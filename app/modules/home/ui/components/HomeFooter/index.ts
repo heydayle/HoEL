@@ -1,1 +1,1 @@
-export { default as HomeFooter } from "./HomeFooter";
+export { HomeFooter } from "./HomeFooter";

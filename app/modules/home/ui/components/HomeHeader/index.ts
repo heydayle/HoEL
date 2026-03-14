@@ -1,1 +1,1 @@
-export { default as HomeHeader } from "./HomeHeader";
+export { HomeHeader } from "./HomeHeader";

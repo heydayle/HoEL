@@ -1,23 +1,30 @@
 {
-  "title": "Home",
-  "hero_greeting": "Master English Through History",
-  "hero_subtitle": "Explore fascinating historical events while building your English vocabulary, grammar, and comprehension skills. Learning has never been this engaging.",
-  "cta_start": "Start Learning",
-  "cta_explore": "Explore Features",
-  "feature_section_title": "What You'll Discover",
-  "feature_section_subtitle": "A comprehensive toolkit designed to make learning English through history immersive and effective.",
-  "feature_vocabulary_title": "Vocabulary Builder",
-  "feature_vocabulary_desc": "Learn new words in context through historical texts and stories. Expand your lexicon naturally.",
-  "feature_grammar_title": "Grammar Patterns",
-  "feature_grammar_desc": "Master grammar structures by analyzing real historical documents and literary works.",
-  "feature_history_title": "Historical Context",
-  "feature_history_desc": "Dive into key events, civilizations, and cultural milestones across different eras.",
-  "feature_quiz_title": "Smart Quizzes",
-  "feature_quiz_desc": "Test your knowledge with adaptive quizzes that track your progress and target weak areas.",
-  "stat_words": "Words Learned",
-  "stat_lessons": "Lessons Done",
-  "stat_streak": "Day Streak",
-  "stat_accuracy": "Accuracy",
-  "footer_text": "English Learning History — Learn English, One Era at a Time.",
-  "footer_copyright": "© 2026 English Learning History. All rights reserved."
+  "title": "LingoNote — Language Lesson Tracker",
+  "app_name": "LingoNote",
+  "app_tagline": "Your offline language lesson companion",
+  "app_description": "Record lessons, build vocabulary, and track what you learn — all saved locally on your device.",
+
+  "onboarding_title": "Choose Your Mode",
+  "onboarding_subtitle": "How are you using LingoNote today?",
+
+  "mode_student_label": "Student Mode",
+  "mode_student_description": "Track lessons you've attended, review vocabulary, and save what your teacher shared with you.",
+  "mode_teacher_label": "Teacher Mode",
+  "mode_teacher_description": "Plan your lessons, log student names, prepare vocabulary lists, and export notes to share.",
+
+  "cta_enter": "Enter as {{mode}}",
+  "cta_student": "Enter as Student",
+  "cta_teacher": "Enter as Teacher",
+
+  "feature_offline_title": "Offline First",
+  "feature_offline_desc": "Everything is saved in your browser. No sign-up, no server, no internet required.",
+  "feature_vocab_title": "Vocabulary Builder",
+  "feature_vocab_desc": "Log words with IPA, part of speech, meaning, translation, and usage examples.",
+  "feature_notes_title": "Rich Notes",
+  "feature_notes_desc": "Capture lesson notes and reference links in a structured, easy-to-review format.",
+  "feature_export_title": "Import & Export",
+  "feature_export_desc": "Export lessons as JSON to share with students or back up your data at any time.",
+
+  "footer_text": "LingoNote — Learn smarter, one lesson at a time.",
+  "footer_copyright": "© 2026 LingoNote. All rights reserved."
 }

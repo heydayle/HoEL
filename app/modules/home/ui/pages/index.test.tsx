@@ -1,47 +1,60 @@
-import { render, screen } from '@testing-library/react';
-import HomePage from './index';
+import { render, screen } from "@testing-library/react";
 
-// We mock the child components since we are testing page composition
-jest.mock('@/app/modules/home/ui/components', () => ({
+import HomePage from "./index";
+
+// Mock styled-components to avoid SSR issues in Jest
+jest.mock("styled-components", () => {
+  const actual = jest.requireActual("styled-components");
+  return actual;
+});
+
+// Mock child components since we test page composition only
+jest.mock("@/app/modules/home/ui/components", () => ({
   HomeHeader: () => <header data-testid="mock-home-header">Header</header>,
-  HeroSection: () => <section data-testid="mock-hero-section">Hero</section>,
-  StatsBar: () => <section data-testid="mock-stats-bar">Stats</section>,
-  FeatureGrid: () => <section data-testid="mock-feature-grid">Features</section>,
+  ModeSelector: () => (
+    <section data-testid="mock-mode-selector">ModeSelector</section>
+  ),
+  FeatureHighlights: () => (
+    <section data-testid="mock-feature-highlights">FeatureHighlights</section>
+  ),
   HomeFooter: () => <footer data-testid="mock-home-footer">Footer</footer>,
 }));
 
-// Mock the facade hook to provide static predictably logic
-jest.mock('@/app/modules/home/ui/hooks', () => ({
+// Mock the facade hook with new shape
+jest.mock("@/app/modules/home/ui/hooks", () => ({
   useHomePage: jest.fn(() => ({
-    resolvedTheme: 'light',
+    resolvedTheme: "light" as const,
     toggleTheme: jest.fn(),
-    locale: 'en',
+    locale: "en",
     setLocale: jest.fn(),
     t: (key: string) => key,
-    features: [],
-    stats: [],
+    modeCards: [],
+    featureHighlights: [],
+    handleSelectMode: jest.fn(),
   })),
 }));
 
-describe('HomePage Component', () => {
-  it('should render all child sections composing the home module', () => {
+describe("HomePage Component", () => {
+  it("should render all child sections composing the home module", () => {
     render(<HomePage />);
-    
-    expect(screen.getByTestId('mock-home-header')).toBeInTheDocument();
-    expect(screen.getByTestId('mock-hero-section')).toBeInTheDocument();
-    expect(screen.getByTestId('mock-stats-bar')).toBeInTheDocument();
-    expect(screen.getByTestId('mock-feature-grid')).toBeInTheDocument();
-    expect(screen.getByTestId('mock-home-footer')).toBeInTheDocument();
+
+    expect(screen.getByTestId("mock-home-header")).toBeInTheDocument();
+    expect(screen.getByTestId("mock-mode-selector")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("mock-feature-highlights")
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("mock-home-footer")).toBeInTheDocument();
   });
-  
-  it('should wrap everything in a main div struct with proper layout classes', () => {
+
+  it("should render a footer element in the DOM", () => {
     const { container } = render(<HomePage />);
-    // Check main container
-    const outerDiv = container.firstChild as HTMLDivElement;
-    expect(outerDiv).toHaveClass('flex', 'min-h-screen', 'flex-col', 'bg-background');
-    
-    // Main element exists
-    const mainElement = container.querySelector('main');
-    expect(mainElement).toHaveClass('flex', 'flex-1', 'flex-col');
+    const footer = container.querySelector("footer");
+    expect(footer).toBeInTheDocument();
+  });
+
+  it("should render a header element in the DOM", () => {
+    const { container } = render(<HomePage />);
+    const header = container.querySelector("header");
+    expect(header).toBeInTheDocument();
   });
 });

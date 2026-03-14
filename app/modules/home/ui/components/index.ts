@@ -1,5 +1,4 @@
-export { FeatureGrid } from "./FeatureGrid";
-export { HeroSection } from "./HeroSection";
+export { FeatureHighlights } from "./FeatureHighlights";
 export { HomeFooter } from "./HomeFooter";
 export { HomeHeader } from "./HomeHeader";
-export { StatsBar } from "./StatsBar";
+export { ModeSelector } from "./ModeSelector";

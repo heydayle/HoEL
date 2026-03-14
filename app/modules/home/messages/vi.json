@@ -1,23 +1,30 @@
 {
-  "title": "Trang chủ",
-  "hero_greeting": "Chinh Phục Tiếng Anh Qua Lịch Sử",
-  "hero_subtitle": "Khám phá những sự kiện lịch sử hấp dẫn trong khi xây dựng vốn từ vựng, ngữ pháp và kỹ năng đọc hiểu tiếng Anh. Việc học chưa bao giờ thú vị đến thế.",
-  "cta_start": "Bắt Đầu Học",
-  "cta_explore": "Khám Phá Tính Năng",
-  "feature_section_title": "Bạn Sẽ Khám Phá Gì",
-  "feature_section_subtitle": "Bộ công cụ toàn diện giúp việc học tiếng Anh qua lịch sử trở nên hấp dẫn và hiệu quả.",
-  "feature_vocabulary_title": "Xây Dựng Từ Vựng",
-  "feature_vocabulary_desc": "Học từ mới theo ngữ cảnh qua các văn bản và câu chuyện lịch sử. Mở rộng vốn từ một cách tự nhiên.",
-  "feature_grammar_title": "Mẫu Ngữ Pháp",
-  "feature_grammar_desc": "Thành thạo cấu trúc ngữ pháp bằng cách phân tích tài liệu lịch sử và tác phẩm văn học thực tế.",
-  "feature_history_title": "Bối Cảnh Lịch Sử",
-  "feature_history_desc": "Đắm mình vào các sự kiện quan trọng, nền văn minh và cột mốc văn hóa qua các thời kỳ.",
-  "feature_quiz_title": "Bài Kiểm Tra Thông Minh",
-  "feature_quiz_desc": "Kiểm tra kiến thức với các bài quiz thích ứng, theo dõi tiến trình và tập trung vào điểm yếu.",
-  "stat_words": "Từ Đã Học",
-  "stat_lessons": "Bài Hoàn Thành",
-  "stat_streak": "Chuỗi Ngày",
-  "stat_accuracy": "Độ Chính Xác",
-  "footer_text": "English Learning History — Học Tiếng Anh, Mỗi Ngày Một Thời Đại.",
-  "footer_copyright": "© 2026 English Learning History. Đã bảo lưu mọi quyền."
+  "title": "LingoNote — Trình Theo Dõi Bài Học",
+  "app_name": "LingoNote",
+  "app_tagline": "Người bạn đồng hành học ngôn ngữ ngoại tuyến",
+  "app_description": "Ghi chép buổi học, xây dựng từ vựng và theo dõi những gì bạn học — tất cả được lưu trữ cục bộ trên thiết bị của bạn.",
+
+  "onboarding_title": "Chọn Chế Độ Của Bạn",
+  "onboarding_subtitle": "Hôm nay bạn đang dùng LingoNote với tư cách gì?",
+
+  "mode_student_label": "Chế Độ Học Sinh",
+  "mode_student_description": "Theo dõi các buổi học đã tham dự, ôn lại từ vựng và lưu những gì giáo viên chia sẻ.",
+  "mode_teacher_label": "Chế Độ Giáo Viên",
+  "mode_teacher_description": "Lên kế hoạch bài học, ghi tên học sinh, chuẩn bị danh sách từ vựng và xuất ghi chú để chia sẻ.",
+
+  "cta_enter": "Vào với tư cách {{mode}}",
+  "cta_student": "Vào với tư cách Học Sinh",
+  "cta_teacher": "Vào với tư cách Giáo Viên",
+
+  "feature_offline_title": "Hoạt Động Ngoại Tuyến",
+  "feature_offline_desc": "Mọi thứ được lưu trong trình duyệt. Không cần đăng ký, không server, không cần mạng.",
+  "feature_vocab_title": "Xây Dựng Từ Vựng",
+  "feature_vocab_desc": "Ghi lại từ ngữ kèm IPA, từ loại, nghĩa, bản dịch và ví dụ sử dụng.",
+  "feature_notes_title": "Ghi Chú Phong Phú",
+  "feature_notes_desc": "Ghi chép bài học và liên kết tham khảo theo cấu trúc rõ ràng, dễ ôn lại.",
+  "feature_export_title": "Nhập & Xuất Dữ Liệu",
+  "feature_export_desc": "Xuất bài học dưới dạng JSON để chia sẻ với học sinh hoặc sao lưu dữ liệu bất kỳ lúc nào.",
+
+  "footer_text": "LingoNote — Học thông minh hơn, từng buổi một.",
+  "footer_copyright": "© 2026 LingoNote. Đã bảo lưu mọi quyền."
 }

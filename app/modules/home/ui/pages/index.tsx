@@ -1,19 +1,20 @@
 "use client";
 
 import {
-  FeatureGrid,
-  HeroSection,
+  FeatureHighlights,
   HomeFooter,
   HomeHeader,
-  StatsBar,
+  ModeSelector,
 } from "@/app/modules/home/ui/components";
 import { useHomePage } from "@/app/modules/home/ui/hooks";
 
+import { HeaderSpacer, HomeMainContent, HomePageWrapper } from "./styled";
+
 /**
- * Main page component for the Home module.
- * Composes all Home sub-components (Header, Hero, Stats, Features, Footer)
- * and wires them with data/handlers from the useHomePage hook.
- * @returns The complete Home page view
+ * Main page component for the Home onboarding module.
+ * Composes the header, mode selector, feature highlights, and footer.
+ * Wires data and handlers from the useHomePage hook.
+ * @returns The complete Home onboarding page view
  */
 export default function HomePage(): React.JSX.Element {
   const {
@@ -22,12 +23,13 @@ export default function HomePage(): React.JSX.Element {
     locale,
     setLocale,
     t,
-    features,
-    stats,
+    modeCards,
+    featureHighlights,
+    handleSelectMode,
   } = useHomePage();
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <HomePageWrapper>
       <HomeHeader
         resolvedTheme={resolvedTheme}
         onThemeToggle={toggleTheme}
@@ -36,30 +38,26 @@ export default function HomePage(): React.JSX.Element {
       />
 
       {/* Spacer for fixed header */}
-      <div className="h-16" />
+      <HeaderSpacer />
 
-      <main className="flex flex-1 flex-col">
-        <HeroSection
-          greeting={t("hero_greeting")}
-          subtitle={t("hero_subtitle")}
-          ctaStart={t("cta_start")}
-          ctaExplore={t("cta_explore")}
-        />
-
-        <StatsBar stats={stats} t={t} />
-
-        <FeatureGrid
-          features={features}
+      <HomeMainContent>
+        <ModeSelector
+          title={t("onboarding_title")}
+          subtitle={t("onboarding_subtitle")}
+          appTagline={t("app_tagline")}
+          modeCards={modeCards}
+          featureHighlights={featureHighlights}
           t={t}
-          sectionTitle={t("feature_section_title")}
-          sectionSubtitle={t("feature_section_subtitle")}
+          onSelectMode={handleSelectMode}
         />
-      </main>
+
+        <FeatureHighlights highlights={featureHighlights} t={t} />
+      </HomeMainContent>
 
       <HomeFooter
         footerText={t("footer_text")}
         copyright={t("footer_copyright")}
       />
-    </div>
+    </HomePageWrapper>
   );
 }

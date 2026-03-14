@@ -4,6 +4,12 @@
 export type Locale = "en" | "vi";
 
 /**
+ * User mode for the application.
+ * Selected on first load and persisted in localStorage.
+ */
+export type UserMode = "student" | "teacher";
+
+/**
  * Supported theme modes for the application.
  */
 export type ThemeMode = "light" | "dark" | "system";

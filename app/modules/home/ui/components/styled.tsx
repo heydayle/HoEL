@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 
 /* ============================================================
  * Shared styled-components for Home module UI components.
@@ -8,7 +8,7 @@ import styled, { keyframes } from "styled-components";
 
 /** Fade in from bottom animation */
 const fadeInUp = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
 `;
 
@@ -18,146 +18,17 @@ const fadeIn = keyframes`
   to   { opacity: 1; }
 `;
 
-/** Scale in animation */
+/** Scale in & up animation */
 const scaleIn = keyframes`
-  from { opacity: 0; transform: scale(0.9); }
+  from { opacity: 0; transform: scale(0.92); }
   to   { opacity: 1; transform: scale(1); }
 `;
 
-/* --- HeroSection --- */
+/* ------------------------------------------------------------------ */
+/* HomeHeader                                                           */
+/* ------------------------------------------------------------------ */
 
-/**
- * Outer wrapper for the Hero section with relative positioning.
- */
-export const HeroWrapper = styled.section`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 85vh;
-  overflow: hidden;
-  padding: 6rem 1.5rem;
-  text-align: center;
-`;
-
-/**
- * Decorative glow overlay behind the hero content.
- */
-export const HeroGlow = styled.div`
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  opacity: 0.6;
-  background: var(--gradient-glow);
-`;
-
-/**
- * Animated hero content container with fade-in effect.
- */
-export const HeroContent = styled.div`
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  max-width: 48rem;
-  animation: ${fadeInUp} 0.8s ease-out;
-`;
-
-/* --- StatsBar --- */
-
-/**
- * Container for the stats bar section.
- */
-export const StatsContainer = styled.section`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-  max-width: 64rem;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
-  width: 100%;
-  animation: ${fadeInUp} 0.8s ease-out 0.5s both;
-`;
-
-/**
- * Individual stat card with hover lift effect.
- */
-export const StatCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 140px;
-  padding: 1.25rem 1.5rem;
-  border-radius: var(--radius-lg, 16px);
-  border: 1px solid var(--surface-border);
-  background-color: var(--surface);
-  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
-
-  &:hover {
-    border-color: rgba(108, 92, 231, 0.3);
-    box-shadow: var(--surface-shadow-hover);
-    transform: translateY(-4px);
-  }
-`;
-
-/* --- FeatureGrid --- */
-
-/**
- * Container for the features section including heading.
- */
-export const FeaturesSection = styled.section`
-  width: 100%;
-  max-width: 72rem;
-  margin: 0 auto;
-  padding: 5rem 1.5rem;
-`;
-
-/**
- * Heading container for features section title and subtitle.
- */
-export const FeaturesHeading = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-bottom: 3.5rem;
-  animation: ${fadeInUp} 0.7s ease-out;
-`;
-
-/**
- * Individual feature card with animated hover effects.
- */
-export const FeatureCard = styled.article`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  padding: 1.75rem;
-  border-radius: var(--radius-lg, 16px);
-  border: 1px solid var(--surface-border);
-  background-color: var(--surface);
-  box-shadow: var(--surface-shadow);
-  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-
-  &:hover {
-    border-color: transparent;
-    box-shadow: var(--surface-shadow-hover);
-    transform: translateY(-8px);
-  }
-`;
-
-/* --- HomeHeader --- */
-
-/**
- * Fixed header bar with frosted glass effect.
- */
+/** Fixed frosted-glass header bar */
 export const HeaderBar = styled.header`
   position: fixed;
   top: 0;
@@ -170,32 +41,288 @@ export const HeaderBar = styled.header`
   height: 4rem;
   padding: 0 1.5rem;
   border-bottom: 1px solid var(--surface-border);
-  background-color: rgba(var(--background), 0.8);
+  background-color: rgba(var(--background-rgb, 10, 10, 20), 0.8);
   backdrop-filter: blur(24px);
   animation: ${fadeIn} 0.5s ease-out;
 `;
 
-/* --- HomeFooter --- */
+/* ------------------------------------------------------------------ */
+/* AppBrand                                                             */
+/* ------------------------------------------------------------------ */
+
+/** Brand logo container */
+export const BrandWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+`;
+
+/** Colored icon pill for the brand logo */
+export const BrandIconPill = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-md);
+  background-color: var(--accent-primary);
+  font-size: 1.125rem;
+  color: #fff;
+`;
+
+/** Brand name text */
+export const BrandName = styled.span`
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+`;
+
+/* ------------------------------------------------------------------ */
+/* ModeSelector — Onboarding hero area                                 */
+/* ------------------------------------------------------------------ */
 
 /**
- * Footer container with top border and secondary background.
+ * Central hero wrapper for the mode selection screen.
+ * Fills remaining viewport height below the fixed header.
  */
+export const OnboardingWrapper = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 5rem 1.5rem 3rem;
+  min-height: calc(100vh - 4rem);
+  text-align: center;
+  animation: ${fadeInUp} 0.7s ease-out;
+
+  @media (min-width: 768px) {
+    padding: 6rem 2rem 4rem;
+    justify-content: center;
+    min-height: calc(100vh - 4rem);
+  }
+`;
+
+/** Decorative glow circle behind the headline */
+export const HeroGlow = styled.div`
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background: var(--gradient-glow);
+`;
+
+/** App name badge shown above the headline */
+export const AppBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-full);
+  background-color: var(--accent-primary-light);
+  padding: 0.375rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin-bottom: 1.5rem;
+`;
+
+/** Pulsing dot inside AppBadge */
+export const PulseDot = styled.span`
+  display: flex;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: var(--accent-primary);
+`;
+
+/** Main onboarding headline */
+export const OnboardingTitle = styled.h1`
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+  margin-bottom: 0.75rem;
+  max-width: 32rem;
+
+  @media (min-width: 640px) {
+    font-size: 3rem;
+  }
+`;
+
+/** Onboarding subtitle below the headline */
+export const OnboardingSubtitle = styled.p`
+  font-size: 1rem;
+  color: var(--foreground-secondary);
+  max-width: 26rem;
+  line-height: 1.6;
+  margin-bottom: 3rem;
+
+  @media (min-width: 640px) {
+    font-size: 1.0625rem;
+  }
+`;
+
+/** Two-column grid that holds the mode cards */
+export const ModeCardsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  width: 100%;
+  max-width: 44rem;
+  margin-bottom: 4rem;
+
+  @media (min-width: 600px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+`;
+
+/**
+ * A clickable mode card.
+ * Accent color is applied via CSS custom property --card-accent.
+ */
+export const ModeCard = styled.button<{ $accentColor: string }>`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 1.75rem;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--surface-border);
+  background-color: var(--surface);
+  box-shadow: var(--surface-shadow);
+  cursor: pointer;
+  text-align: left;
+  transition: all 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  animation: ${scaleIn} 0.5s ease-out both;
+
+  ${({ $accentColor }) => css`
+    --card-accent: var(--${$accentColor});
+    --card-accent-light: var(--${$accentColor}-light);
+  `}
+
+  &:hover {
+    border-color: var(--card-accent);
+    box-shadow: 0 0 0 3px var(--card-accent-light), var(--surface-shadow-hover);
+    transform: translateY(-6px);
+  }
+
+  &:active {
+    transform: translateY(-2px) scale(0.99);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--card-accent);
+    outline-offset: 3px;
+  }
+`;
+
+/** Emoji icon pill inside ModeCard */
+export const ModeIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: var(--radius-md);
+  background-color: var(--card-accent-light);
+  font-size: 1.625rem;
+  transition: transform var(--transition-spring);
+
+  ${ModeCard}:hover & {
+    transform: scale(1.12);
+  }
+`;
+
+/** Mode label inside ModeCard */
+export const ModeLabel = styled.span`
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--card-accent);
+`;
+
+/** Mode description inside ModeCard */
+export const ModeDescription = styled.p`
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--foreground-secondary);
+`;
+
+/** CTA link text at the bottom of a ModeCard */
+export const ModeCta = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--card-accent);
+`;
+
+/* ------------------------------------------------------------------ */
+/* FeatureHighlights                                                    */
+/* ------------------------------------------------------------------ */
+
+/** Section wrapping the feature highlight pills */
+export const FeaturesSection = styled.section`
+  width: 100%;
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 0 1.5rem 5rem;
+  animation: ${fadeInUp} 0.7s ease-out 0.4s both;
+`;
+
+/** Row of feature pills */
+export const FeaturesRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+`;
+
+/** Individual feature pill */
+export const FeaturePill = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--surface-border);
+  background-color: var(--surface);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--foreground-secondary);
+  transition: all var(--transition-base);
+
+  &:hover {
+    border-color: var(--accent-primary);
+    color: var(--foreground);
+    background-color: var(--accent-primary-light);
+  }
+`;
+
+/* ------------------------------------------------------------------ */
+/* HomeFooter                                                           */
+/* ------------------------------------------------------------------ */
+
+/** Footer container with top border */
 export const FooterWrapper = styled.footer`
   margin-top: auto;
   width: 100%;
   border-top: 1px solid var(--surface-border);
   background-color: var(--background-secondary);
-  padding: 2.5rem 1.5rem;
+  padding: 2rem 1.5rem;
 `;
 
-/**
- * Centered content area within the footer.
- */
+/** Centered footer content */
 export const FooterContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   max-width: 72rem;
   margin: 0 auto;
   text-align: center;

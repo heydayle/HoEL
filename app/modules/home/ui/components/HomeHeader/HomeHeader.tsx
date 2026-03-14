@@ -2,11 +2,18 @@
 
 import type { Locale } from "@/app/shared/types";
 
+import {
+  BrandIconPill,
+  BrandName,
+  BrandWrapper,
+  HeaderBar,
+} from "../styled";
+
 /**
  * Props for the HomeHeader component.
  */
 interface IHomeHeaderProps {
-  /** The currently resolved theme (light or dark) */
+  /** The currently resolved theme ("light" | "dark") */
   resolvedTheme: "light" | "dark";
   /** Callback to toggle the theme */
   onThemeToggle: () => void;
@@ -17,45 +24,25 @@ interface IHomeHeaderProps {
 }
 
 /**
- * Header/navigation bar component for the Home page.
- * Contains the app logo/brand, theme toggle, and locale switcher.
- * Features a frosted glass background effect that blurs content on scroll.
+ * Header bar for the Home onboarding page.
+ * Displays the LingoNote brand and controls for theme and locale.
+ * Features a frosted-glass background effect.
  * @param props - HomeHeader props including theme and locale controls
  * @returns The rendered HomeHeader element
  */
-export default function HomeHeader({
+export function HomeHeader({
   resolvedTheme,
   onThemeToggle,
   locale,
   onLocaleChange,
 }: IHomeHeaderProps): React.JSX.Element {
   return (
-    <header
-      id="home-header"
-      className="
-        fixed top-0 right-0 left-0 z-50
-        flex h-16 items-center justify-between
-        border-b border-surface-border
-        bg-background/80 px-6
-        backdrop-blur-xl
-      "
-      style={{ animation: "fadeIn 0.5s ease-out" }}
-    >
+    <HeaderBar id="home-header">
       {/* Brand */}
-      <div className="flex items-center gap-3">
-        <div
-          className="
-            flex h-9 w-9 items-center justify-center
-            rounded-[var(--radius-md)]
-            bg-accent-primary text-lg text-white
-          "
-        >
-          📜
-        </div>
-        <span className="text-base font-bold tracking-tight text-foreground">
-          ELH
-        </span>
-      </div>
+      <BrandWrapper>
+        <BrandIconPill aria-hidden="true">📝</BrandIconPill>
+        <BrandName>LingoNote</BrandName>
+      </BrandWrapper>
 
       {/* Controls */}
       <div className="flex items-center gap-3">
@@ -67,9 +54,9 @@ export default function HomeHeader({
               onLocaleChange("en");
             }}
             className={`
-              flex items-center gap-1.5
+              flex cursor-pointer items-center gap-1.5
               rounded-[var(--radius-sm)] px-3 py-1.5
-              text-sm font-medium cursor-pointer
+              text-sm font-medium
               transition-all duration-200
               ${
                 locale === "en"
@@ -88,9 +75,9 @@ export default function HomeHeader({
               onLocaleChange("vi");
             }}
             className={`
-              flex items-center gap-1.5
+              flex cursor-pointer items-center gap-1.5
               rounded-[var(--radius-sm)] px-3 py-1.5
-              text-sm font-medium cursor-pointer
+              text-sm font-medium
               transition-all duration-200
               ${
                 locale === "vi"
@@ -110,9 +97,9 @@ export default function HomeHeader({
           id="header-theme-toggle"
           onClick={onThemeToggle}
           className="
-            flex h-10 w-10 items-center justify-center
+            flex h-10 w-10 cursor-pointer items-center justify-center
             rounded-[var(--radius-md)] bg-surface-hover
-            text-foreground-secondary cursor-pointer
+            text-foreground-secondary
             transition-all duration-200
             hover:bg-accent-primary-light hover:text-accent-primary
             active:scale-[0.92]
@@ -129,6 +116,7 @@ export default function HomeHeader({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
+              aria-hidden="true"
             >
               <circle cx="12" cy="12" r="4" />
               <path d="M12 2v2" />
@@ -150,12 +138,13 @@ export default function HomeHeader({
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
+              aria-hidden="true"
             >
               <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
             </svg>
           )}
         </button>
       </div>
-    </header>
+    </HeaderBar>
   );
 }

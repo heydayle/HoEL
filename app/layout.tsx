@@ -19,15 +19,17 @@ const geistMono = Geist_Mono({
 
 /** SEO metadata for the application */
 export const metadata: Metadata = {
-  title: "English Learning History — Learn English Through History",
+  title: "LingoNote — Language Lesson Tracker",
   description:
-    "Master English vocabulary, grammar, and comprehension by exploring fascinating historical events and cultural milestones across different eras.",
+    "An offline-first app to record language learning sessions, build vocabulary lists, and track lessons as a student or teacher. No sign-up required.",
   keywords: [
-    "English learning",
-    "history",
+    "language learning",
+    "lesson tracker",
     "vocabulary",
-    "grammar",
-    "education",
+    "offline",
+    "student",
+    "teacher",
+    "LingoNote",
   ],
 };
 
