@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Card } from '@/app/shared/components/Styled';
+import { Badge, Card, Input } from '@/app/shared/components/Styled';
 
 /**
  * Header row containing page heading and utility controls.
@@ -60,57 +60,140 @@ export const StatValue = styled.p`
 `;
 
 /**
- * Card for displaying the latest lesson details.
+ * Filter panel container.
  */
-export const LatestLessonCard = styled(Card)`
+export const FilterPanel = styled(Card)`
+  border: 1px solid var(--surface-border);
+  background: var(--surface);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`;
+
+/**
+ * Filter control row for responsive layout.
+ */
+export const FilterGrid = styled.div`
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+`;
+
+/**
+ * Styled shared input for filters.
+ */
+export const FilterInput = styled(Input)`
+  width: 100%;
+`;
+
+/**
+ * Native select input used in filter controls.
+ */
+export const FilterSelect = styled.select`
+  width: 100%;
+  height: 2.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-border);
+  background: var(--surface);
+  color: var(--foreground);
+  padding: 0 0.75rem;
+`;
+
+/**
+ * Filter checkbox label wrapper.
+ */
+export const FilterCheckboxLabel = styled.label`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--foreground-secondary);
+  font-size: 0.875rem;
+`;
+
+/**
+ * Filter action button.
+ */
+export const FilterResetButton = styled.button`
+  width: fit-content;
+  padding: 0.45rem 0.8rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-border);
+  background: var(--surface-hover);
+  color: var(--foreground);
+  cursor: pointer;
+`;
+
+/**
+ * Lessons list container.
+ */
+export const LessonsList = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`;
+
+/**
+ * Single lesson card in the list.
+ */
+export const LessonCard = styled(Card)`
   border: 1px solid var(--surface-border);
   background: var(--surface);
   padding: 1rem;
 `;
 
 /**
- * Title of the latest lesson topic.
+ * Top row inside lesson card.
+ */
+export const LessonCardHeader = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+`;
+
+/**
+ * Lesson topic title.
  */
 export const LessonTopic = styled.h2`
   margin: 0;
   color: var(--foreground);
-  font-size: 1.25rem;
+  font-size: 1.1rem;
 `;
 
 /**
- * Small meta text row in lesson details.
+ * Meta text in lesson cards.
  */
 export const LessonMeta = styled.p`
-  margin: 0.5rem 0 0;
+  margin: 0.4rem 0 0;
   color: var(--foreground-secondary);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 `;
 
 /**
  * Notes content preview block.
  */
 export const NotesContent = styled.p`
-  margin: 1rem 0 0;
-  color: var(--foreground);
-  line-height: 1.6;
-`;
-
-/**
- * List container for lesson reference links.
- */
-export const LinkList = styled.ul`
   margin: 0.75rem 0 0;
-  padding-left: 1.25rem;
+  color: var(--foreground);
+  line-height: 1.5;
 `;
 
 /**
- * Reference link text style.
+ * Priority badge style.
  */
-export const LinkItem = styled.a`
+export const PriorityBadge = styled(Badge)`
+  background: var(--accent-primary-light);
   color: var(--accent-primary);
-  text-decoration: none;
+`;
 
-  &:hover {
-    text-decoration: underline;
-  }
+/**
+ * Empty state text when list has no result.
+ */
+export const EmptyState = styled.p`
+  margin: 0;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--surface-border);
+  color: var(--foreground-secondary);
 `;
