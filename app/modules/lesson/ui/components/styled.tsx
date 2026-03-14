@@ -2,6 +2,14 @@ import styled from 'styled-components';
 
 import { Badge, Card, Input } from '@/app/shared/components/Styled';
 
+/** Compact spacing for components with small width footprint (< 20rem). */
+const SMALL_COMPONENT_PADDING_Y = '6px';
+const SMALL_COMPONENT_PADDING_X = '10px';
+
+/** Comfortable spacing for components with larger width footprint (>= 20rem). */
+const LARGE_COMPONENT_PADDING_Y = '10px';
+const LARGE_COMPONENT_PADDING_X = '20px';
+
 /**
  * Header row containing page heading and utility controls.
  */
@@ -37,7 +45,7 @@ export const StatsGrid = styled.section`
 export const StatCard = styled(Card)`
   border: 1px solid var(--surface-border);
   background: var(--surface);
-  padding: 1rem;
+  padding: ${LARGE_COMPONENT_PADDING_Y} ${LARGE_COMPONENT_PADDING_X};
 `;
 
 /**
@@ -65,7 +73,7 @@ export const StatValue = styled.p`
 export const FilterPanel = styled(Card)`
   border: 1px solid var(--surface-border);
   background: var(--surface);
-  padding: 1rem;
+  padding: ${LARGE_COMPONENT_PADDING_Y} ${LARGE_COMPONENT_PADDING_X};
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -85,6 +93,11 @@ export const FilterGrid = styled.div`
  */
 export const FilterInput = styled(Input)`
   width: 100%;
+  padding: ${SMALL_COMPONENT_PADDING_Y} ${SMALL_COMPONENT_PADDING_X};
+
+  @media (min-width: 768px) {
+    padding: ${LARGE_COMPONENT_PADDING_Y} 16px;
+  }
 `;
 
 /**
@@ -97,7 +110,11 @@ export const FilterSelect = styled.select`
   border: 1px solid var(--surface-border);
   background: var(--surface);
   color: var(--foreground);
-  padding: 0 0.75rem;
+  padding: ${SMALL_COMPONENT_PADDING_Y} ${SMALL_COMPONENT_PADDING_X};
+
+  @media (min-width: 768px) {
+    padding: ${LARGE_COMPONENT_PADDING_Y} 16px;
+  }
 `;
 
 /**
@@ -116,12 +133,16 @@ export const FilterCheckboxLabel = styled.label`
  */
 export const FilterResetButton = styled.button`
   width: fit-content;
-  padding: 0.45rem 0.8rem;
+  padding: ${SMALL_COMPONENT_PADDING_Y} ${SMALL_COMPONENT_PADDING_X};
   border-radius: var(--radius-md);
   border: 1px solid var(--surface-border);
   background: var(--surface-hover);
   color: var(--foreground);
   cursor: pointer;
+
+  @media (min-width: 768px) {
+    padding: ${LARGE_COMPONENT_PADDING_Y} 16px;
+  }
 `;
 
 /**
@@ -139,7 +160,7 @@ export const LessonsList = styled.section`
 export const LessonCard = styled(Card)`
   border: 1px solid var(--surface-border);
   background: var(--surface);
-  padding: 1rem;
+  padding: ${LARGE_COMPONENT_PADDING_Y} ${LARGE_COMPONENT_PADDING_X};
 `;
 
 /**
@@ -185,6 +206,7 @@ export const NotesContent = styled.p`
 export const PriorityBadge = styled(Badge)`
   background: var(--accent-primary-light);
   color: var(--accent-primary);
+  padding: ${SMALL_COMPONENT_PADDING_Y} ${SMALL_COMPONENT_PADDING_X};
 `;
 
 /**
@@ -192,7 +214,7 @@ export const PriorityBadge = styled(Badge)`
  */
 export const EmptyState = styled.p`
   margin: 0;
-  padding: 1rem;
+  padding: ${LARGE_COMPONENT_PADDING_Y} ${LARGE_COMPONENT_PADDING_X};
   border-radius: var(--radius-md);
   border: 1px dashed var(--surface-border);
   color: var(--foreground-secondary);
