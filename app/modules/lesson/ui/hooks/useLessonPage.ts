@@ -8,7 +8,8 @@ import {
   getLessonStats,
   LESSON_FALLBACK_DATA,
 } from '@/app/modules/lesson/core/usecases';
-import { getLessonsFromLocalStorage } from '@/app/modules/lesson/infras';
+import type { ILesson } from '@/app/modules/lesson/core/models';
+import { getLessonsFromLocalStorage, saveLessonsToLocalStorage } from '@/app/modules/lesson/infras';
 import enMessages from '@/app/modules/lesson/messages/en.json';
 import viMessages from '@/app/modules/lesson/messages/vi.json';
 import { useLocale, useTheme } from '@/app/shared/hooks';
@@ -47,10 +48,27 @@ export const useLessonPage = () => {
   /**
    * Reads lessons from local storage and falls back to sample data.
    */
-  const lessons = useMemo(() => {
+  const [lessons, setLessons] = useState<ILesson[]>(() => {
     const localLessons = getLessonsFromLocalStorage();
     return localLessons.length > 0 ? localLessons : LESSON_FALLBACK_DATA;
-  }, []);
+  });
+
+  /**
+   * Adds a new lesson to the list and persists it.
+   * @param lesson - Built lesson
+   */
+  const addLesson = (lesson: Omit<ILesson, 'id'>) => {
+    const newLesson: ILesson = {
+      ...lesson,
+      id: `lesson-${Date.now()}`,
+    };
+    
+    // Fallback data shouldn't be persist unless explicitly merged, 
+    // but the current spec persists everything if a change is made.
+    const updatedLessons = [newLesson, ...lessons];
+    setLessons(updatedLessons);
+    saveLessonsToLocalStorage(updatedLessons);
+  };
 
   /**
    * Computes the filtered and sorted lessons list.
@@ -175,5 +193,6 @@ export const useLessonPage = () => {
     updateEndDate,
     updateSortBy,
     resetFilters,
+    addLesson,
   };
 };

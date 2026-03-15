@@ -25,3 +25,14 @@ export const getLessonsFromLocalStorage = (): ILesson[] => {
     return [];
   }
 };
+
+/**
+ * Saves lesson records to localStorage.
+ * @param lessons - Lessons to save
+ */
+export const saveLessonsToLocalStorage = (lessons: ILesson[]): void => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  localStorage.setItem(LESSON_STORAGE_KEY, JSON.stringify(lessons));
+};

@@ -1,5 +1,6 @@
 'use client';
 
+import { CreateLessonModal } from '@/app/modules/lesson/ui/components/CreateLessonModal';
 import { LessonOverview } from '@/app/modules/lesson/ui/components/LessonOverview';
 import { ControlsGroup, LessonHeaderRow } from '@/app/modules/lesson/ui/components/styled';
 import { useLessonPage } from '@/app/modules/lesson/ui/hooks';
@@ -30,6 +31,7 @@ export default function LessonPage(): React.JSX.Element {
     updateEndDate,
     updateSortBy,
     resetFilters,
+    addLesson,
   } = useLessonPage();
 
   return (
@@ -42,6 +44,7 @@ export default function LessonPage(): React.JSX.Element {
           </div>
 
           <ControlsGroup>
+            <CreateLessonModal t={t} onAddLesson={addLesson} />
             <LocaleSwitcher locale={locale} onLocaleChange={setLocale} />
             <ThemeToggle resolvedTheme={resolvedTheme} onToggle={toggleTheme} />
           </ControlsGroup>

@@ -124,4 +124,81 @@ describe('LessonOverview', () => {
 
     expect(onSearchTermChange).toHaveBeenCalledWith('travel');
   });
+
+  it('should call corresponding handlers when filters are changed', () => {
+    const onPriorityFilterChange = jest.fn();
+    const onPinnedFilterChange = jest.fn();
+    const onFavoriteFilterChange = jest.fn();
+    const onStartDateChange = jest.fn();
+    const onEndDateChange = jest.fn();
+    const onSortChange = jest.fn();
+    const onResetFilters = jest.fn();
+
+    render(
+      <LessonOverview
+        stats={MOCK_STATS}
+        lessons={MOCK_LESSONS}
+        filters={MOCK_FILTERS}
+        t={t}
+        onSearchTermChange={jest.fn()}
+        onPinnedFilterChange={onPinnedFilterChange}
+        onFavoriteFilterChange={onFavoriteFilterChange}
+        onPriorityFilterChange={onPriorityFilterChange}
+        onStartDateChange={onStartDateChange}
+        onEndDateChange={onEndDateChange}
+        onSortChange={onSortChange}
+        onResetFilters={onResetFilters}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('priority_filter_aria_label'), {
+      target: { value: 'High' },
+    });
+    expect(onPriorityFilterChange).toHaveBeenCalledWith('High');
+
+    fireEvent.change(screen.getByLabelText('sort_aria_label'), {
+      target: { value: 'topic_asc' },
+    });
+    expect(onSortChange).toHaveBeenCalledWith('topic_asc');
+
+    fireEvent.change(screen.getByLabelText('start_date_aria_label'), {
+      target: { value: '2026-03-01' },
+    });
+    expect(onStartDateChange).toHaveBeenCalledWith('2026-03-01');
+
+    fireEvent.change(screen.getByLabelText('end_date_aria_label'), {
+      target: { value: '2026-03-31' },
+    });
+    expect(onEndDateChange).toHaveBeenCalledWith('2026-03-31');
+
+    fireEvent.click(screen.getByLabelText('filter_pinned'));
+    expect(onPinnedFilterChange).toHaveBeenCalledWith(true);
+
+    fireEvent.click(screen.getByLabelText('filter_favorite'));
+    expect(onFavoriteFilterChange).toHaveBeenCalledWith(true);
+
+    fireEvent.click(screen.getByText('reset_filters'));
+    expect(onResetFilters).toHaveBeenCalled();
+  });
+
+  it('renders empty state when lessons array is empty', () => {
+    render(
+      <LessonOverview
+        stats={MOCK_STATS}
+        lessons={[]}
+        filters={MOCK_FILTERS}
+        t={t}
+        onSearchTermChange={jest.fn()}
+        onPinnedFilterChange={jest.fn()}
+        onFavoriteFilterChange={jest.fn()}
+        onPriorityFilterChange={jest.fn()}
+        onStartDateChange={jest.fn()}
+        onEndDateChange={jest.fn()}
+        onSortChange={jest.fn()}
+        onResetFilters={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByText('empty_state')).toBeInTheDocument();
+  });
 });
