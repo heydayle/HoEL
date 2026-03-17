@@ -38,8 +38,8 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
 
 /** Map of size names to their Tailwind class combinations */
 const SIZE_CLASSES: Record<ButtonSize, string> = {
-  sm: "px-4 py-2 text-sm",
-  md: "px-6 py-3 text-base",
+  sm: "px-3 py-2 text-sm",
+  md: "px-4 py-3 text-base",
   lg: "px-8 py-4 text-lg",
 };
 
