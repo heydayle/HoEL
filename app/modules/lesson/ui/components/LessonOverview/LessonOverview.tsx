@@ -1,8 +1,10 @@
 import type { ILesson, ILessonStats, LessonPriority } from '@/app/modules/lesson/core/models';
 import type { ILessonFilterInput, LessonSortOption } from '@/app/modules/lesson/core/usecases';
+import { ExternalLink, Pencil } from 'lucide-react';
 
 import {
   EmptyState,
+  EditLessonButton,
   FilterCheckboxLabel,
   FilterGrid,
   FilterInput,
@@ -15,6 +17,7 @@ import {
   LessonsList,
   LessonTopic,
   NotesContent,
+  OpenLessonButton,
   PriorityBadge,
   StatCard,
   StatLabel,
@@ -50,6 +53,10 @@ interface ILessonOverviewProps {
   onSortChange: (value: LessonSortOption) => void;
   /** Reset filters handler */
   onResetFilters: () => void;
+  /** Lesson selection handler */
+  onSelectLesson: (lesson: ILesson) => void;
+  /** Edit lesson handler */
+  onEditLesson: (lesson: ILesson) => void;
 }
 
 /**
@@ -70,6 +77,8 @@ export function LessonOverview({
   onEndDateChange,
   onSortChange,
   onResetFilters,
+  onSelectLesson,
+  onEditLesson,
 }: ILessonOverviewProps): React.JSX.Element {
   return (
     <>
@@ -168,7 +177,7 @@ export function LessonOverview({
           <EmptyState>{t('empty_state')}</EmptyState>
         ) : (
           lessons.map((lesson) => (
-            <LessonCard key={lesson.id}>
+            <LessonCard key={lesson.id} onClick={() => onSelectLesson(lesson)}>
               <LessonCardHeader>
                 <div>
                   <LessonTopic>{lesson.topic}</LessonTopic>
@@ -180,7 +189,29 @@ export function LessonOverview({
                   </LessonMeta>
                 </div>
 
-                <PriorityBadge>{lesson.priority}</PriorityBadge>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <EditLessonButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEditLesson(lesson);
+                    }}
+                    title="Edit lesson"
+                    aria-label="Edit lesson"
+                  >
+                    <Pencil style={{ width: '1rem', height: '1rem' }} />
+                  </EditLessonButton>
+                  <OpenLessonButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(`/lessons/${lesson.id}`, '_blank');
+                    }}
+                    title="Open in new tab"
+                    aria-label="Open in new tab"
+                  >
+                    <ExternalLink style={{ width: '1rem', height: '1rem' }} />
+                  </OpenLessonButton>
+                  <PriorityBadge>{lesson.priority}</PriorityBadge>
+                </div>
               </LessonCardHeader>
 
               <NotesContent>{lesson.notes}</NotesContent>

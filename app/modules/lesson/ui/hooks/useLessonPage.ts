@@ -71,6 +71,19 @@ export const useLessonPage = () => {
   };
 
   /**
+   * Updates an existing lesson and persists it.
+   * @param lessonId - ID of lesson to update
+   * @param lesson - Updated lesson data
+   */
+  const updateLesson = (lessonId: string, lesson: Omit<ILesson, 'id'>) => {
+    const updatedLessons = lessons.map((l) =>
+      l.id === lessonId ? { ...lesson, id: lessonId } : l
+    );
+    setLessons(updatedLessons);
+    saveLessonsToLocalStorage(updatedLessons);
+  };
+
+  /**
    * Computes the filtered and sorted lessons list.
    */
   const displayedLessons = useMemo(() => getFilteredLessons(lessons, filters), [lessons, filters]);
@@ -194,5 +207,6 @@ export const useLessonPage = () => {
     updateSortBy,
     resetFilters,
     addLesson,
+    updateLesson,
   };
 };

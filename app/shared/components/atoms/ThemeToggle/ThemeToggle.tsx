@@ -25,7 +25,7 @@ export default function ThemeToggle({
       id="theme-toggle-btn"
       onClick={onToggle}
       className="
-        relative flex h-10 w-10 items-center justify-center
+        relative flex p-1.5 items-center justify-center
         rounded-[var(--radius-md)] bg-surface-hover
         text-foreground-secondary
         transition-all duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)]

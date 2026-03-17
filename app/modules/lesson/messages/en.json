@@ -29,6 +29,7 @@
   "create_lesson_title": "Create Lesson",
   "create_lesson_desc": "Add a new lesson to your tracker.",
   "create_lesson_submit": "Create",
+  "update_lesson_submit": "Update",
   "cancel": "Cancel",
   "form_topic": "Topic",
   "form_participant": "Participant",

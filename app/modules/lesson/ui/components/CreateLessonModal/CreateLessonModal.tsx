@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 
 import type { ILesson, LessonPriority } from '@/app/modules/lesson/core/models';
@@ -43,16 +43,50 @@ interface ICreateLessonModalProps {
   t: (key: string) => string;
   /** Callback when new lesson is created */
   onAddLesson: (lesson: Omit<ILesson, 'id'>) => void;
+  /** Optional lesson to edit */
+  editingLesson?: ILesson | null;
+  /** Callback when lesson is edited */
+  onEditLesson?: (lessonId: string, lesson: Omit<ILesson, 'id'>) => void;
+  /** Callback when modal closes */
+  onClose?: () => void;
 }
 
 /**
- * Modal dialog with form for creating a new lesson.
+ * Modal dialog with form for creating or editing a lesson.
  * @param props - Component props
  * @returns Modal component
  */
-export function CreateLessonModal({ t, onAddLesson }: ICreateLessonModalProps): React.JSX.Element {
+export function CreateLessonModal({ 
+  t, 
+  onAddLesson, 
+  editingLesson, 
+  onEditLesson,
+  onClose 
+}: ICreateLessonModalProps): React.JSX.Element {
   const [open, setOpen] = useState(false);
   const [vocabularies, setVocabularies] = useState<{ id: string }[]>([]);
+  const isEditing = !!editingLesson;
+
+  // Initialize form data when editing
+  useEffect(() => {
+    if (isEditing && editingLesson) {
+      setVocabularies(editingLesson.vocabularies.map((v) => ({ id: v.id })));
+    }
+  }, [editingLesson, isEditing]);
+
+  // Close modal when editingLesson changes to null
+  useEffect(() => {
+    if (!isEditing && open) {
+      setOpen(false);
+    }
+  }, [isEditing, open]);
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (!newOpen && onClose) {
+      onClose();
+    }
+  };
 
   /**
    * Appends a new empty vocabulary entry to the list.
@@ -83,15 +117,15 @@ export function CreateLessonModal({ t, onAddLesson }: ICreateLessonModalProps): 
       dateStr = `${dateStr}T09:00:00.000Z`;
     }
 
-    const newLesson: Omit<ILesson, 'id'> = {
+    const lesson: Omit<ILesson, 'id'> = {
       topic: formData.get('topic') as string,
       participantName: formData.get('participantName') as string,
       date: dateStr,
       notes: formData.get('notes') as string,
       priority: formData.get('priority') as LessonPriority,
-      isPinned: false,
-      isFavorite: false,
-      links: [],
+      isPinned: isEditing ? editingLesson!.isPinned : false,
+      isFavorite: isEditing ? editingLesson!.isFavorite : false,
+      links: isEditing ? editingLesson!.links : [],
       vocabularies: vocabularies
         .map((v, index) => ({
           id: v.id,
@@ -104,37 +138,51 @@ export function CreateLessonModal({ t, onAddLesson }: ICreateLessonModalProps): 
           example: (formData.get(`vocab_${index}_example`) as string) || '',
         }))
         .filter((v) => v.word.trim() !== ''),
-      questions: [],
+      questions: isEditing ? editingLesson!.questions : [],
     };
 
-    onAddLesson(newLesson);
+    if (isEditing && editingLesson && onEditLesson) {
+      onEditLesson(editingLesson.id, lesson);
+    } else {
+      onAddLesson(lesson);
+    }
+
     setVocabularies([]);
     setOpen(false);
   };
 
+  // Set open state when editingLesson changes
+  useEffect(() => {
+    if (editingLesson) {
+      setOpen(true);
+    }
+  }, [editingLesson]);
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button />}>
-        {t('create_lesson_title')}
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      {!isEditing && (
+        <DialogTrigger render={<Button />}>
+          {t('create_lesson_title')}
+        </DialogTrigger>
+      )}
 
       <ModalContent>
         <ModalHeader>
-          <DialogTitle>{t('create_lesson_title')}</DialogTitle>
-          <DialogDescription>{t('create_lesson_desc')}</DialogDescription>
+          <DialogTitle>{isEditing ? 'Edit Lesson' : t('create_lesson_title')}</DialogTitle>
+          <DialogDescription>{isEditing ? 'Update lesson details' : t('create_lesson_desc')}</DialogDescription>
         </ModalHeader>
 
-        <ModalForm onSubmit={handleSubmit}>
+        <ModalForm key={editingLesson?.id || 'create'} onSubmit={handleSubmit}>
           <ModalBody>
             <FormGroup>
               <FormLabel htmlFor="topic">{t('form_topic')}</FormLabel>
-              <Input id="topic" name="topic" required />
+              <Input id="topic" name="topic" required defaultValue={isEditing ? editingLesson?.topic : ''} />
             </FormGroup>
 
             <FormRow>
               <FormGroup>
                 <FormLabel htmlFor="participantName">{t('form_participant')}</FormLabel>
-                <Input id="participantName" name="participantName" required />
+                <Input id="participantName" name="participantName" required defaultValue={isEditing ? editingLesson?.participantName : ''} />
               </FormGroup>
 
               <FormGroup>
@@ -144,14 +192,14 @@ export function CreateLessonModal({ t, onAddLesson }: ICreateLessonModalProps): 
                   name="date"
                   type="date"
                   required
-                  defaultValue={new Date().toISOString().split('T')[0]}
+                  defaultValue={isEditing ? editingLesson ? new Date(editingLesson.date).toISOString().split('T')[0] : '' : new Date().toISOString().split('T')[0]}
                 />
               </FormGroup>
             </FormRow>
 
             <FormGroup>
               <FormLabel htmlFor="priority">{t('form_priority')}</FormLabel>
-              <Select name="priority" defaultValue="Medium">
+              <Select name="priority" defaultValue={isEditing ? editingLesson?.priority : 'Medium'}>
                 <SelectTrigger id="priority">
                   <SelectValue placeholder={t('priority_medium')} />
                 </SelectTrigger>
@@ -165,7 +213,7 @@ export function CreateLessonModal({ t, onAddLesson }: ICreateLessonModalProps): 
 
             <FormGroup>
               <FormLabel htmlFor="notes">{t('form_notes')}</FormLabel>
-              <Input id="notes" name="notes" />
+              <Input id="notes" name="notes" defaultValue={isEditing ? editingLesson?.notes : ''} />
             </FormGroup>
 
             <VocabSection>
@@ -195,39 +243,39 @@ export function CreateLessonModal({ t, onAddLesson }: ICreateLessonModalProps): 
                   <FormRow>
                     <FormGroup>
                       <FormLabel>{t('vocab_word')}*</FormLabel>
-                      <Input name={`vocab_${index}_word`} required />
+                      <Input name={`vocab_${index}_word`} required defaultValue={isEditing ? editingLesson?.vocabularies[index]?.word ?? '' : ''} />
                     </FormGroup>
                     <FormGroup>
                       <FormLabel>{t('vocab_ipa')}</FormLabel>
-                      <Input name={`vocab_${index}_ipa`} />
+                      <Input name={`vocab_${index}_ipa`} defaultValue={isEditing ? editingLesson?.vocabularies[index]?.ipa ?? '' : ''} />
                     </FormGroup>
                   </FormRow>
 
                   <FormRow>
                     <FormGroup>
                       <FormLabel>{t('vocab_pos')}</FormLabel>
-                      <Input name={`vocab_${index}_partOfSpeech`} />
+                      <Input name={`vocab_${index}_partOfSpeech`} defaultValue={isEditing ? editingLesson?.vocabularies[index]?.partOfSpeech ?? '' : ''} />
                     </FormGroup>
                     <FormGroup>
                       <FormLabel>{t('vocab_meaning')}*</FormLabel>
-                      <Input name={`vocab_${index}_meaning`} required />
+                      <Input name={`vocab_${index}_meaning`} required defaultValue={isEditing ? editingLesson?.vocabularies[index]?.meaning ?? '' : ''} />
                     </FormGroup>
                   </FormRow>
 
                   <FormRow>
                     <FormGroup>
                       <FormLabel>{t('vocab_translation')}*</FormLabel>
-                      <Input name={`vocab_${index}_translation`} required />
+                      <Input name={`vocab_${index}_translation`} required defaultValue={isEditing ? editingLesson?.vocabularies[index]?.translation ?? '' : ''} />
                     </FormGroup>
                     <FormGroup>
                       <FormLabel>{t('vocab_pronunciation')}</FormLabel>
-                      <Input name={`vocab_${index}_pronunciation`} />
+                      <Input name={`vocab_${index}_pronunciation`} defaultValue={isEditing ? editingLesson?.vocabularies[index]?.pronunciation ?? '' : ''} />
                     </FormGroup>
                   </FormRow>
 
                   <FormGroup>
                     <FormLabel>{t('vocab_example')}</FormLabel>
-                    <Input name={`vocab_${index}_example`} />
+                    <Input name={`vocab_${index}_example`} defaultValue={isEditing ? editingLesson?.vocabularies[index]?.example ?? '' : ''} />
                   </FormGroup>
                 </VocabItem>
               ))}
@@ -245,7 +293,7 @@ export function CreateLessonModal({ t, onAddLesson }: ICreateLessonModalProps): 
             >
               {t('cancel')}
             </Button>
-            <Button type="submit">{t('create_lesson_submit')}</Button>
+            <Button type="submit">{isEditing ? t('update_lesson_submit') : t('create_lesson_submit')}</Button>
           </ModalFooter>
         </ModalForm>
       </ModalContent>

@@ -149,8 +149,8 @@ export const FilterResetButton = styled.button`
  * Lessons list container.
  */
 export const LessonsList = styled.section`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
   gap: 0.75rem;
 `;
 
@@ -158,9 +158,20 @@ export const LessonsList = styled.section`
  * Single lesson card in the list.
  */
 export const LessonCard = styled(Card)`
-  border: 1px solid var(--surface-border);
   background: var(--surface);
-  padding: ${LARGE_COMPONENT_PADDING_Y} ${LARGE_COMPONENT_PADDING_X};
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--accent-primary);
+    background: var(--surface-hover);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 `;
 
 /**
@@ -207,6 +218,56 @@ export const PriorityBadge = styled(Badge)`
   background: var(--accent-primary-light);
   color: var(--accent-primary);
   padding: ${SMALL_COMPONENT_PADDING_Y} ${SMALL_COMPONENT_PADDING_X};
+`;
+
+/**
+ * Button to open lesson in new tab (positioned on card).
+ */
+export const OpenLessonButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--foreground-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: var(--surface-hover);
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+/**
+ * Button to edit lesson (positioned on card).
+ */
+export const EditLessonButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--foreground-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: var(--surface-hover);
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 `;
 
 /**
