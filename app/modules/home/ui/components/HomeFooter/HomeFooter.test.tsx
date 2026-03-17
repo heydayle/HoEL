@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import HomeFooter from './HomeFooter';
+import { HomeFooter } from './HomeFooter';
 
 describe('HomeFooter component', () => {
   const defaultProps = {

@@ -149,4 +149,247 @@ describe('useLessonPage', () => {
 
     expect(mockSetThemeMode).toHaveBeenCalledWith('light');
   });
+
+  it('updateLesson updates an existing lesson and saves to local storage', () => {
+    const mockLessons = [
+      {
+        id: 'lesson-1',
+        topic: 'Original Topic',
+        participantName: 'John',
+        date: '2023-01-01',
+        isPinned: false,
+        isFavorite: false,
+        priority: 'Low',
+        notes: '',
+        links: [],
+        vocabularies: [],
+        questions: []
+      },
+      {
+        id: 'lesson-2',
+        topic: 'Another Topic',
+        participantName: 'Jane',
+        date: '2023-01-02',
+        isPinned: false,
+        isFavorite: false,
+        priority: 'High',
+        notes: '',
+        links: [],
+        vocabularies: [],
+        questions: []
+      }
+    ];
+    (getLessonsFromLocalStorage as jest.Mock).mockReturnValue(mockLessons);
+
+    const { result } = renderHook(() => useLessonPage());
+
+    const updatedData = {
+      topic: 'Updated Topic',
+      participantName: 'Jane Doe',
+      date: '2023-01-01',
+      isPinned: true,
+      isFavorite: true,
+      priority: 'High',
+      notes: 'Updated notes',
+      links: [],
+      vocabularies: [],
+      questions: []
+    };
+
+    act(() => {
+      result.current.updateLesson('lesson-1', updatedData);
+    });
+
+    const updatedLesson = result.current.displayedLessons.find(l => l.id === 'lesson-1');
+    expect(updatedLesson).toEqual({
+      id: 'lesson-1',
+      ...updatedData
+    });
+    // Verify that saveLessonsToLocalStorage was called with the updated lessons
+    expect(saveLessonsToLocalStorage).toHaveBeenCalled();
+    const savedLessons = (saveLessonsToLocalStorage as jest.Mock).mock.calls[0][0];
+    expect(savedLessons.find((l: any) => l.id === 'lesson-1')).toEqual({
+      id: 'lesson-1',
+      ...updatedData
+    });
+  });
+
+  it('updateLesson preserves lesson ID when updating', () => {
+    const mockLessons = [
+      {
+        id: 'lesson-123',
+        topic: 'Original',
+        participantName: 'John',
+        date: '2023-01-01',
+        isPinned: false,
+        isFavorite: false,
+        priority: 'Low',
+        notes: '',
+        links: [],
+        vocabularies: [],
+        questions: []
+      }
+    ];
+    (getLessonsFromLocalStorage as jest.Mock).mockReturnValue(mockLessons);
+
+    const { result } = renderHook(() => useLessonPage());
+
+    act(() => {
+      result.current.updateLesson('lesson-123', {
+        topic: 'New Topic',
+        participantName: 'Jane',
+        date: '2023-01-01',
+        isPinned: false,
+        isFavorite: false,
+        priority: 'Medium',
+        notes: '',
+        links: [],
+        vocabularies: [],
+        questions: []
+      });
+    });
+
+    expect(result.current.displayedLessons[0].id).toBe('lesson-123');
+    expect(result.current.displayedLessons[0].topic).toBe('New Topic');
+  });
+
+  it('updateLesson handles updating vocabularies', () => {
+    const mockLessons = [
+      {
+        id: 'lesson-1',
+        topic: 'English',
+        participantName: 'John',
+        date: '2023-01-01',
+        isPinned: false,
+        isFavorite: false,
+        priority: 'Medium',
+        notes: '',
+        links: [],
+        vocabularies: [
+          { id: 'vocab-1', word: 'old word', meaning: 'old meaning' }
+        ],
+        questions: []
+      }
+    ];
+    (getLessonsFromLocalStorage as jest.Mock).mockReturnValue(mockLessons);
+
+    const { result } = renderHook(() => useLessonPage());
+
+    const updatedVocabularies = [
+      { id: 'vocab-1', word: 'new word', meaning: 'new meaning' },
+      { id: 'vocab-2', word: 'another word', meaning: 'another meaning' }
+    ];
+
+    act(() => {
+      result.current.updateLesson('lesson-1', {
+        topic: 'English',
+        participantName: 'John',
+        date: '2023-01-01',
+        isPinned: false,
+        isFavorite: false,
+        priority: 'Medium',
+        notes: '',
+        links: [],
+        vocabularies: updatedVocabularies,
+        questions: []
+      });
+    });
+
+    expect(result.current.displayedLessons[0].vocabularies).toEqual(updatedVocabularies);
+    expect(result.current.displayedLessons[0].vocabularies.length).toBe(2);
+  });
+
+  it('updateLesson does not modify other lessons', () => {
+    const lesson1 = {
+      id: 'lesson-1',
+      topic: 'Topic 1',
+      participantName: 'John',
+      date: '2023-01-01',
+      isPinned: false,
+      isFavorite: false,
+      priority: 'Low',
+      notes: '',
+      links: [],
+      vocabularies: [],
+      questions: []
+    };
+    const lesson2 = {
+      id: 'lesson-2',
+      topic: 'Topic 2',
+      participantName: 'Jane',
+      date: '2023-01-02',
+      isPinned: true,
+      isFavorite: false,
+      priority: 'High',
+      notes: 'Some notes',
+      links: [],
+      vocabularies: [],
+      questions: []
+    };
+    const mockLessons = [lesson1, lesson2];
+    (getLessonsFromLocalStorage as jest.Mock).mockReturnValue(mockLessons);
+
+    const { result } = renderHook(() => useLessonPage());
+
+    act(() => {
+      result.current.updateLesson('lesson-1', {
+        topic: 'Updated Topic 1',
+        participantName: 'John',
+        date: '2023-01-01',
+        isPinned: true,
+        isFavorite: false,
+        priority: 'Low',
+        notes: '',
+        links: [],
+        vocabularies: [],
+        questions: []
+      });
+    });
+
+    // Second lesson should remain unchanged
+    const unchangedLesson = result.current.displayedLessons.find(l => l.id === 'lesson-2');
+    expect(unchangedLesson).toEqual(lesson2);
+  });
+
+  it('updateLesson handles updating non-existent lesson gracefully', () => {
+    const mockLessons = [
+      {
+        id: 'lesson-1',
+        topic: 'Topic 1',
+        participantName: 'John',
+        date: '2023-01-01',
+        isPinned: false,
+        isFavorite: false,
+        priority: 'Low',
+        notes: '',
+        links: [],
+        vocabularies: [],
+        questions: []
+      }
+    ];
+    (getLessonsFromLocalStorage as jest.Mock).mockReturnValue(mockLessons);
+
+    const { result } = renderHook(() => useLessonPage());
+    const originalLength = result.current.displayedLessons.length;
+
+    act(() => {
+      result.current.updateLesson('non-existent-id', {
+        topic: 'Non-existent',
+        participantName: 'Nobody',
+        date: '2023-01-01',
+        isPinned: false,
+        isFavorite: false,
+        priority: 'Low',
+        notes: '',
+        links: [],
+        vocabularies: [],
+        questions: []
+      });
+    });
+
+    // Should still have same number of lessons
+    expect(result.current.displayedLessons.length).toBe(originalLength);
+    // Original lesson should be preserved
+    expect(result.current.displayedLessons[0]).toEqual(mockLessons[0]);
+  });
 });
