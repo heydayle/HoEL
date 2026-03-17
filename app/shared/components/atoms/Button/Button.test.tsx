@@ -9,7 +9,7 @@ describe('Button atom', () => {
     expect(button).toBeInTheDocument();
     
     // Default size is md and variant is primary
-    expect(button).toHaveClass('px-6', 'py-3', 'text-base');
+    expect(button).toHaveClass('px-4', 'py-3', 'text-base');
     expect(button).toHaveClass('bg-accent-primary');
   });
 
@@ -34,7 +34,7 @@ describe('Button atom', () => {
 
   it('should render with different sizes', () => {
     const { rerender } = render(<Button size="sm">Button</Button>);
-    expect(screen.getByRole('button')).toHaveClass('px-4', 'py-2', 'text-sm');
+    expect(screen.getByRole('button')).toHaveClass('px-3', 'py-2', 'text-sm');
 
     rerender(<Button size="lg">Button</Button>);
     expect(screen.getByRole('button')).toHaveClass('px-8', 'py-4', 'text-lg');

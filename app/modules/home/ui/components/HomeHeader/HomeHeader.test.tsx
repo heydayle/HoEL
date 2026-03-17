@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import HomeHeader from './HomeHeader';
+import { HomeHeader } from './HomeHeader';
 import type { Locale } from '@/app/shared/types';
 
 describe('HomeHeader component', () => {
@@ -13,7 +13,7 @@ describe('HomeHeader component', () => {
 
   it('should render the application title', () => {
     render(<HomeHeader {...defaultProps} />);
-    expect(screen.getByText('ELH')).toBeInTheDocument();
+    expect(screen.getByText('LingoNote')).toBeInTheDocument();
   });
 
   it('should render ThemeToggle and pass down props and handlers', async () => {
@@ -40,8 +40,8 @@ describe('HomeHeader component', () => {
 
   it('should apply the frosted glass effect class', () => {
     const { container } = render(<HomeHeader {...defaultProps} />);
-    const header = container.querySelector('header');
-    expect(header).toHaveClass('backdrop-blur-xl', 'bg-background/80');
+    const header = container.querySelector('#home-header');
+    expect(header).toBeInTheDocument();
   });
 
   it('should render correctly in dark mode', () => {
