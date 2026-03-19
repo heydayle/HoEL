@@ -35,3 +35,33 @@ export interface IFeatureHighlight {
   /** Emoji or icon string for the feature */
   icon: string;
 }
+
+/**
+ * Interface representing a feature card in the feature grid.
+ */
+export interface IFeatureCard {
+  /** Unique identifier for the feature */
+  id: string;
+  /** Translation key for the feature title */
+  titleKey: string;
+  /** Translation key for the feature description */
+  descriptionKey: string;
+  /** Emoji or icon string for the feature */
+  icon: string;
+  /** Accent color key for styling the card */
+  accentColor: "accent-primary" | "accent-secondary" | "accent-warm" | "accent-gold";
+}
+
+/**
+ * Interface representing a learning statistic card.
+ */
+export interface ILearningStat {
+  /** Unique identifier for the stat */
+  id: string;
+  /** Numeric value to display */
+  value: number | string;
+  /** Translation key for the stat label */
+  labelKey: string;
+  /** Emoji or icon string for the stat */
+  icon: string;
+}
