@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import type { ILesson } from '@/app/modules/lesson/core/models';
 import { CreateLessonModal } from '@/app/modules/lesson/ui/components/CreateLessonModal';
@@ -8,6 +9,7 @@ import { LessonDetailModal } from '@/app/modules/lesson/ui/components/LessonDeta
 import { LessonOverview } from '@/app/modules/lesson/ui/components/LessonOverview';
 import { ControlsGroup, LessonHeaderRow } from '@/app/modules/lesson/ui/components/styled';
 import { useLessonPage } from '@/app/modules/lesson/ui/hooks';
+import { Button } from '@/app/shared/components/Styled';
 import { LocaleSwitcher, ThemeToggle } from '@/app/shared/components';
 
 import { LessonContainer, LessonPageWrapper, LessonSubtitle, LessonTitle } from './styled';
@@ -18,6 +20,7 @@ import { LessonContainer, LessonPageWrapper, LessonSubtitle, LessonTitle } from 
  * @returns Lessons list page UI
  */
 export default function LessonPage(): React.JSX.Element {
+  const router = useRouter();
   const [selectedLesson, setSelectedLesson] = useState<ILesson | null>(null);
   const [editingLesson, setEditingLesson] = useState<ILesson | null>(null);
 
@@ -70,13 +73,9 @@ export default function LessonPage(): React.JSX.Element {
           </div>
 
           <ControlsGroup>
-            <CreateLessonModal 
-              t={t} 
-              onAddLesson={addLesson}
-              editingLesson={editingLesson}
-              onEditLesson={handleUpdateLesson}
-              onClose={() => setEditingLesson(null)}
-            />
+            <Button type="button" onClick={() => router.push('/lessons/new')}>
+              {t('create_lesson_title')}
+            </Button>
             <LocaleSwitcher locale={locale} onLocaleChange={setLocale} />
             <ThemeToggle resolvedTheme={resolvedTheme} onToggle={toggleTheme} />
           </ControlsGroup>
@@ -100,6 +99,13 @@ export default function LessonPage(): React.JSX.Element {
         />
 
         <LessonDetailModal lesson={selectedLesson} t={t} onClose={() => setSelectedLesson(null)} />
+        <CreateLessonModal
+          t={t}
+          onAddLesson={addLesson}
+          editingLesson={editingLesson}
+          onEditLesson={handleUpdateLesson}
+          onClose={() => setEditingLesson(null)}
+        />
       </LessonContainer>
     </LessonPageWrapper>
   );

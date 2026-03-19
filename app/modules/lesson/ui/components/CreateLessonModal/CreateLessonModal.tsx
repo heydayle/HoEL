@@ -49,6 +49,10 @@ interface ICreateLessonModalProps {
   onEditLesson?: (lessonId: string, lesson: Omit<ILesson, 'id'>) => void;
   /** Callback when modal closes */
   onClose?: () => void;
+  /** Whether the modal should start opened */
+  defaultOpen?: boolean;
+  /** Hides the trigger button when true */
+  hideTrigger?: boolean;
 }
 
 /**
@@ -61,9 +65,11 @@ export function CreateLessonModal({
   onAddLesson, 
   editingLesson, 
   onEditLesson,
-  onClose 
+  onClose,
+  defaultOpen = false,
+  hideTrigger = false,
 }: ICreateLessonModalProps): React.JSX.Element {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
   const [vocabularies, setVocabularies] = useState<{ id: string }[]>([]);
   const isEditing = !!editingLesson;
 
@@ -160,7 +166,7 @@ export function CreateLessonModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      {!isEditing && (
+      {!isEditing && !hideTrigger && (
         <DialogTrigger render={<Button />}>
           {t('create_lesson_title')}
         </DialogTrigger>
