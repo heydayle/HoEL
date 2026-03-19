@@ -3,6 +3,16 @@ import { render, screen } from '@testing-library/react';
 import LessonPage from './index';
 
 /**
+ * Mock next/navigation router
+ */
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    prefetch: jest.fn(),
+  }),
+}));
+
+/**
  * Mock styled-components module to avoid test environment issues.
  */
 jest.mock('styled-components', () => {
