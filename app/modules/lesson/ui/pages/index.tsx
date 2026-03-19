@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import type { ILesson } from '@/app/modules/lesson/core/models';
-import { CreateLessonModal } from '@/app/modules/lesson/ui/components/CreateLessonModal';
 import { LessonDetailModal } from '@/app/modules/lesson/ui/components/LessonDetailModal';
 import { LessonOverview } from '@/app/modules/lesson/ui/components/LessonOverview';
 import { ControlsGroup, LessonHeaderRow } from '@/app/modules/lesson/ui/components/styled';
 import { useLessonPage } from '@/app/modules/lesson/ui/hooks';
+import { Button } from '@/app/shared/components/Styled';
 import { LocaleSwitcher, ThemeToggle } from '@/app/shared/components';
 
 import { LessonContainer, LessonPageWrapper, LessonSubtitle, LessonTitle } from './styled';
@@ -18,8 +19,8 @@ import { LessonContainer, LessonPageWrapper, LessonSubtitle, LessonTitle } from 
  * @returns Lessons list page UI
  */
 export default function LessonPage(): React.JSX.Element {
+  const router = useRouter();
   const [selectedLesson, setSelectedLesson] = useState<ILesson | null>(null);
-  const [editingLesson, setEditingLesson] = useState<ILesson | null>(null);
 
   const {
     resolvedTheme,
@@ -38,26 +39,10 @@ export default function LessonPage(): React.JSX.Element {
     updateEndDate,
     updateSortBy,
     resetFilters,
-    addLesson,
-    updateLesson,
   } = useLessonPage();
 
-  const handleUpdateLesson = (lessonId: string, updatedLesson: Omit<ILesson, 'id'>) => {
-    updateLesson(lessonId, updatedLesson);
-    setEditingLesson(null);
-  };
-
   const onEditLesson = (lesson: ILesson) => {
-    // If clicking edit on the same lesson, close and reopen to refresh the form
-    if (editingLesson?.id === lesson.id) {
-      setEditingLesson(null);
-      // Use setTimeout to ensure the state update is processed before reopening
-      setTimeout(() => {
-        setEditingLesson(lesson);
-      }, 0);
-    } else {
-      setEditingLesson(lesson);
-    }
+    router.push(`/lessons/${lesson.id}/edit`);
   };
 
   return (
@@ -70,13 +55,9 @@ export default function LessonPage(): React.JSX.Element {
           </div>
 
           <ControlsGroup>
-            <CreateLessonModal 
-              t={t} 
-              onAddLesson={addLesson}
-              editingLesson={editingLesson}
-              onEditLesson={handleUpdateLesson}
-              onClose={() => setEditingLesson(null)}
-            />
+            <Button type="button" onClick={() => router.push('/lessons/new')}>
+              {t('create_lesson_title')}
+            </Button>
             <LocaleSwitcher locale={locale} onLocaleChange={setLocale} />
             <ThemeToggle resolvedTheme={resolvedTheme} onToggle={toggleTheme} />
           </ControlsGroup>

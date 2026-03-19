@@ -5,7 +5,6 @@ import { use } from 'react';
 import { ArrowLeft, Pencil } from 'lucide-react';
 
 import type { ILesson } from '@/app/modules/lesson/core/models';
-import { CreateLessonModal } from '@/app/modules/lesson/ui/components/CreateLessonModal';
 import { LessonDetailModal } from '@/app/modules/lesson/ui/components/LessonDetailModal';
 import { ControlsGroup, EditLessonButton, LessonHeaderRow } from '@/app/modules/lesson/ui/components/styled';
 import { useLessonPage } from '@/app/modules/lesson/ui/hooks';
@@ -43,33 +42,12 @@ export default function LessonDetailPage({ params: paramsPromise }: ILessonDetai
   const [lesson, setLesson] = useState<ILesson | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [editingLesson, setEditingLesson] = useState<ILesson | null>(null);
 
   const { resolvedTheme, setThemeMode } = useTheme();
   const { locale, setLocale, t } = useLocale(MESSAGES);
-  const { displayedLessons, updateLesson } = useLessonPage();
+  const { displayedLessons } = useLessonPage();
 
   const router = useRouter();
-
-  const handleUpdateLesson = (lessonId: string, updatedLesson: Omit<ILesson, 'id'>) => {
-    updateLesson(lessonId, updatedLesson);
-    setEditingLesson(null);
-    // Update local state to reflect the changes
-    setLesson((prev) => (prev ? { ...prev, ...updatedLesson } : null));
-  };
-
-  const onEditLesson = (lesson: ILesson) => {
-    // If clicking edit on the same lesson, close and reopen to refresh the form
-    if (editingLesson?.id === lesson.id) {
-      setEditingLesson(null);
-      // Use setTimeout to ensure the state update is processed before reopening
-      setTimeout(() => {
-        setEditingLesson(lesson);
-      }, 0);
-    } else {
-      setEditingLesson(lesson);
-    }
-  };
 
   useEffect(() => {
     const fetchLesson = async () => {
@@ -144,7 +122,7 @@ export default function LessonDetailPage({ params: paramsPromise }: ILessonDetai
 
           <ControlsGroup>
             <EditLessonButton
-              onClick={() => onEditLesson(lesson)}
+              onClick={() => router.push(`/lessons/${lesson.id}/edit`)}
               title="Edit lesson"
               aria-label="Edit lesson"
             >
@@ -156,14 +134,6 @@ export default function LessonDetailPage({ params: paramsPromise }: ILessonDetai
         </LessonHeaderRow>
 
         <LessonDetailModal lesson={lesson} t={t} onClose={() => {}} />
-
-        <CreateLessonModal 
-          t={t} 
-          onAddLesson={() => {}}
-          editingLesson={editingLesson}
-          onEditLesson={handleUpdateLesson}
-          onClose={() => setEditingLesson(null)}
-        />
       </DetailPageContainer>
     </DetailPageWrapper>
   );
