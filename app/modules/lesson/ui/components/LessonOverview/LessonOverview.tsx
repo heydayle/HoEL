@@ -200,16 +200,6 @@ export function LessonOverview({
                   >
                     <Pencil style={{ width: '1rem', height: '1rem' }} />
                   </EditLessonButton>
-                  <OpenLessonButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(`/lessons/${lesson.id}`, '_blank');
-                    }}
-                    title="Open in new tab"
-                    aria-label="Open in new tab"
-                  >
-                    <ExternalLink style={{ width: '1rem', height: '1rem' }} />
-                  </OpenLessonButton>
                   <PriorityBadge>{lesson.priority}</PriorityBadge>
                 </div>
               </LessonCardHeader>

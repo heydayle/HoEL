@@ -42,7 +42,7 @@ export default function LessonPage(): React.JSX.Element {
   } = useLessonPage();
 
   const onEditLesson = (lesson: ILesson) => {
-    router.push(`/lessons/${lesson.id}/edit`);
+    router.push(`/lessons/${lesson.id}`);
   };
 
   return (

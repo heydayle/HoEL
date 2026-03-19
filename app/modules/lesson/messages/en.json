@@ -45,5 +45,7 @@
   "vocab_meaning": "Meaning",
   "vocab_translation": "Translation",
   "vocab_pronunciation": "Pronunciation",
-  "vocab_example": "Example"
+  "vocab_example": "Example",
+  "lesson_created_toast": "Lesson created successfully",
+  "lesson_updated_toast": "Lesson updated successfully"
 }

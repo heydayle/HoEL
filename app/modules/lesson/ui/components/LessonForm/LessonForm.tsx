@@ -12,6 +12,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Textarea,
 } from '@/app/shared/components/Styled';
 
 import {
@@ -115,11 +116,6 @@ export function LessonForm({
 
   return (
     <FormCard>
-      <FormHeader>
-        <FormTitle>{title}</FormTitle>
-        <FormSubtitle>{description}</FormSubtitle>
-      </FormHeader>
-
       <FormSection onSubmit={handleSubmit}>
         <FormGroup>
           <FormLabel htmlFor="topic">{t('form_topic')}</FormLabel>
@@ -159,7 +155,7 @@ export function LessonForm({
 
         <FormGroup>
           <FormLabel htmlFor="notes">{t('form_notes')}</FormLabel>
-          <Input id="notes" name="notes" defaultValue={initialLesson?.notes ?? ''} />
+          <Textarea id="notes" name="notes" defaultValue={initialLesson?.notes ?? ''} />
         </FormGroup>
 
         <VocabSection>
