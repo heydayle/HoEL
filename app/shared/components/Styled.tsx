@@ -32,8 +32,9 @@ export {
   DialogTrigger,
 } from "@/components/ui/dialog";
 export { Input } from "@/components/ui/input";
+export { Textarea } from "@/components/ui/textarea";
 export { Separator } from "@/components/ui/separator";
-
+export { Toaster } from "@/components/ui/sonner"
 export {
   Select,
   SelectGroup,

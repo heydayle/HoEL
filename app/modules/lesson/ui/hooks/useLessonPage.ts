@@ -14,6 +14,7 @@ import enMessages from '@/app/modules/lesson/messages/en.json';
 import viMessages from '@/app/modules/lesson/messages/vi.json';
 import { useLocale, useTheme } from '@/app/shared/hooks';
 import type { Locale, TranslationMessages } from '@/app/shared/types';
+import { toast } from "sonner"
 
 /**
  * Locale messages map for the lesson module.
@@ -68,6 +69,7 @@ export const useLessonPage = () => {
     const updatedLessons = [newLesson, ...lessons];
     setLessons(updatedLessons);
     saveLessonsToLocalStorage(updatedLessons);
+    toast.success(t('lesson_created_toast'));
   };
 
   /**
@@ -81,6 +83,7 @@ export const useLessonPage = () => {
     );
     setLessons(updatedLessons);
     saveLessonsToLocalStorage(updatedLessons);
+    toast.success(t('lesson_updated_toast'));
   };
 
   /**
