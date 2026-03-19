@@ -29,6 +29,7 @@
   "create_lesson_title": "Tạo buổi học",
   "create_lesson_desc": "Thêm một buổi học mới vào sổ tay của bạn.",
   "create_lesson_submit": "Tạo mới",
+  "update_lesson_submit": "Cập nhật",
   "cancel": "Hủy",
   "form_topic": "Chủ đề",
   "form_participant": "Người tham gia",
@@ -44,5 +45,7 @@
   "vocab_meaning": "Ý nghĩa",
   "vocab_translation": "Dịch nghĩa",
   "vocab_pronunciation": "Cách phát âm",
-  "vocab_example": "Ví dụ"
+  "vocab_example": "Ví dụ",
+  "lesson_created_toast": "Buổi học đã được tạo thành công",
+  "lesson_updated_toast": "Buổi học đã được cập nhật thành công"
 }
