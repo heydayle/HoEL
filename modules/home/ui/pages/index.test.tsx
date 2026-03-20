@@ -9,7 +9,7 @@ jest.mock("styled-components", () => {
 });
 
 // Mock child components since we test page composition only
-jest.mock("@/app/modules/home/ui/components", () => ({
+jest.mock("@/modules/home/ui/components", () => ({
   HomeHeader: () => <header data-testid="mock-home-header">Header</header>,
   ModeSelector: () => (
     <section data-testid="mock-mode-selector">ModeSelector</section>
@@ -21,7 +21,7 @@ jest.mock("@/app/modules/home/ui/components", () => ({
 }));
 
 // Mock the facade hook with new shape
-jest.mock("@/app/modules/home/ui/hooks", () => ({
+jest.mock("@/modules/home/ui/hooks", () => ({
   useHomePage: jest.fn(() => ({
     resolvedTheme: "light" as const,
     toggleTheme: jest.fn(),

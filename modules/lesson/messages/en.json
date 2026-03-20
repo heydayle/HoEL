@@ -37,7 +37,7 @@
   "form_notes": "Notes",
   "form_priority": "Priority",
   "vocab_section_title": "Vocabulary",
-  "add_vocab_btn": "Add Word",
+  "add_vocab_btn": "Add Word Manually",
   "remove_vocab_btn": "Remove",
   "vocab_word": "Word",
   "vocab_ipa": "IPA",
@@ -47,5 +47,6 @@
   "vocab_pronunciation": "Pronunciation",
   "vocab_example": "Example",
   "lesson_created_toast": "Lesson created successfully",
-  "lesson_updated_toast": "Lesson updated successfully"
+  "lesson_updated_toast": "Lesson updated successfully",
+  "load_vocab_btn": "Load Vocabulary"
 }

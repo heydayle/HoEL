@@ -12,7 +12,7 @@ jest.mock("next/navigation", () => ({
 }));
 
 // Mock the shared hooks to isolate useHomePage testing
-jest.mock("@/app/shared/hooks", () => ({
+jest.mock("@/shared/hooks", () => ({
   useTheme: jest.fn(() => ({
     mode: "system",
     resolvedTheme: "dark",

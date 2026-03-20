@@ -7,8 +7,10 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { inputs, user = "abc-123" } = body;
+    const inputs = await request.json();
+    // console.log(body);
+    
+    // const { inputs, user = "abc-123" } = body;
 
     const apiKey = process.env.API_SECRET_KEY_DIFY;
     const baseUrl = process.env.NEXT_PUBLIC_DIFY_BASE_URL;
@@ -29,7 +31,7 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         inputs,
         response_mode: "blocking",
-        user,
+        user: `user-${Date.now()}`
       }),
     });
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 
 import type { ILesson, LessonPriority } from '@/modules/lesson/core/models';
@@ -18,12 +18,9 @@ import {
 import {
   FormCard,
   FormGroup,
-  FormHeader,
   FormLabel,
   FormRow,
   FormSection,
-  FormSubtitle,
-  FormTitle,
   FooterActions,
   VocabHeader,
   VocabIndex,
@@ -32,6 +29,7 @@ import {
   VocabSection,
   VocabTitle,
 } from './styled';
+import { useGenerateVocab } from '../../hooks/useGenerateVocab';
 
 interface ILessonFormProps {
   t: (key: string) => string;
@@ -50,17 +48,12 @@ interface ILessonFormProps {
  */
 export function LessonForm({
   t,
-  title,
-  description,
   submitLabel,
   initialLesson,
   onSubmitLesson,
   onCancel,
 }: ILessonFormProps): React.JSX.Element {
-  const [newVocab, setNewVocab] = useState('');
-  const [vocabularies, setVocabularies] = useState<{ id: string }[]>(
-    initialLesson?.vocabularies.map((vocab) => ({ id: vocab.id })) ?? []
-  );
+  const { generate, isLoading, newVocab, setNewVocab, setVocabularies, vocabularies } = useGenerateVocab(initialLesson);
   const isEditing = !!initialLesson;
 
   const defaultDate = useMemo(() => {
@@ -77,12 +70,23 @@ export function LessonForm({
   const handleLoadVocab = () => {
     if (newVocab.trim() === '') return;
 
-    setVocabularies([...vocabularies, { id: `vocab-${Date.now()}` }]);
-    setNewVocab('');
-  }
+    generate(newVocab);
+  };
 
   const handleAddVocab = () => {
-    setVocabularies([...vocabularies, { id: `vocab-${Date.now()}` }]);
+    setVocabularies([
+      ...vocabularies,
+      {
+        id: `vocab-${Date.now()}`,
+        word: '',
+        ipa: '',
+        partOfSpeech: '',
+        meaning: '',
+        translation: '',
+        pronunciation: '',
+        example: '',
+      },
+    ]);
   };
 
   const handleRemoveVocab = (id: string) => {
@@ -196,11 +200,11 @@ export function LessonForm({
               <FormRow>
                 <FormGroup>
                   <FormLabel>{t('vocab_word')}*</FormLabel>
-                  <Input name={`vocab_${index}_word`} required defaultValue={initialLesson?.vocabularies[index]?.word ?? ''} />
+                  <Input name={`vocab_${index}_word`} required defaultValue={vocabularies[index]?.word ?? ''} />
                 </FormGroup>
                 <FormGroup>
                   <FormLabel>{t('vocab_ipa')}</FormLabel>
-                  <Input name={`vocab_${index}_ipa`} defaultValue={initialLesson?.vocabularies[index]?.ipa ?? ''} />
+                  <Input name={`vocab_${index}_ipa`} defaultValue={vocabularies[index]?.ipa ?? ''} />
                 </FormGroup>
               </FormRow>
 
@@ -209,12 +213,12 @@ export function LessonForm({
                   <FormLabel>{t('vocab_pos')}</FormLabel>
                   <Input
                     name={`vocab_${index}_partOfSpeech`}
-                    defaultValue={initialLesson?.vocabularies[index]?.partOfSpeech ?? ''}
+                    defaultValue={vocabularies[index]?.partOfSpeech ?? ''}
                   />
                 </FormGroup>
                 <FormGroup>
                   <FormLabel>{t('vocab_meaning')}*</FormLabel>
-                  <Input name={`vocab_${index}_meaning`} required defaultValue={initialLesson?.vocabularies[index]?.meaning ?? ''} />
+                  <Input name={`vocab_${index}_meaning`} required defaultValue={vocabularies[index]?.meaning ?? ''} />
                 </FormGroup>
               </FormRow>
 
@@ -224,28 +228,31 @@ export function LessonForm({
                   <Input
                     name={`vocab_${index}_translation`}
                     required
-                    defaultValue={initialLesson?.vocabularies[index]?.translation ?? ''}
+                    defaultValue={vocabularies[index]?.translation ?? ''}
                   />
                 </FormGroup>
                 <FormGroup>
                   <FormLabel>{t('vocab_pronunciation')}</FormLabel>
                   <Input
                     name={`vocab_${index}_pronunciation`}
-                    defaultValue={initialLesson?.vocabularies[index]?.pronunciation ?? ''}
+                    defaultValue={vocabularies[index]?.pronunciation ?? ''}
                   />
                 </FormGroup>
               </FormRow>
 
               <FormGroup>
                 <FormLabel>{t('vocab_example')}</FormLabel>
-                <Input name={`vocab_${index}_example`} defaultValue={initialLesson?.vocabularies[index]?.example ?? ''} />
+                <Input name={`vocab_${index}_example`} defaultValue={vocabularies[index]?.example ?? ''} />
               </FormGroup>
             </VocabItem>
           ))}
 
           {/** input add new vocabulary*/}
-          <div>
-            <Input id="new-vocab" name="new-vocab" type="text" required defaultValue={newVocab} onChange={onChangeNewVocab} />
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', padding: '0 1rem' }}>
+            <Input id="new-vocab" name="new-vocab" type="text" value={newVocab} onChange={onChangeNewVocab} />
+            <Button type="button" variant="outline" onClick={handleLoadVocab} disabled={isLoading}>
+              {t('load_vocab_btn')}
+            </Button>
           </div>
         </VocabSection>
 

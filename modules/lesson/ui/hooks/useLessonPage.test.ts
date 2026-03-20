@@ -4,12 +4,12 @@ import { getLessonsFromLocalStorage, saveLessonsToLocalStorage } from '@/modules
 import { LESSON_FALLBACK_DATA } from '@/modules/lesson/core/usecases';
 import { useTheme, useLocale } from '@/shared/hooks';
 
-jest.mock('@/app/modules/lesson/infras', () => ({
+jest.mock('@/modules/lesson/infras', () => ({
   getLessonsFromLocalStorage: jest.fn(),
   saveLessonsToLocalStorage: jest.fn(),
 }));
 
-jest.mock('@/app/shared/hooks', () => ({
+jest.mock('@/shared/hooks', () => ({
   useTheme: jest.fn(),
   useLocale: jest.fn(),
 }));

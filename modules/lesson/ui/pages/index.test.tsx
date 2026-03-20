@@ -23,14 +23,14 @@ jest.mock('styled-components', () => {
 /**
  * Mock overview component to focus on page composition.
  */
-jest.mock('@/app/modules/lesson/ui/components/LessonOverview', () => ({
+jest.mock('@/modules/lesson/ui/components/LessonOverview', () => ({
   LessonOverview: () => <section data-testid="mock-lesson-overview">LessonOverview</section>,
 }));
 
 /**
  * Mock hook to provide deterministic page data.
  */
-jest.mock('@/app/modules/lesson/ui/hooks', () => ({
+jest.mock('@/modules/lesson/ui/hooks', () => ({
   useLessonPage: jest.fn(() => ({
     resolvedTheme: 'dark' as const,
     locale: 'en' as const,

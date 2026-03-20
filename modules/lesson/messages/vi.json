@@ -37,7 +37,7 @@
   "form_notes": "Ghi chú",
   "form_priority": "Mức ưu tiên",
   "vocab_section_title": "Từ vựng",
-  "add_vocab_btn": "Thêm từ",
+  "add_vocab_btn": "Thêm từ thủ công",
   "remove_vocab_btn": "Xóa",
   "vocab_word": "Từ",
   "vocab_ipa": "Phiên âm",
@@ -47,5 +47,6 @@
   "vocab_pronunciation": "Cách phát âm",
   "vocab_example": "Ví dụ",
   "lesson_created_toast": "Buổi học đã được tạo thành công",
-  "lesson_updated_toast": "Buổi học đã được cập nhật thành công"
+  "lesson_updated_toast": "Buổi học đã được cập nhật thành công",
+  "load_vocab_btn": "Tải Từ Vựng"
 }

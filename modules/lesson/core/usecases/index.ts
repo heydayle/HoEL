@@ -1,4 +1,5 @@
-import type { ILesson, ILessonStats, LessonPriority } from '@/modules/lesson/core/models';
+import type { ILesson, ILessonStats, IVocabulary, LessonPriority } from '@/modules/lesson/core/models';
+import { fetchGeneratedVocab } from '../../infras';
 
 /**
  * Supported sort options for the lessons list.
@@ -191,4 +192,30 @@ export const getLessonStats = (lessons: ILesson[]): ILessonStats => {
     totalVocabularies,
     totalQuestions,
   };
+};
+
+/**
+ * UseCase: Xử lý logic nghiệp vụ khi người dùng yêu cầu tạo từ vựng
+ * @param {string} word - Từ vựng nhập vào từ UI
+ * @returns {Promise<IVocabulary>} Kết quả trả về cho UI
+ */
+export const executeGenerateVocab = async (word: string): Promise<IVocabulary> => {
+  // 1. Validate đầu vào (Business logic)
+  if (!word || word.trim().length === 0) {
+    throw new Error('Word cannot be empty');
+  }
+
+  try {
+    // 2. Gọi tầng Infras để lấy data
+    const newVocab = await fetchGeneratedVocab(word.trim());
+
+    // 3. (Optional) Thực hiện các nghiệp vụ khác:
+    // Ví dụ: SaveToLocalStorage(newVocab) hoặc dispatch(addVocab(newVocab))
+
+    return newVocab;
+  } catch (error) {
+    // Xử lý lỗi đặc thù của business nếu cần
+    console.error('UseCase Error: executeGenerateVocab failed', error);
+    throw error;
+  }
 };
