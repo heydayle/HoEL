@@ -4,11 +4,11 @@ import { use, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 
-import type { ILesson } from '@/app/modules/lesson/core/models';
-import { LessonForm } from '@/app/modules/lesson/ui/components/LessonForm';
-import { ControlsGroup, LessonHeaderRow } from '@/app/modules/lesson/ui/components/styled';
-import { useLessonPage } from '@/app/modules/lesson/ui/hooks';
-import { LocaleSwitcher, ThemeToggle } from '@/app/shared/components';
+import type { ILesson } from '@/modules/lesson/core/models';
+import { LessonForm } from '@/modules/lesson/ui/components/LessonForm';
+import { ControlsGroup, LessonHeaderRow } from '@/modules/lesson/ui/components/styled';
+import { useLessonPage } from '@/modules/lesson/ui/hooks';
+import { LocaleSwitcher, ThemeToggle } from '@/shared/components';
 
 import { BackButton, DetailPageContainer, DetailPageWrapper, LessonTitle } from './styled';
 import Link from 'next/link';

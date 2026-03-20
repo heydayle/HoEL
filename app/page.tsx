@@ -1,4 +1,4 @@
-import HomePage from "@/app/modules/home/ui/pages";
+import HomePage from "@/modules/home/ui/pages";
 
 /**
  * Root page component for the '/' route.

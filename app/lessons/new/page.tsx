@@ -2,13 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 
-import type { ILesson } from '@/app/modules/lesson/core/models';
-import { LessonForm } from '@/app/modules/lesson/ui/components/LessonForm';
-import { ControlsGroup, LessonHeaderRow } from '@/app/modules/lesson/ui/components/styled';
-import { useLessonPage } from '@/app/modules/lesson/ui/hooks';
-import { LocaleSwitcher, ThemeToggle } from '@/app/shared/components';
+import type { ILesson } from '@/modules/lesson/core/models';
+import { LessonForm } from '@/modules/lesson/ui/components/LessonForm';
+import { ControlsGroup, LessonHeaderRow } from '@/modules/lesson/ui/components/styled';
+import { useLessonPage } from '@/modules/lesson/ui/hooks';
+import { LocaleSwitcher, ThemeToggle } from '@/shared/components';
 
-import { LessonContainer, LessonPageWrapper, LessonSubtitle, LessonTitle } from '@/app/modules/lesson/ui/pages/styled';
+import { LessonContainer, LessonPageWrapper, LessonSubtitle, LessonTitle } from '@/modules/lesson/ui/pages/styled';
 
 /**
  * Page route for creating a new lesson at /lessons/new.

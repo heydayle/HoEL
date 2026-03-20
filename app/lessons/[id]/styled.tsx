@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Button } from '@/app/shared/components/Styled';
+import { Button } from '@/shared/components/Styled';
 
 /**
  * Main wrapper for the lesson detail page.

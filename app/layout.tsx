@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import StyledComponentsRegistry from "@/lib/registry";
-import { Toaster } from "@/app/shared/components/Styled";
+import { Toaster } from "@/shared/components/Styled";
 
 import "./globals.css";
 

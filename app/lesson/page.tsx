@@ -1,4 +1,4 @@
-import LessonsPage from '@/app/modules/lesson/ui/pages';
+import LessonsPage from '@/modules/lesson/ui/pages';
 
 /**
  * Backward-compatible entry page for the '/lesson' route.
