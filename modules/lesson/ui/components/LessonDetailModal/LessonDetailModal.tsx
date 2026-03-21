@@ -22,6 +22,21 @@ import {
   DetailValue,
   VocabDetailItem,
   VocabIndex,
+  VocabWordHeader,
+  VocabWord,
+  VocabIPA,
+  VocabMetadata,
+  PoSBadge,
+  PronunciationNote,
+  MeaningSection,
+  MeaningLabel,
+  MeaningText,
+  ExampleSection,
+  ExampleLabel,
+  ExampleText,
+  TranslationSection,
+  TranslationLabel,
+  TranslationText,
 } from './styled';
 
 /**
@@ -96,25 +111,49 @@ export function LessonDetailModal({
               <DetailListContainer>
                 {lesson.vocabularies.map((vocab, index) => (
                   <VocabDetailItem key={vocab.id}>
-                    <div>
-                      <DetailGroupLabel>
-                        <VocabIndex>#{index + 1}</VocabIndex> {vocab.word}
-                      </DetailGroupLabel>
-                      {vocab.ipa && <DetailValue>IPA: {vocab.ipa}</DetailValue>}
-                      {vocab.partOfSpeech && (
-                        <DetailValue>
-                          Part of speech: {vocab.partOfSpeech}
-                        </DetailValue>
-                      )}
-                      {vocab.meaning && <DetailValue>{vocab.meaning}</DetailValue>}
-                      {vocab.pronunciation && (
-                        <DetailValue>
-                          Pronunciation: {vocab.pronunciation}
-                        </DetailValue>
-                      )}
-                      {vocab.example && <DetailValue>Example: {vocab.example}</DetailValue>}
-                      {vocab.translation && <DetailValue>Translation: {vocab.translation}</DetailValue>}
-                    </div>
+                    <VocabWordHeader>
+                      <div>
+                        <VocabIndex>#{index + 1}</VocabIndex>
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <VocabWord>{vocab.word}</VocabWord>
+                        {vocab.ipa && <VocabIPA>{vocab.ipa}</VocabIPA>}
+                      </div>
+                    </VocabWordHeader>
+
+                    {(vocab.partOfSpeech || vocab.pronunciation) && (
+                      <VocabMetadata>
+                        {vocab.partOfSpeech && (
+                          <PoSBadge>{vocab.partOfSpeech}</PoSBadge>
+                        )}
+                        {vocab.pronunciation && (
+                          <PronunciationNote>
+                            🔊 {vocab.pronunciation}
+                          </PronunciationNote>
+                        )}
+                      </VocabMetadata>
+                    )}
+
+                    {vocab.meaning && (
+                      <MeaningSection>
+                        <MeaningLabel>📖 Definition</MeaningLabel>
+                        <MeaningText>{vocab.meaning}</MeaningText>
+                      </MeaningSection>
+                    )}
+
+                    {vocab.example && (
+                      <ExampleSection>
+                        <ExampleLabel>📝 Example</ExampleLabel>
+                        <ExampleText dangerouslySetInnerHTML={{ __html: vocab.example }} />
+                      </ExampleSection>
+                    )}
+
+                    {vocab.translation && (
+                      <TranslationSection>
+                        <TranslationLabel>🌐 Translation</TranslationLabel>
+                        <TranslationText>{vocab.translation}</TranslationText>
+                      </TranslationSection>
+                    )}
                   </VocabDetailItem>
                 ))}
               </DetailListContainer>
