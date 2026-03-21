@@ -1,4 +1,4 @@
-import type { ILesson, ILessonStats, IVocabulary, LessonPriority } from '@/modules/lesson/core/models';
+import type { ILesson, ILessonStats, LessonPriority, IDifyVocabResponse } from '@/modules/lesson/core/models';
 import { fetchGeneratedVocab } from '../../infras';
 
 /**
@@ -197,9 +197,9 @@ export const getLessonStats = (lessons: ILesson[]): ILessonStats => {
 /**
  * UseCase: Xử lý logic nghiệp vụ khi người dùng yêu cầu tạo từ vựng
  * @param {string} word - Từ vựng nhập vào từ UI
- * @returns {Promise<IVocabulary>} Kết quả trả về cho UI
+ * @returns {Promise<IDifyVocabResponse>} Raw response từ Dify API
  */
-export const executeGenerateVocab = async (word: string): Promise<IVocabulary> => {
+export const executeGenerateVocab = async (word: string): Promise<IDifyVocabResponse> => {
   // 1. Validate đầu vào (Business logic)
   if (!word || word.trim().length === 0) {
     throw new Error('Word cannot be empty');

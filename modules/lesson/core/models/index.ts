@@ -76,3 +76,14 @@ export interface ILessonStats {
   /** Total review questions across lessons */
   totalQuestions: number;
 }
+
+/**
+ * Raw response structure from Dify API for vocabulary generation
+ */
+export interface IDifyVocabResponse {
+  data: {
+    outputs: {
+      text_result: string;
+    };
+  };
+}

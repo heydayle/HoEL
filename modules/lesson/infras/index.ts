@@ -1,4 +1,4 @@
-import type { ILesson, IVocabulary } from '@/modules/lesson/core/models';
+import type { ILesson, IDifyVocabResponse } from '@/modules/lesson/core/models';
 
 /** Key used to persist lessons in browser localStorage. */
 const LESSON_STORAGE_KEY = 'lingonote_lessons';
@@ -40,9 +40,9 @@ export const saveLessonsToLocalStorage = (lessons: ILesson[]): void => {
 /**
  * Gửi request lên server để tạo từ vựng tự động qua LLM
  * @param {string} word - Từ vựng cần tra cứu
- * @returns {Promise<IVocabulary>} Dữ liệu từ vựng đã được format
+ * @returns {Promise<IDifyVocabResponse>} Raw response data từ Dify API
  */
-export const fetchGeneratedVocab = async (word: string): Promise<IVocabulary> => {
+export const fetchGeneratedVocab = async (word: string): Promise<IDifyVocabResponse> => {
   const response = await fetch('/api/workflow/add', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

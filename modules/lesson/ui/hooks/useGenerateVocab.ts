@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { executeGenerateVocab } from '../../core/usecases';
 import { ILesson, IVocabulary } from '../../core/models';
+import { parseTextResult } from '@/shared/hooks';
 
 /**
  * Custom hook quản lý trạng thái khi gọi API tạo từ vựng
@@ -24,10 +25,11 @@ export const useGenerateVocab = (initialLesson?: ILesson | null) => {
     try {
       // Gọi UseCase để thực thi logic
       const result = await executeGenerateVocab(word);
-        // result is IVocabulary
-        setVocabData(result);
-        setVocabularies((prev) => [...prev, { ...result, id: `vocab-${Date.now()}` }]);
-        setNewVocab('');
+      // result is raw API response with nested structure
+      setVocabData(result as unknown as IVocabulary);
+      const newVocabEntry: IVocabulary = parseTextResult(result?.data?.outputs?.text_result) as IVocabulary;
+      setVocabularies((prev) => [...prev, newVocabEntry]);
+      setNewVocab('');
     } catch (err: unknown) {
       setError((err as Error).message || 'An unexpected error occurred');
     } finally {
