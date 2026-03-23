@@ -48,5 +48,9 @@
   "vocab_example": "Example",
   "lesson_created_toast": "Lesson created successfully",
   "lesson_updated_toast": "Lesson updated successfully",
-  "load_vocab_btn": "Load Vocabulary"
+  "load_vocab_btn": "Load Vocabulary",
+  "vocab_meaning_label": "Meaning",
+  "vocab_example_label": "Example",
+  "vocab_translation_label": "Translation",
+  "load_vocab_description": "Enter vocabulary into the box above and click 'Load vocabulary' to load vocabulary from AI."
 }

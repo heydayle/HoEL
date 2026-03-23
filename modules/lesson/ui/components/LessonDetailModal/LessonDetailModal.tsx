@@ -1,42 +1,31 @@
 'use client';
 
 import type { ILesson } from '@/modules/lesson/core/models';
-import {
-  Dialog,
-  DialogDescription,
-  DialogTitle,
-} from '@/shared/components/Styled';
+import { Dialog, DialogDescription, DialogTitle } from '@/shared/components/Styled';
 
 import {
-  DetailBadge,
   DetailContent,
-  DetailGrid,
-  DetailGroupLabel,
-  DetailItem,
   DetailListContainer,
   DetailModalContent,
   DetailModalHeader,
-  DetailRow,
   DetailSection,
   DetailSectionTitle,
-  DetailValue,
-  VocabDetailItem,
-  VocabIndex,
-  VocabWordHeader,
-  VocabWord,
-  VocabIPA,
-  VocabMetadata,
+  ExampleText,
+  MeaningText,
+  MetaChip,
+  MetaDot,
+  MetaStrip,
   PoSBadge,
   PronunciationNote,
-  MeaningSection,
-  MeaningLabel,
-  MeaningText,
-  ExampleSection,
-  ExampleLabel,
-  ExampleText,
-  TranslationSection,
-  TranslationLabel,
+  RowLabel,
   TranslationText,
+  VocabDataRow,
+  VocabDetailItem,
+  VocabIPA,
+  VocabIndex,
+  VocabRow1,
+  VocabWord,
+  VocabWordGroup,
 } from './styled';
 
 /**
@@ -53,6 +42,11 @@ interface ILessonDetailModalProps {
 
 /**
  * Modal dialog for displaying lesson details.
+ * Each vocabulary entry is rendered in a minimal 4-row layout:
+ *   Row 1 – index · word · IPA · part-of-speech · pronunciation
+ *   Row 2 – meaning
+ *   Row 3 – example
+ *   Row 4 – translation
  * @param props - Component props
  * @returns Modal component
  */
@@ -72,87 +66,78 @@ export function LessonDetailModal({
         </DetailModalHeader>
 
         <DetailContent>
-          <DetailSection>
-            <DetailRow>
-              <DetailItem>
-                <DetailGroupLabel>{t('date_label')}</DetailGroupLabel>
-                <DetailValue>{new Date(lesson.date).toLocaleDateString()}</DetailValue>
-              </DetailItem>
-
-              <DetailItem>
-                <DetailGroupLabel>{t('priority_filter_aria_label')}</DetailGroupLabel>
-                <DetailValue>
-                  <DetailBadge>{lesson.priority}</DetailBadge>
-                </DetailValue>
-              </DetailItem>
-            </DetailRow>
-          </DetailSection>
-
-          <DetailSection>
-            <DetailSectionTitle>{t('form_notes')}</DetailSectionTitle>
-            <DetailValue>{lesson.notes}</DetailValue>
-          </DetailSection>
-
-          <DetailGrid>
-            <DetailItem>
-              <DetailGroupLabel>{t('vocab_count')}</DetailGroupLabel>
-              <DetailValue>{lesson.vocabularies.length}</DetailValue>
-            </DetailItem>
-
-            <DetailItem>
-              <DetailGroupLabel>{t('question_count')}</DetailGroupLabel>
-              <DetailValue>{lesson.questions.length}</DetailValue>
-            </DetailItem>
-          </DetailGrid>
-
+          {/* ── Meta strip: date · priority · notes · vocab count · question count ── */}
+          <MetaStrip>
+            <MetaChip>{new Date(lesson.date).toLocaleDateString()}</MetaChip>
+            <MetaDot />
+            <MetaChip>{lesson.priority}</MetaChip>
+            {lesson.notes && (
+              <>
+                <MetaDot />
+                <MetaChip $dim>{lesson.notes}</MetaChip>
+              </>
+            )}
+            <MetaDot />
+            <MetaChip>
+              {lesson.vocabularies.length}&nbsp;{t('vocab_count')}
+            </MetaChip>
+            <MetaDot />
+            <MetaChip>
+              {lesson.questions.length}&nbsp;{t('question_count')}
+            </MetaChip>
+          </MetaStrip>
+          {/* Vocabulary list */}
           {lesson.vocabularies.length > 0 && (
             <DetailSection>
               <DetailSectionTitle>{t('vocab_section_title')}</DetailSectionTitle>
+
               <DetailListContainer>
                 {lesson.vocabularies.map((vocab, index) => (
                   <VocabDetailItem key={vocab.id}>
-                    <VocabWordHeader>
-                      <div>
-                        <VocabIndex>#{index + 1}</VocabIndex>
-                      </div>
-                      <div style={{ flex: 1 }}>
+                    {/* ── Row 1: index · word · IPA · PoS · pronunciation ── */}
+                    <VocabRow1>
+                      <VocabIndex>#{index + 1}</VocabIndex>
+
+                      <VocabWordGroup>
                         <VocabWord>{vocab.word}</VocabWord>
                         {vocab.ipa && <VocabIPA>{vocab.ipa}</VocabIPA>}
-                      </div>
-                    </VocabWordHeader>
+                      </VocabWordGroup>
 
-                    {(vocab.partOfSpeech || vocab.pronunciation) && (
-                      <VocabMetadata>
-                        {vocab.partOfSpeech && (
-                          <PoSBadge>{vocab.partOfSpeech}</PoSBadge>
-                        )}
-                        {vocab.pronunciation && (
-                          <PronunciationNote>
-                            🔊 {vocab.pronunciation}
-                          </PronunciationNote>
-                        )}
-                      </VocabMetadata>
-                    )}
+                      {vocab.partOfSpeech && <PoSBadge>{vocab.partOfSpeech}</PoSBadge>}
 
+                      {vocab.pronunciation && (
+                        <PronunciationNote>🔊 {vocab.pronunciation}</PronunciationNote>
+                      )}
+                    </VocabRow1>
+
+                    {/* ── Row 2: meaning ── */}
                     {vocab.meaning && (
-                      <MeaningSection>
-                        <MeaningLabel>📖 Definition</MeaningLabel>
-                        <MeaningText>{vocab.meaning}</MeaningText>
-                      </MeaningSection>
+                      <VocabDataRow>
+                        <RowLabel>
+                          {t('vocab_meaning_label')}:<br />
+                        </RowLabel>
+                        - <MeaningText>{vocab.meaning}</MeaningText>
+                      </VocabDataRow>
                     )}
 
+                    {/* ── Row 3: example ── */}
                     {vocab.example && (
-                      <ExampleSection>
-                        <ExampleLabel>📝 Example</ExampleLabel>
-                        <ExampleText dangerouslySetInnerHTML={{ __html: vocab.example }} />
-                      </ExampleSection>
+                      <VocabDataRow>
+                        <RowLabel>
+                          {t('vocab_example_label')}:<br />
+                        </RowLabel>
+                        - <ExampleText dangerouslySetInnerHTML={{ __html: vocab.example }} />
+                      </VocabDataRow>
                     )}
 
+                    {/* ── Row 4: translation ── */}
                     {vocab.translation && (
-                      <TranslationSection>
-                        <TranslationLabel>🌐 Translation</TranslationLabel>
-                        <TranslationText>{vocab.translation}</TranslationText>
-                      </TranslationSection>
+                      <VocabDataRow>
+                        <RowLabel>
+                          {t('vocab_translation_label')}:<br />
+                        </RowLabel>
+                        - <TranslationText>{vocab.translation}</TranslationText>
+                      </VocabDataRow>
                     )}
                   </VocabDetailItem>
                 ))}

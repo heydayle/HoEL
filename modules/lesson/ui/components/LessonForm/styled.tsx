@@ -1,6 +1,13 @@
 import styled from 'styled-components';
 
+/**
+ * Outer card wrapper — flex column so the sticky footer works
+ * within any scrolling parent (modal body or page scroll).
+ */
 export const FormCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   border: 1px solid hsl(var(--border));
   border-radius: 0.75rem;
   background: hsl(var(--background));
@@ -21,11 +28,16 @@ export const FormSubtitle = styled.p`
   color: var(--foreground-secondary);
 `;
 
+/**
+ * The <form> element.
+ * Extra bottom padding prevents content from hiding behind the fixed footer bar.
+ */
 export const FormSection = styled.form`
-  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  padding: 1.5rem;
+  padding-bottom: 6rem;
 `;
 
 export const FormGroup = styled.div`
@@ -52,8 +64,26 @@ export const FormRow = styled.div`
   }
 `;
 
+/**
+ * 4-column grid row for compact vocab fields (Word, IPA, PoS, Pronunciation).
+ * Stacks to 2 columns on tablet, single column on mobile.
+ */
+export const VocabRow4 = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+
+  @media (min-width: 640px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+  }
+`;
+
 export const VocabSection = styled.div`
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   padding-top: 1rem;
   border-top: 1px solid hsl(var(--border));
   display: flex;
@@ -93,11 +123,32 @@ export const VocabIndex = styled.span`
   font-weight: 500;
 `;
 
+/**
+ * New-vocab input row — flush, no extra padding.
+ */
+export const NewVocabRow = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+`;
+
+/**
+ * Footer action bar — fixed to the bottom of the viewport.
+ * Always visible regardless of page scroll position.
+ * Max-width and centering mirror the LessonContainer constraint (60rem).
+ */
 export const FooterActions = styled.div`
-  margin-top: 0.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid hsl(var(--border));
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  border-top: 1px solid hsl(var(--border) / 0.5);
+  background: hsl(var(--background) / 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 `;

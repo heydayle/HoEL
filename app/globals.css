@@ -90,30 +90,30 @@
   --gradient-card: linear-gradient(145deg, rgba(96, 165, 250, 0.08), rgba(34, 211, 238, 0.05));
   --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(96, 165, 250, 0.2), transparent 60%);
 
-  --surface: #0f172a;
-  --surface-hover: #1e293b;
-  --surface-border: rgba(255, 255, 255, 0.05);
-  --surface-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --surface: #13151c;
+  --surface-hover: #1c1f2b;
+  --surface-border: rgba(255, 255, 255, 0.07);
+  --surface-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
   --surface-shadow-hover: 0 0 20px rgba(96, 165, 250, 0.15);
 
   /* shadcn/ui Variables (Dark) */
-  --background: oklch(0.12 0.02 260); /* Slate 950 base */
+  --background: oklch(0.105 0.018 265); /* #13151c-derived base */
   --foreground: oklch(0.98 0.01 240);
-  --card: oklch(0.15 0.02 260);
+  --card: oklch(0.13 0.02 265);          /* slightly above surface */
   --card-foreground: oklch(0.98 0.01 240);
-  --popover: oklch(0.15 0.02 260);
+  --popover: oklch(0.13 0.02 265);
   --popover-foreground: oklch(0.98 0.01 240);
-  --primary: oklch(0.7 0.12 250); 
+  --primary: oklch(0.7 0.12 250);
   --primary-foreground: oklch(0.12 0.02 260);
-  --secondary: oklch(0.22 0.03 260);
+  --secondary: oklch(0.19 0.025 265);
   --secondary-foreground: oklch(0.98 0.01 240);
-  --muted: oklch(0.22 0.03 260);
+  --muted: oklch(0.19 0.025 265);
   --muted-foreground: oklch(0.65 0.03 250);
-  --accent: oklch(0.22 0.03 260);
+  --accent: oklch(0.19 0.025 265);
   --accent-foreground: oklch(0.98 0.01 240);
   --destructive: oklch(0.45 0.18 25);
-  --border: oklch(0.25 0.03 260);
-  --input: oklch(0.25 0.03 260);
+  --border: oklch(0.22 0.025 265);
+  --input: oklch(0.22 0.025 265);
   --ring: oklch(0.7 0.12 250);
 }
 

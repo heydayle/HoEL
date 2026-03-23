@@ -1,9 +1,6 @@
 import styled from 'styled-components';
 
-import {
-  DialogContent,
-  DialogHeader,
-} from '@/shared/components/Styled';
+import { DialogContent, DialogHeader } from '@/shared/components/Styled';
 
 /**
  * Styled dialog content for lesson details modal.
@@ -17,7 +14,7 @@ export const DetailModalContent = styled(DialogContent)`
   gap: 0 !important;
 
   @media (min-width: 640px) {
-    max-width: 42rem !important;
+    max-width: 44rem !important;
   }
 `;
 
@@ -26,8 +23,8 @@ export const DetailModalContent = styled(DialogContent)`
  */
 export const DetailModalHeader = styled(DialogHeader)`
   flex-shrink: 0 !important;
-  padding: 1.5rem !important;
-  border-bottom: 1px solid hsl(var(--border)) !important;
+  padding: 1rem !important;
+  border-bottom: 1px solid hsl(var(--border) / 0.5) !important;
 `;
 
 /**
@@ -36,10 +33,10 @@ export const DetailModalHeader = styled(DialogHeader)`
 export const DetailContent = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 1.5rem;
+  padding: 0 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 `;
 
 /**
@@ -55,12 +52,12 @@ export const DetailSection = styled.div`
  * Section title styling.
  */
 export const DetailSectionTitle = styled.h3`
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--foreground-secondary);
-  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  margin: 0 0 0.5rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 `;
 
 /**
@@ -85,14 +82,11 @@ export const DetailItem = styled.div`
  * Label for detail items.
  */
 export const DetailGroupLabel = styled.label`
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--foreground-secondary);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  letter-spacing: 0.06em;
 `;
 
 /**
@@ -100,8 +94,8 @@ export const DetailGroupLabel = styled.label`
  */
 export const DetailValue = styled.p`
   margin: 0;
-  color: var(--foreground);
-  font-size: 0.9rem;
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
   line-height: 1.5;
 `;
 
@@ -110,12 +104,12 @@ export const DetailValue = styled.p`
  */
 export const DetailBadge = styled.span`
   display: inline-block;
-  padding: 0.25rem 0.75rem;
+  padding: 0.15rem 0.6rem;
   border-radius: 0.25rem;
-  background: var(--accent-primary-light);
-  color: var(--accent-primary);
-  font-size: 0.75rem;
-  font-weight: 600;
+  background: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+  font-size: 0.7rem;
+  font-weight: 500;
 `;
 
 /**
@@ -133,220 +127,199 @@ export const DetailRow = styled.div`
 export const DetailListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0;
 `;
+
+/* ─────────────────────────────────────────────
+   Vocabulary item rows
+───────────────────────────────────────────── */
 
 /**
  * Individual vocabulary item in detail view.
+ * Clean card with a single top-border separator and no shadow.
  */
 export const VocabDetailItem = styled.div`
-  padding: 1rem;
-  border: 1px solid hsl(var(--border));
-  background-color: hsl(var(--muted) / 0.3);
-  border-top: 1px solid gray;
+  padding: 0.875rem 0;
+  border-top: 1px solid hsl(var(--border) / 0.4);
 
-  &:hover {
-    background-color: hsl(var(--muted) / 0.5);
+  &:first-child {
+    border-top: none;
   }
 `;
 
 /**
- * Vocabulary index number.
+ * Row 1 — index · word · ipa · pos badge · pronunciation.
+ * Single horizontal line, low contrast layout.
  */
-export const VocabIndex = styled.span`
-  display: inline-block;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  background: var(--accent-primary);
-  color: white;
-  text-align: center;
-  line-height: 1.5rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  flex-shrink: 0;
-  padding: 0.25rem;
+export const VocabRow1 = styled.div`
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.375rem;
 `;
 
 /**
- * Enhanced vocabulary header with word and IPA.
+ * Vocabulary index number — minimal monospace badge.
  */
-export const VocabWordHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid hsl(var(--border));
+export const VocabIndex = styled.span`
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground) / 0.6);
+  min-width: 1rem;
+  flex-shrink: 0;
+`;
+
+/**
+ * Word + IPA wrapper — keeps them together on wrap.
+ */
+export const VocabWordGroup = styled.span`
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  flex-shrink: 0;
 `;
 
 /**
  * Main vocabulary word.
  */
-export const VocabWord = styled.h4`
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--foreground);
+export const VocabWord = styled.span`
+  font-size: 0.975rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
   word-break: break-word;
 `;
 
 /**
- * Phonetic notation (IPA).
+ * Phonetic notation (IPA) — muted, italic.
  */
-export const VocabIPA = styled.p`
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--foreground-secondary);
+export const VocabIPA = styled.span`
+  font-size: 0.8rem;
+  color: hsl(var(--muted-foreground));
   font-style: italic;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 `;
 
 /**
- * Metadata section for part of speech and pronunciation info.
- */
-export const VocabMetadata = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-  align-items: center;
-`;
-
-/**
- * Badge for part of speech.
+ * Part of speech badge — flat, borderless, very subtle.
  */
 export const PoSBadge = styled.span`
-  display: inline-block;
-  padding: 0.35rem 0.75rem;
-  border-radius: 1rem;
-  background: var(--accent-primary);
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground) / 0.7);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
+  border: 1px solid hsl(var(--border) / 0.5);
+  border-radius: 0.25rem;
+  padding: 0.05rem 0.35rem;
+  flex-shrink: 0;
 `;
 
 /**
- * Pronunciation note.
+ * Pronunciation note — inline text, no background pill.
  */
-export const PronunciationNote = styled.p`
-  margin: 0;
-  font-size: 0.8rem;
-  color: var(--foreground-secondary);
-  padding: 0.5rem 0.75rem;
-  background: var(--accent-secondary-light);
-  border-radius: 0.375rem;
-  border-left: 3px solid var(--accent-secondary);
+export const PronunciationNote = styled.span`
+  font-size: 0.775rem;
+  color: hsl(var(--muted-foreground) / 0.65);
 `;
 
 /**
- * Meaning/Definition section.
+ * Shared wrapper for rows 2-4.
  */
-export const MeaningSection = styled.div`
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-  padding: 0.75rem;
-  gap: 0.5rem;
-  border-radius: 0.375rem;
-  border-left: 4px solid var(--accent-primary);
-  background: var(--accent-secondary-light);
+export const VocabDataRow = styled.div`
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+  margin-top: 0.2rem;
 `;
 
 /**
- * Meaning label.
+ * Inline muted prefix label for a data row (e.g. "Meaning ·").
  */
-export const MeaningLabel = styled.p`
-  margin: 0;
-  font-size: 0.75rem;
-  font-weight: 600;
+export const RowLabel = styled.span`
+  font-size: 0.7rem;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--accent-primary);
+  color: hsl(var(--muted-foreground) / 0.5);
+  margin-right: 0.4rem;
 `;
 
 /**
- * Definition text.
+ * Row 2 — meaning text.
  */
-export const MeaningText = styled.p`
-  margin: 0;
-  font-size: 0.95rem;
+export const MeaningText = styled.span`
+  color: hsl(var(--foreground) / 0.85);
+  font-size: 0.875rem;
   line-height: 1.6;
-  color: var(--foreground);
-  background: hsl(var(--secondary-foreground) / 0.9);
 `;
 
 /**
- * Example section with styling.
+ * Row 3 — example text (italic). Rendered as a span inside VocabDataRow (div block).
+ * Supports dangerouslySetInnerHTML for rich HTML content.
  */
-export const ExampleSection = styled.div`
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  background: var(--accent-secondary-light);
-  border-radius: 0.375rem;
-  border-left: 4px solid var(--accent-secondary);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-
-/**
- * Example label.
- */
-export const ExampleLabel = styled.p`
-  margin: 0;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--accent-secondary);
-`;
-
-/**
- * Example sentence text.
- */
-export const ExampleText = styled.p`
-  margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--foreground);
+export const ExampleText = styled.div`
+  display: inline;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.85rem;
   font-style: italic;
-`;
-
-/**
- * Translation section.
- */
-export const TranslationSection = styled.div`
-  padding: 0.75rem;
-  border-radius: 0.375rem;
-  border-left: 4px solid hsl(var(--border));
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  background: var(--accent-secondary-light);
-  border-left: 4px solid var(--accent-secondary);
-`;
-
-/**
- * Translation label.
- */
-export const TranslationLabel = styled.p`
-  margin: 0;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--foreground-secondary);
-`;
-
-/**
- * Translation text.
- */
-export const TranslationText = styled.p`
-  margin: 0;
-  font-size: 0.9rem;
   line-height: 1.6;
-  color: var(--foreground);
 `;
+
+/**
+ * Row 4 — translation text.
+ */
+export const TranslationText = styled.span`
+  color: hsl(var(--muted-foreground) / 0.75);
+  font-size: 0.825rem;
+  line-height: 1.6;
+`;
+
+/* ─── Meta strip — compact one-line summary below header ─── */
+
+/**
+ * Horizontal strip that collapses date, priority, notes, and counts
+ * into a single wrapped-friendly row of chips.
+ */
+export const MetaStrip = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid hsl(var(--border) / 0.4);
+`;
+
+/**
+ * Individual meta chip — plain inline text token.
+ * @prop $dim - when true renders at a lower opacity for de-emphasized values (e.g. notes)
+ */
+export const MetaChip = styled.span<{ $dim?: boolean }>`
+  font-size: 0.75rem;
+  color: ${({ $dim }) =>
+    $dim ? 'hsl(var(--muted-foreground) / 0.55)' : 'hsl(var(--muted-foreground))'};
+  white-space: nowrap;
+  max-width: 18ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+/**
+ * Separator dot between meta chips.
+ */
+export const MetaDot = styled.span`
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: hsl(var(--muted-foreground) / 0.3);
+  flex-shrink: 0;
+`;
+
+/* ─── legacy exports kept to avoid breaking other imports ─── */
+export const VocabWordHeader = styled.div``;
+export const VocabMetadata = styled.div``;
+export const MeaningSection = styled.div``;
+export const MeaningLabel = styled.p``;
+export const ExampleSection = styled.div``;
+export const ExampleLabel = styled.p``;
+export const TranslationSection = styled.div``;
+export const TranslationLabel = styled.p``;

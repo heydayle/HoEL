@@ -48,5 +48,9 @@
   "vocab_example": "Ví dụ",
   "lesson_created_toast": "Buổi học đã được tạo thành công",
   "lesson_updated_toast": "Buổi học đã được cập nhật thành công",
-  "load_vocab_btn": "Tải Từ Vựng"
+  "load_vocab_btn": "Tải Từ Vựng",
+  "vocab_meaning_label": "Nghĩa",
+  "vocab_example_label": "Ví dụ",
+  "vocab_translation_label": "Dịch",
+  "load_vocab_description": "Nhập từ vựng vào ô bên trên và nhấn nút \"Load vocabulary\" để tải từ vựng từ AI."
 }
