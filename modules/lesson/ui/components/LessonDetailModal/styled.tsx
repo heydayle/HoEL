@@ -196,9 +196,12 @@ export const VocabWord = styled.span`
  * Phonetic notation (IPA) — muted, italic.
  */
 export const VocabIPA = styled.span`
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: hsl(var(--muted-foreground));
-  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  border-left: 1px solid var(--border);
+  padding-left: 0.5rem;
 `;
 
 /**
@@ -214,6 +217,7 @@ export const PoSBadge = styled.span`
   border-radius: 0.25rem;
   padding: 0.05rem 0.35rem;
   flex-shrink: 0;
+  background: var(--accent-primary-light);
 `;
 
 /**
@@ -265,10 +269,9 @@ export const ExampleText = styled.div`
   font-size: 0.85rem;
   font-style: italic;
   line-height: 1.6;
-  background: var(--highlight);
   
   b {
-    background: var(--background);
+    background: var(--highlight);
     padding: 0rem 0.25rem;
   }
 `;

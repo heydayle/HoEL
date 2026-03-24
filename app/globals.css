@@ -64,6 +64,7 @@
   --ring: oklch(0.51 0.21 252);
   --radius: 0.5rem;
   --highlight: rgba(243, 255, 68, 1);
+  --green: #22c55e;
 }
 
 /* --- Dark Mode --- */
@@ -117,6 +118,7 @@
   --input: oklch(0.22 0.025 265);
   --ring: oklch(0.7 0.12 250);
   --highlight: rgba(216, 160, 6, 0.8);
+  --green: #22c55e;
 }
 
 @theme inline {

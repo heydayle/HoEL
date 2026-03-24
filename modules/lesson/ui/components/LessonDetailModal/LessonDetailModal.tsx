@@ -64,15 +64,19 @@ export function LessonDetailModal({
           <DialogTitle>{lesson.topic}</DialogTitle>
           <DialogDescription>{t('form_participant')}: {lesson.participantName}</DialogDescription>
           <MetaStrip>
-            <MetaChip>{new Date(lesson.date).toLocaleDateString()}</MetaChip>
-            <MetaDot />
-            <MetaChip>{lesson.priority}</MetaChip>
+            <MetaChip style={{ 
+              padding: '0.05rem 0.35rem',
+              borderRadius: '0.25rem',
+              color: 'var(--background)',
+              background: `${lesson.priority === 'High' ? 'var(--accent-primary)' : lesson.priority === 'Medium' ? 'var(--accent-secondary)' : 'var(--green)'}` }}>{lesson.priority}</MetaChip>
             {lesson.notes && (
               <>
                 <MetaDot />
                 <MetaChip $dim>{lesson.notes}</MetaChip>
               </>
             )}
+            <MetaDot />
+            <MetaChip>{new Date(lesson.date).toLocaleDateString()}</MetaChip>
             <MetaDot />
             <MetaChip>
               {lesson.vocabularies.length}&nbsp;{t('vocab_count')}
