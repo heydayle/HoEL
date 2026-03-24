@@ -127,7 +127,8 @@ export const DetailRow = styled.div`
 export const DetailListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 1rem;
+  padding-bottom: 1rem;
 `;
 
 /* ─────────────────────────────────────────────
@@ -140,11 +141,10 @@ export const DetailListContainer = styled.div`
  */
 export const VocabDetailItem = styled.div`
   padding: 0.875rem 0;
-  border-top: 1px solid hsl(var(--border) / 0.4);
-
-  &:first-child {
-    border-top: none;
-  }
+  border: 1px solid var(--border);
+  padding: 0.875rem;
+  border-radius: 0.5rem;
+  background: hsl(var(--background));
 `;
 
 /**
@@ -188,6 +188,8 @@ export const VocabWord = styled.span`
   font-weight: 600;
   color: hsl(var(--foreground));
   word-break: break-word;
+  background: var(--highlight);
+  padding: 0rem 0.25rem;
 `;
 
 /**
@@ -263,6 +265,12 @@ export const ExampleText = styled.div`
   font-size: 0.85rem;
   font-style: italic;
   line-height: 1.6;
+  background: var(--highlight);
+  
+  b {
+    background: var(--background);
+    padding: 0rem 0.25rem;
+  }
 `;
 
 /**

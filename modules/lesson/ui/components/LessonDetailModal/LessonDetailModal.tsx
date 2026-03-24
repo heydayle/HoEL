@@ -62,11 +62,7 @@ export function LessonDetailModal({
       <DetailModalContent>
         <DetailModalHeader>
           <DialogTitle>{lesson.topic}</DialogTitle>
-          <DialogDescription>{lesson.participantName}</DialogDescription>
-        </DetailModalHeader>
-
-        <DetailContent>
-          {/* ── Meta strip: date · priority · notes · vocab count · question count ── */}
+          <DialogDescription>{t('form_participant')}: {lesson.participantName}</DialogDescription>
           <MetaStrip>
             <MetaChip>{new Date(lesson.date).toLocaleDateString()}</MetaChip>
             <MetaDot />
@@ -86,6 +82,10 @@ export function LessonDetailModal({
               {lesson.questions.length}&nbsp;{t('question_count')}
             </MetaChip>
           </MetaStrip>
+        </DetailModalHeader>
+
+        <DetailContent>
+          
           {/* Vocabulary list */}
           {lesson.vocabularies.length > 0 && (
             <DetailSection>
