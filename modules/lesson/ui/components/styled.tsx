@@ -111,10 +111,6 @@ export const FilterSelect = styled.select`
   background: var(--surface);
   color: var(--foreground);
   padding: ${SMALL_COMPONENT_PADDING_Y} ${SMALL_COMPONENT_PADDING_X};
-
-  @media (min-width: 768px) {
-    padding: ${LARGE_COMPONENT_PADDING_Y} 16px;
-  }
 `;
 
 /**

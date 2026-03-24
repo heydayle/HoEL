@@ -53,7 +53,7 @@ describe('LessonDetailModal — header', () => {
 
   it('renders participant name as dialog description', () => {
     render(<LessonDetailModal lesson={makeLesson()} t={t} onClose={jest.fn()} />);
-    expect(screen.getByText('Alice')).toBeInTheDocument();
+    expect(screen.getByText('form_participant: Alice')).toBeInTheDocument();
   });
 });
 
