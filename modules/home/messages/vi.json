@@ -7,9 +7,9 @@
   "onboarding_title": "Chọn Chế Độ Của Bạn",
   "onboarding_subtitle": "Hôm nay bạn đang dùng LingoNote với tư cách gì?",
 
-  "mode_student_label": "Chế Độ Học Sinh",
+  "mode_student_label": "Dành cho Học Sinh",
   "mode_student_description": "Theo dõi các buổi học đã tham dự, ôn lại từ vựng và lưu những gì giáo viên chia sẻ.",
-  "mode_teacher_label": "Chế Độ Giáo Viên",
+  "mode_teacher_label": "Dành cho Giáo Viên (Đang phát triển)",
   "mode_teacher_description": "Lên kế hoạch bài học, ghi tên học sinh, chuẩn bị danh sách từ vựng và xuất ghi chú để chia sẻ.",
 
   "cta_enter": "Vào với tư cách {{mode}}",

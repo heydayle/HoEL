@@ -1,5 +1,6 @@
 {
   "page_title": "Welcome Back",
+  "page_title_register": "Create Your Account",
   "page_subtitle_sign_in": "Sign in to continue your learning journey",
   "page_subtitle_register": "Create an account to start learning",
   "label_email": "Email Address",
@@ -20,5 +21,7 @@
   "error_unexpected": "An unexpected error occurred. Please try again.",
   "divider_or": "or continue with",
   "provider_google": "Continue with Google",
-  "provider_github": "Continue with GitHub"
+  "provider_github": "Continue with GitHub",
+  "sign_in_success": "Signed in successfully!",
+  "register_success": "Account created successfully!"
 }

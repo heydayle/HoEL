@@ -8,7 +8,7 @@ The folder system must be strictly organized and isolated. Cross-importing again
 
 - **`app/shared/`**: Contains shared resources for the entire project. Only includes: shared `components`, global `hooks`, global state (`stores`), and global interfaces (`types`).
 - **`app/<page>/`**: Acts as the Entry Point for the Next.js App Router. This folder is **ONLY** used to define `page.tsx`, `layout.tsx`, routing, extract parameters from the URL, and return the UI Component imported from `app/modules`. Absolutely no complex logic should be written here.
-- **`app/modules/<module_name>/`**: Contains all logic, UI, and state of each specific page/feature. The mandatory structure of a module is as follows:
+- **`modules/<module_name>/`**: Contains all logic, UI, and state of each specific page/feature. The mandatory structure of a module is as follows:
   - `core/`: Contains core logic and domain.
     - `models/`: Contains `type` and `interface` definitions for the module's data.
     - `repositories/`: Contains `types` and `interfaces` defining the contracts for functions.

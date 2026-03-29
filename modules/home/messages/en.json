@@ -7,9 +7,9 @@
   "onboarding_title": "Choose Your Mode",
   "onboarding_subtitle": "How are you using LingoNote today?",
 
-  "mode_student_label": "Student Mode",
+  "mode_student_label": "For Student",
   "mode_student_description": "Track lessons you've attended, review vocabulary, and save what your teacher shared with you.",
-  "mode_teacher_label": "Teacher Mode",
+  "mode_teacher_label": "For Teacher (Developing)",
   "mode_teacher_description": "Plan your lessons, log student names, prepare vocabulary lists, and export notes to share.",
 
   "cta_enter": "Enter as {{mode}}",

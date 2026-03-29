@@ -12,9 +12,8 @@ import { signInUseCase, signUpUseCase, signInWithProviderUseCase } from '../../c
 import { UsersTableAuthRepository } from '../../infras/authRepository';
 import en from '../../messages/en.json';
 import vi from '../../messages/vi.json';
+import { toast } from 'sonner';
 
-/** LocalStorage key for persisting the authenticated user session */
-const USER_SESSION_KEY = 'elh-user-session';
 
 /** Locale messages map for auth module */
 const authMessages: Record<Locale, Record<string, string>> = { en, vi };
@@ -64,19 +63,26 @@ export const useAuthPage = () => {
           ? await signInUseCase(repository, formData)
           : await signUpUseCase(repository, formData);
 
+        // if (result.success && isSignIn) {
+        //   localStorage.setItem(USER_SESSION_KEY, JSON.stringify(result.user));
+        //   localStorage.setItem(ACCESS_TOKEN_KEY, result?.session?.access_token as string);
+        //   await setCookie(ACCESS_TOKEN_KEY, result?.session?.access_token || '', { httpOnly: true, secure: true, maxAge: result?.session?.expires_in || 0 });
+        // }
+
+        if (isSignIn) {
+          toast.success(t('sign_in_success'));
+        } else {
+          toast.success(t('register_success'));
+          setAuthMode(AuthMode.SIGN_IN);
+        }
+
         if (!result.success && result.error) {
-          setError(result.error);
+          toast.error(result.error);
         }
-
-        if (result.success && result.user) {
-          localStorage.setItem(USER_SESSION_KEY, JSON.stringify(result.user));
-        }
-
         return result;
       } catch {
-        const fallbackError = t('error_unexpected');
-        setError(fallbackError);
-        return { success: false, error: fallbackError };
+        // Fallback error message for unexpected issues
+        return { success: false, error: t('error_unexpected') };
       } finally {
         setIsLoading(false);
       }
@@ -122,6 +128,7 @@ export const useAuthPage = () => {
     authMode,
     /** Whether the form is currently in sign in mode */
     isSignIn,
+    setAuthMode,
     /** Whether an auth request is in progress */
     isLoading,
     /** Current error message, if any */

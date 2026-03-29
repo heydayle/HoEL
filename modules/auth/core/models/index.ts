@@ -1,3 +1,5 @@
+import type { Session } from '@supabase/supabase-js';
+
 /**
  * Interface representing a row in the Supabase `users` table.
  */
@@ -51,4 +53,8 @@ export interface IAuthResult {
   user?: Omit<IUser, 'password'>;
   /** Error message if the action failed */
   error?: string;
+  /** The session data returned by Supabase Auth (optional) */
+  session?: Session;
+  /** Indicates if the password is considered weak (optional) */
+  weakPassword?: boolean;
 }

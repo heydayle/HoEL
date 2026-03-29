@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import type { IFeatureHighlight, IModeCard } from "@/modules/home/core/models";
-import type { UserMode } from "@/shared/types";
+import type { IFeatureHighlight, IModeCard } from '@/modules/home/core/models';
+import type { UserMode } from '@/shared/types';
 
 import {
   AppBadge,
@@ -15,7 +15,7 @@ import {
   OnboardingTitle,
   OnboardingWrapper,
   PulseDot,
-} from "../styled";
+} from '../styled';
 
 /**
  * Props for the ModeSelector component.
@@ -73,10 +73,18 @@ export function ModeSelector({
             key={card.id}
             id={`mode-card-${card.id}`}
             $accentColor={card.accentColor}
+            disabled={!card.active}
             onClick={() => {
-              onSelectMode(card.id);
+              if (card.active) {
+                onSelectMode(card.id);
+              }
             }}
-            style={{ animationDelay: `${0.1 + index * 0.12}s` }}
+            style={{
+              animationDelay: `${0.1 + index * 0.12}s`,
+              opacity: card.active ? 1 : 0.5,
+              cursor: card.active ? 'pointer' : 'not-allowed',
+              filter: !card.active ? 'grayscale(100%)' : 'none',
+            }}
             aria-label={t(card.labelKey)}
           >
             {/* Icon */}
