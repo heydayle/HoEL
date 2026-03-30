@@ -58,11 +58,12 @@ export interface ILesson {
   /** Long-form note content */
   notes: string;
   /** External reference links */
-  links: string[];
+  // links: string[];
   /** Related vocabulary entries */
   vocabularies: IVocabulary[];
   /** Related Q&A entries */
-  questions: IQuestion[];
+  // questions: IQuestion[];
+  createdBy?: string; // Optional field to track which user created the lesson
 }
 
 /**
@@ -73,8 +74,6 @@ export interface ILessonStats {
   totalLessons: number;
   /** Total vocab items across lessons */
   totalVocabularies: number;
-  /** Total review questions across lessons */
-  totalQuestions: number;
 }
 
 /**

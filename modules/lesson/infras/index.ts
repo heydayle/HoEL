@@ -1,4 +1,5 @@
 import type { ILesson, IDifyVocabResponse } from '@/modules/lesson/core/models';
+import { createClient } from '@/shared/utils/supabase/client';
 
 /** Key used to persist lessons in browser localStorage. */
 const LESSON_STORAGE_KEY = 'lingonote_lessons';
@@ -30,12 +31,12 @@ export const getLessonsFromLocalStorage = (): ILesson[] => {
  * Saves lesson records to localStorage.
  * @param lessons - Lessons to save
  */
-export const saveLessonsToLocalStorage = (lessons: ILesson[]): void => {
-  if (typeof window === 'undefined') {
-    return;
-  }
-  localStorage.setItem(LESSON_STORAGE_KEY, JSON.stringify(lessons));
-};
+// export const saveLessonsToLocalStorage = (lessons: ILesson[]): void => {
+//   if (typeof window === 'undefined') {
+//     return;
+//   }
+//   localStorage.setItem(LESSON_STORAGE_KEY, JSON.stringify(lessons));
+// };
 
 /**
  * Gửi request lên server để tạo từ vựng tự động qua LLM
@@ -55,3 +56,34 @@ export const fetchGeneratedVocab = async (word: string): Promise<IDifyVocabRespo
 
   return response.json();
 };
+
+
+/**
+ * UseCase: Add lesson with supabase
+ * @param {ILesson} lesson - Lesson data to be added
+ * @returns {Promise<void>}
+ */
+export const saveLessonsToLocalStorage = async (lesson: ILesson): Promise<{ data?: any, success?: boolean, error?: boolean }> => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('lessons')
+    .insert({
+      id: lesson.id,
+      date: lesson.date,
+      topic: lesson.topic,
+      participantName: lesson.participantName,
+      isPinned: lesson.isPinned,
+      isFavorite: lesson.isFavorite,
+      priority: lesson.priority,
+      notes: lesson.notes,
+      // links: JSON.stringify(lesson.links),
+      // vocabularies: JSON.stringify(lesson.vocabularies),
+      // questions: JSON.stringify(lesson.questions),
+    });
+
+  if (error) {
+    console.error('Error adding lesson:', error);
+    return { success: false, error: true, data: error };
+  }
+  return { success: true, data };
+}

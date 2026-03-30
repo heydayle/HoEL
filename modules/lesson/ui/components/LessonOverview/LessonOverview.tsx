@@ -206,8 +206,7 @@ export function LessonOverview({
 
               <NotesContent>{lesson.notes}</NotesContent>
               <LessonMeta>
-                {t('vocab_count')}: {lesson.vocabularies.length} · {t('question_count')}:{' '}
-                {lesson.questions.length}
+                {t('vocab_count')}: {lesson.vocabularies.length}
               </LessonMeta>
             </LessonCard>
           ))

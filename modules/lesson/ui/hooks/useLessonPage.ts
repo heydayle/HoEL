@@ -15,6 +15,7 @@ import viMessages from '@/modules/lesson/messages/vi.json';
 import { useLocale, useTheme } from '@/shared/hooks';
 import type { Locale, TranslationMessages } from '@/shared/types';
 import { toast } from "sonner"
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Locale messages map for the lesson module.
@@ -45,7 +46,8 @@ export const useLessonPage = () => {
   const { mode, resolvedTheme, setThemeMode } = useTheme();
   const { locale, setLocale, t } = useLocale(MESSAGES);
   const [filters, setFilters] = useState<ILessonFilterInput>(INITIAL_FILTERS);
-
+  const user = localStorage.getItem('sb-hpnokwlodebafzgebopj-auth-token');
+  const userID = JSON.parse(user || '{}')?.user?.id;
   
   /**
    * Reads lessons from local storage and falls back to sample data.
@@ -59,17 +61,22 @@ export const useLessonPage = () => {
    * Adds a new lesson to the list and persists it.
    * @param lesson - Built lesson
    */
-  const addLesson = (lesson: Omit<ILesson, 'id'>) => {
+  const addLesson = async (lesson: Omit<ILesson, 'id'>) => {
+    const uuid = uuidv4(); // Generate a unique ID for the new lesson
     const newLesson: ILesson = {
       ...lesson,
-      id: `lesson-${Date.now()}`,
+      id: uuid,
+      createdBy: userID || 'unknown',
     };
+    const result = await saveLessonsToLocalStorage(newLesson);
     
-    // Fallback data shouldn't be persist unless explicitly merged, 
-    // but the current spec persists everything if a change is made.
+    if (!result) {
+      toast.error(t('lesson_save_error_toast'));
+      return;
+    }
+    
     const updatedLessons = [newLesson, ...lessons];
     setLessons(updatedLessons);
-    saveLessonsToLocalStorage(updatedLessons);
     toast.success(t('lesson_created_toast'));
   };
 

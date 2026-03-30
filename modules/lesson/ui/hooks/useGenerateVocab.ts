@@ -11,7 +11,7 @@ export const useGenerateVocab = (initialLesson?: ILesson | null) => {
   const [error, setError] = useState<string | null>(null);
   const [newVocab, setNewVocab] = useState('');
   const [vocabData, setVocabData] = useState<IVocabulary | null>(null);
-    const [vocabularies, setVocabularies] = useState<IVocabulary[]>(
+  const [vocabularies, setVocabularies] = useState<IVocabulary[]>(
       initialLesson?.vocabularies ?? []
     );
   /**

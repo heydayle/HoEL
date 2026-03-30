@@ -63,12 +63,6 @@ export const useAuthPage = () => {
           ? await signInUseCase(repository, formData)
           : await signUpUseCase(repository, formData);
 
-        // if (result.success && isSignIn) {
-        //   localStorage.setItem(USER_SESSION_KEY, JSON.stringify(result.user));
-        //   localStorage.setItem(ACCESS_TOKEN_KEY, result?.session?.access_token as string);
-        //   await setCookie(ACCESS_TOKEN_KEY, result?.session?.access_token || '', { httpOnly: true, secure: true, maxAge: result?.session?.expires_in || 0 });
-        // }
-
         if (isSignIn) {
           toast.success(t('sign_in_success'));
         } else {
