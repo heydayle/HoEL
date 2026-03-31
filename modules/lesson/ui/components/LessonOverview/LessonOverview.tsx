@@ -92,11 +92,6 @@ export function LessonOverview({
           <StatLabel>{t('stats_vocab')}</StatLabel>
           <StatValue>{stats.totalVocabularies}</StatValue>
         </StatCard>
-
-        <StatCard>
-          <StatLabel>{t('stats_questions')}</StatLabel>
-          <StatValue>{stats.totalQuestions}</StatValue>
-        </StatCard>
       </StatsGrid>
 
       <FilterPanel>
@@ -206,7 +201,7 @@ export function LessonOverview({
 
               <NotesContent>{lesson.notes}</NotesContent>
               <LessonMeta>
-                {t('vocab_count')}: {lesson.vocabularies.length}
+                {t('vocab_count')}: {lesson?.vocabularies?.length}
               </LessonMeta>
             </LessonCard>
           ))

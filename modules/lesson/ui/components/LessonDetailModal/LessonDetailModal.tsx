@@ -79,19 +79,16 @@ export function LessonDetailModal({
             <MetaChip>{new Date(lesson.date).toLocaleDateString()}</MetaChip>
             <MetaDot />
             <MetaChip>
-              {lesson.vocabularies.length}&nbsp;{t('vocab_count')}
+              {lesson?.vocabularies?.length}&nbsp;{t('vocab_count')}
             </MetaChip>
             <MetaDot />
-            <MetaChip>
-              {lesson.questions.length}&nbsp;{t('question_count')}
-            </MetaChip>
           </MetaStrip>
         </DetailModalHeader>
 
         <DetailContent>
           
           {/* Vocabulary list */}
-          {lesson.vocabularies.length > 0 && (
+          {lesson?.vocabularies?.length > 0 && (
             <DetailSection>
               <DetailSectionTitle>{t('vocab_section_title')}</DetailSectionTitle>
 

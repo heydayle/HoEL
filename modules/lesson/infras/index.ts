@@ -8,23 +8,30 @@ const LESSON_STORAGE_KEY = 'lingonote_lessons';
  * Reads lesson records from localStorage.
  * @returns Parsed lessons, or an empty array if unavailable/invalid
  */
-export const getLessonsFromLocalStorage = (): ILesson[] => {
-  if (typeof window === 'undefined') {
+export const getLessonsFromLocalStorage = async (): Promise<ILesson[]> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.from('lessons').select('*');
+
+  if (error) {
+    console.error('Error fetching lessons:', error);
     return [];
   }
+  
+  return data as ILesson[];
 
-  const raw = localStorage.getItem(LESSON_STORAGE_KEY);
+  // const raw = localStorage.getItem(LESSON_STORAGE_KEY);
 
-  if (!raw) {
-    return [];
-  }
+  // if (!raw) {
+  //   return [];
+  // }
 
-  try {
-    const parsed = JSON.parse(raw) as ILesson[];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+  // try {
+  //   const parsed = JSON.parse(raw) as ILesson[];
+  //   return Array.isArray(parsed) ? parsed : [];
+  // } catch {
+  //   return [];
+  // }
 };
 
 /**

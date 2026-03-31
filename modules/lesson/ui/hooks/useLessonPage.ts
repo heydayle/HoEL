@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import type { ILessonFilterInput, LessonSortOption } from '@/modules/lesson/core/usecases';
 import {
@@ -46,16 +46,19 @@ export const useLessonPage = () => {
   const { mode, resolvedTheme, setThemeMode } = useTheme();
   const { locale, setLocale, t } = useLocale(MESSAGES);
   const [filters, setFilters] = useState<ILessonFilterInput>(INITIAL_FILTERS);
-  const user = localStorage.getItem('sb-hpnokwlodebafzgebopj-auth-token');
-  const userID = JSON.parse(user || '{}')?.user?.id;
   
   /**
    * Reads lessons from local storage and falls back to sample data.
    */
-  const [lessons, setLessons] = useState<ILesson[]>(() => {
-    const localLessons = getLessonsFromLocalStorage();
-    return localLessons.length > 0 ? localLessons : LESSON_FALLBACK_DATA;
-  });
+  const [lessons, setLessons] = useState<ILesson[]>([]);
+
+  useEffect(() => {
+    const loadLessons = async () => {
+      const storedLessons = await getLessonsFromLocalStorage();
+      setLessons(storedLessons.length > 0 ? storedLessons : LESSON_FALLBACK_DATA);
+    };
+    loadLessons();
+  }, []);
 
   /**
    * Adds a new lesson to the list and persists it.
@@ -63,6 +66,8 @@ export const useLessonPage = () => {
    */
   const addLesson = async (lesson: Omit<ILesson, 'id'>) => {
     const uuid = uuidv4(); // Generate a unique ID for the new lesson
+    const user = localStorage.getItem('sb-hpnokwlodebafzgebopj-auth-token');
+    const userID = JSON.parse(user || '{}')?.user?.id;
     const newLesson: ILesson = {
       ...lesson,
       id: uuid,
