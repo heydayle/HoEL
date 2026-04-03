@@ -11,7 +11,6 @@ import { useLessonPage } from '@/modules/lesson/ui/hooks';
 import { LocaleSwitcher, ThemeToggle } from '@/shared/components';
 
 import { BackButton, DetailPageContainer, DetailPageWrapper, LessonTitle } from './styled';
-import Link from 'next/link';
 
 interface IEditLessonPageProps {
   params: Promise<{
@@ -34,13 +33,13 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
     [displayedLessons, params.id]
   );
 
-  const handleUpdateLesson = (updatedLesson: Omit<ILesson, 'id'>) => {
+  const handleUpdateLesson = async (updatedLesson: Omit<ILesson, 'id'>) => {
     if (!lesson) {
       return;
     }
 
-    updateLesson(lesson.id, updatedLesson);
-    router.push(`/lessons/${lesson.id}`);
+    await updateLesson(lesson.id, updatedLesson);
+    router.push(`/lessons`);
   };
 
   if (!lesson) {

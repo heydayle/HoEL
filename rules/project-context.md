@@ -1,94 +1,111 @@
-# 📁 Project Specification & Context: Language Lesson Tracker
+# 📁 Project Specification & Context: LingoNote
 
-**Document Purpose:** This file defines the core business logic, user roles, data structures, and features of the project. The AI Assistant MUST read and strictly follow these definitions when generating modules, routing, and UI components.
+**Document Purpose:** This file defines the core business logic, user roles, database schema, and features of the project. The AI Assistant MUST read and strictly follow these definitions when generating modules, routing, and database interactions.
 
 ---
 
 ## 1. Project Overview
-* **Project Name:** LingoNote (or specific project name)
-* **Description:** An offline-first, local-storage-based application designed to record and manage language learning sessions. It helps both teachers and students take notes, build vocabulary lists, and track knowledge delivered or acquired.
-* **Architecture Note:** 100% of data is stored in the browser's `localStorage`. No backend database is required. State management (e.g., Zustand) will sync directly with `localStorage`.
+
+- **Project Name:** LingoNote
+- **Description:** A web application designed to record and manage language learning sessions. It helps users take notes, build vocabulary lists, and generate AI-powered reading/listening exercises based on learned words.
+- **Architecture Note:** The application uses **Next.js 16 (App Router)** for the frontend and **Supabase (PostgreSQL + Auth)** as the backend. Data interactions should be performed via the Supabase client or dedicated API routes.
 
 ---
 
-## 2. User Modes (Contexts)
-Since the app is local-storage based, users select their "Mode" upon first load, which dictates the UI terminology and primary workflow:
-* **Student Mode:** Focuses on tracking what they have learned, logging the teacher's name, and reviewing vocab/questions.
-* **Teacher Mode:** Focuses on planning lessons, logging the student's name, and preparing materials to export/share with students.
+## 2. User Roles & Authentication
+
+Since the database tracks ownership (`createdBy`), the application requires authentication via Supabase Auth.
+
+- **Authenticated User (Teacher/Student):** Can log in, create lessons, add vocabularies, generate summaries using AI, and view their own data exclusively.
+- **Guest:** Can only access public landing pages and the authentication screen.
 
 ---
 
 ## 3. Global Core Features
-* **Offline-First Storage:** All CRUD operations read from and write to `localStorage`.
-* **Data Portability (Import/Export):** Users can export their data as JSON files and import them on other devices. Supports exporting a single lesson or the entire database.
-* **Multi-language Support (i18n):** System UI toggles between English and Vietnamese.
-* **Theme Management:** System-wide Dark/Light mode using `styled-components` and `shadcn/ui`.
+
+- **Database as a Service:** Full CRUD operations communicating directly with Supabase via `@supabase/auth-helpers-nextjs`.
+- **AI Integration:** Uses LLMs (e.g., DeepSeek) to automatically generate reading paragraphs and comprehension questions based on a lesson's vocabulary list.
+- **Multi-language Support (i18n):** System UI toggles between English (en) and Vietnamese (vi).
+- **Theme Management:** System-wide Dark/Light mode using `styled-components` and `shadcn/ui`.
 
 ---
 
-## 4. Core Data Models (Entities)
-The AI must strictly follow these object structures when creating TypeScript interfaces (`core/models`).
+## 4. Core Database Schema (Supabase ERD)
 
-### A. Lesson
+The AI must strictly follow these exact table structures and data types when creating TypeScript interfaces (`core/models`) and writing Supabase queries.
+
+### Table: `lessons`
+
 Represents a single learning session.
-* `id` (string, UUID)
-* `date` (string/Date ISO)
-* `topic` (string)
-* `participantName` (string) - The name of the Teacher (if user is Student) or Student (if user is Teacher).
-* `isPinned` (boolean)
-* `isFavorite` (boolean)
-* `priority` (enum: Low, Medium, High)
-* `notes` (string/Rich Text)
-* `links` (string[]) - Array of URLs for reference.
-* `vocabularies` (Vocabulary[]) - Array of vocabulary objects.
-* `questions` (Question[]) - Array of Q&A objects.
 
-### B. Vocabulary
-Represents a word or phrase learned in the lesson.
-* `id` (string, UUID)
-* `word` (string) - The vocabulary item.
-* `ipa` (string) - International Phonetic Alphabet transcription.
-* `partOfSpeech` (string) - Noun, verb, adjective, etc.
-* `meaning` (string) - Definition in the target language (e.g., English definition).
-* `translation` (string) - Translated meaning (e.g., Vietnamese).
-* `pronunciation` (string) - Guide on how to say it or a link to audio.
-* `example` (string) - Usage in a sentence.
+- `id` (uuid, Primary Key)
+- `created_at` (timestamptz)
+- `date` (text) - The date the lesson took place.
+- `topic` (text) - The main subject of the lesson.
+- `participantName` (text) - Name of the other person in the session (e.g., student name or teacher name).
+- `isPinned` (Bool) - For UI sorting.
+- `isFavorite` (Bool) - For UI filtering.
+- `priority` (text) - e.g., 'Low', 'Medium', 'High'.
+- `notes` (varchar) - Rich text or markdown content of the lesson.
+- `createdBy` (uuid) - Foreign key to Supabase Auth user ID (owner of the record).
 
-### C. Question
-Represents a Q&A pair for review or homework.
-* `id` (string, UUID)
-* `questionText` (string)
-* `answerText` (string)
+### Table: `vocabularies`
+
+Represents words/phrases learned, linked to a specific lesson.
+
+- `id` (uuid, Primary Key)
+- `created_at` (timestamptz)
+- `word` (varchar) - The vocabulary item.
+- `ipa` (varchar) - International Phonetic Alphabet.
+- `partOfSpeech` (varchar) - Noun, verb, adj, etc.
+- `meaning` (varchar) - Target language definition.
+- `translation` (varchar) - Native language translation.
+- `pronunciation` (text) - Guide or audio link.
+- `example` (varchar) - Example sentence.
+- `lesson_id` (uuid, Foreign Key -> `lessons.id`)
+
+### Table: `summaries`
+
+AI-generated practice content based on the lesson's vocabularies.
+
+- `id` (uuid, Primary Key)
+- `created_at` (timestamptz)
+- `lesson_id` (uuid, Foreign Key -> `lessons.id`)
+- `paragraph` (varchar) - An AI-generated text utilizing the lesson's vocabularies.
+- `question_1` (varchar) - First comprehension/practice question.
+- `question_2` (varchar) - Second comprehension/practice question.
+- `question_3` (varchar) - Third comprehension/practice question.
 
 ---
 
 ## 5. Screens & Module Features
-*(Note: These module names match the folder names in `app/modules/`)*
+
+_(Note: These module names match the folder names in `app/modules/`)_
+
+### Module: `auth`
+
+- **Route:** `/auth` (Single Unified Route)
+- **Features:**
+  - Uses Supabase Email/Password authentication (`signInWithPassword` & `signUp`).
+  - Seamless UI toggle (Tabs component from `shadcn`) between Login and Register modes on the exact same page.
+  - Form validation using Zod & React Hook Form.
+  - Auto-redirect to `/lessons` upon successful authentication.
 
 ### Module: `lessons` (Main Interface)
-* **Route:** `/lessons` (List View)
-  * **Features:** * Display all lessons in a list or grid.
-    * **Search:** By topic, participant name, or notes content.
-    * **Filter:** By `isPinned`, `isFavorite`, `priority`, or date range.
-    * **Sort:** By date (newest/oldest), priority, or topic name.
-* **Route:** `/lessons/create` & `/lessons/[id]/edit` (Form View)
-  * **Features:**
-    * Multi-section form (using React Hook Form + Zod).
-    * Section 1: Lesson Metadata (Date, Topic, Participant, Priority, Toggles for Pinned/Favorite).
-    * Section 2: Rich Text Notes & Links input.
-    * Section 3: Dynamic Vocabulary Builder (Add/Remove vocab items with all fields).
-    * Section 4: Dynamic Q&A Builder (Add/Remove questions and answers).
 
-### Module: `data-sync` (Import/Export)
-* **Route:** `/settings/data` (or modal within lessons)
-* **Features:**
-  * **Export All:** Generates a `.json` file containing all `localStorage` data.
-  * **Export Single:** Generates a `.json` file for a specific lesson ID.
-  * **Import:** Reads a `.json` file, validates the schema (Zod), and merges or overwrites the `localStorage` data.
+- **Route:** `/lessons` (List View)
+  - **Features:** Display lessons belonging to the current `createdBy` user. Includes Search, Filter (`isPinned`, `isFavorite`), and Sort functionalities.
+- **Route:** `/lessons/new` & `/lessons/[id]` (Detail/Edit View)
+  - **Features:**
+    - **Lesson Metadata Form:** Update topic, date, participant, and notes.
+    - **Vocabulary Manager:** Add/Edit/Delete records in the `vocabularies` table linked to this `lesson_id`.
+    - **AI Practice Generator:** A specific UI section to trigger the LLM. It gathers all `word` fields from the related `vocabularies`, sends them to the AI, and saves the resulting paragraph and 3 questions into the `summaries` table.
+    - **Summary View:** Display the generated `paragraph` and the 3 questions for review or practice.
 
 ---
 
 ## 6. Business Rules & Edge Cases
-* **Data Validation:** Before importing any JSON file, the application MUST validate the structure to prevent app crashes from corrupted `localStorage` data.
-* **Local Storage Limits:** Warning should be implemented if local storage exceeds standard limits (though text data rarely hits the 5MB limit, it's good practice).
-* **Search Optimization:** Since data is local, search and filter functions should be handled client-side using efficient array methods.
+
+- **Data Privacy:** Row Level Security (RLS) must be enabled in Supabase so users can only `SELECT`, `INSERT`, `UPDATE`, `DELETE` records where `createdBy = auth.uid()`.
+- **Foreign Key Constraints:** Deleting a lesson MUST cascade and delete all associated `vocabularies` and `summaries` to prevent orphaned data.
+- **Data Synchronization:** When generating a summary via AI, the system must check if a summary for that `lesson_id` already exists. If yes, it should update (`UPDATE`) the existing row rather than inserting (`INSERT`) a duplicate.

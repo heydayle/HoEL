@@ -131,7 +131,6 @@ export function CreateLessonModal({
       priority: formData.get('priority') as LessonPriority,
       isPinned: isEditing ? editingLesson!.isPinned : false,
       isFavorite: isEditing ? editingLesson!.isFavorite : false,
-      links: isEditing ? editingLesson!.links : [],
       vocabularies: vocabularies
         .map((v, index) => ({
           id: v.id,
@@ -144,7 +143,6 @@ export function CreateLessonModal({
           example: (formData.get(`vocab_${index}_example`) as string) || '',
         }))
         .filter((v) => v.word.trim() !== ''),
-      questions: isEditing ? editingLesson!.questions : [],
     };
 
     if (isEditing && editingLesson && onEditLesson) {

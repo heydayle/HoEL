@@ -154,7 +154,6 @@ export function LessonForm({
       priority: formData.get('priority') as LessonPriority,
       isPinned: isEditing ? initialLesson!.isPinned : false,
       isFavorite: isEditing ? initialLesson!.isFavorite : false,
-      links: isEditing ? initialLesson!.links : [],
       vocabularies: vocabularies
         .map((vocab, index) => ({
           id: vocab.id,
@@ -167,7 +166,6 @@ export function LessonForm({
           example: (formData.get(`vocab_${index}_example`) as string) || '',
         }))
         .filter((vocab) => vocab.word.trim() !== ''),
-      questions: isEditing ? initialLesson!.questions : [],
     };
 
     onSubmitLesson(lesson);
@@ -307,7 +305,6 @@ export function LessonForm({
                   placeholder="ex: Feeling or showing pleasure or contentment."
                 />
               </FormGroup>
-
               {/* Example — textarea */}
               <FormGroup>
                 <FormLabel>{t('vocab_example')}</FormLabel>

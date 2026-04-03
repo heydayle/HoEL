@@ -26,6 +26,29 @@ export interface IVocabulary {
 }
 
 /**
+ * Vocabulary row as stored in the Supabase `vocabularies` table.
+ * Extends the base IVocabulary with database-specific fields.
+ */
+export interface IVocabularyRow extends IVocabulary {
+  /** Timestamp when the record was created */
+  created_at: string;
+  /** Foreign key linking to the parent lesson */
+  lesson_id: string;
+}
+
+/**
+ * Payload used to create a new vocabulary record in Supabase.
+ * Omits auto-generated fields (`id`, `created_at`).
+ */
+export type IVocabularyCreatePayload = Omit<IVocabularyRow, 'id' | 'created_at'>;
+
+/**
+ * Payload used to update an existing vocabulary record.
+ * All fields are optional except for the ones being changed.
+ */
+export type IVocabularyUpdatePayload = Partial<Omit<IVocabularyRow, 'id' | 'created_at'>>;
+
+/**
  * Question and answer entity for lesson review.
  */
 export interface IQuestion {

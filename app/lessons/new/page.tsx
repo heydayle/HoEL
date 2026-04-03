@@ -26,8 +26,8 @@ export default function NewLessonPage(): React.JSX.Element {
     addLesson,
   } = useLessonPage();
 
-  const handleAddLesson = (lesson: Omit<ILesson, 'id'>) => {
-    addLesson(lesson);
+  const handleAddLesson = async (lesson: Omit<ILesson, 'id'>) => {
+    await addLesson(lesson);
     router.push('/lessons');
   };
 
