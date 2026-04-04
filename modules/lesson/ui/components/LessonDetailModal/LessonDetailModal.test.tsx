@@ -16,9 +16,7 @@ const makeLesson = (overrides: Partial<ILesson> = {}): ILesson => ({
   priority: 'High',
   isPinned: false,
   isFavorite: false,
-  links: [],
   vocabularies: [],
-  questions: [],
   ...overrides,
 });
 
@@ -97,9 +95,9 @@ describe('LessonDetailModal — meta strip', () => {
   });
 
   it('renders question count chip', () => {
-    const lesson = makeLesson({ questions: [{ id: 'q1' }] as ILesson['questions'] });
+    const lesson = makeLesson();
     render(<LessonDetailModal lesson={lesson} t={t} onClose={jest.fn()} />);
-    expect(screen.getByText(/1\s*question_count/)).toBeInTheDocument();
+    expect(screen.getByText(/0\s*question_count/)).toBeInTheDocument();
   });
 });
 

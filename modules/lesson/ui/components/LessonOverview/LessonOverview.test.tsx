@@ -27,7 +27,6 @@ const MOCK_LESSONS: ILesson[] = [
     isFavorite: true,
     priority: 'Medium',
     notes: 'Practice asking for directions.',
-    links: ['https://example.com/travel-english'],
     vocabularies: [
       {
         id: 'v1',
@@ -50,7 +49,6 @@ const MOCK_LESSONS: ILesson[] = [
         example: 'Which platform should I go to?',
       },
     ],
-    questions: [{ id: 'q1', questionText: 'Where is gate 5?', answerText: 'Near the escalator.' }],
   },
 ];
 
@@ -90,6 +88,8 @@ describe('LessonOverview', () => {
         onEndDateChange={jest.fn()}
         onSortChange={jest.fn()}
         onResetFilters={jest.fn()}
+        onSelectLesson={jest.fn()}
+        onEditLesson={jest.fn()}
       />,
     );
 
@@ -115,6 +115,8 @@ describe('LessonOverview', () => {
         onEndDateChange={jest.fn()}
         onSortChange={jest.fn()}
         onResetFilters={jest.fn()}
+        onSelectLesson={jest.fn()}
+        onEditLesson={jest.fn()}
       />,
     );
 
@@ -148,6 +150,8 @@ describe('LessonOverview', () => {
         onEndDateChange={onEndDateChange}
         onSortChange={onSortChange}
         onResetFilters={onResetFilters}
+        onSelectLesson={jest.fn()}
+        onEditLesson={jest.fn()}
       />,
     );
 
@@ -195,8 +199,8 @@ describe('LessonOverview', () => {
         onStartDateChange={jest.fn()}
         onEndDateChange={jest.fn()}
         onSortChange={jest.fn()}
-        onResetFilters={jest.fn()}
-      />,
+        onResetFilters={jest.fn()}        onSelectLesson={jest.fn()}
+        onEditLesson={jest.fn()}      />,
     );
 
     expect(screen.getByText('empty_state')).toBeInTheDocument();

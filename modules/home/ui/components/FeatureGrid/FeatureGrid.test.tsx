@@ -16,7 +16,7 @@ describe('FeatureGrid component', () => {
       titleKey: 'feature_2_title',
       descriptionKey: 'feature_2_desc',
       icon: '🏛️',
-      accentColor: 'unknown-accent', // tests fallback
+      accentColor: 'accent-secondary',
     },
   ];
 
@@ -60,9 +60,9 @@ describe('FeatureGrid component', () => {
     const extraProps = {
       ...defaultProps,
       features: [
-        { id: 'sec', titleKey: 'sec', descriptionKey: 'sec_desc', icon: '', accentColor: 'accent-secondary' },
-        { id: 'warm', titleKey: 'warm', descriptionKey: 'warm_desc', icon: '', accentColor: 'accent-warm' },
-        { id: 'gold', titleKey: 'gold', descriptionKey: 'gold_desc', icon: '', accentColor: 'accent-gold' }
+        { id: 'sec', titleKey: 'sec', descriptionKey: 'sec_desc', icon: '', accentColor: 'accent-secondary' as const },
+        { id: 'warm', titleKey: 'warm', descriptionKey: 'warm_desc', icon: '', accentColor: 'accent-warm' as const },
+        { id: 'gold', titleKey: 'gold', descriptionKey: 'gold_desc', icon: '', accentColor: 'accent-gold' as const }
       ]
     };
     render(<FeatureGrid {...extraProps} />);

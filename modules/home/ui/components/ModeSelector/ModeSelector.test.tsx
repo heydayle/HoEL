@@ -97,7 +97,7 @@ describe("ModeSelector Component", () => {
       />
     );
 
-    expect(screen.getByTestId ? true : true).toBe(true);
+
     // Both mode cards rendered
     expect(screen.getByText("mode_student_label")).toBeInTheDocument();
     expect(screen.getByText("mode_teacher_label")).toBeInTheDocument();

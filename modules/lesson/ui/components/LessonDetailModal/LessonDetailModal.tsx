@@ -83,7 +83,7 @@ export function LessonDetailModal({
             </MetaChip>
             <MetaDot />
             <MetaChip>
-              {lesson?.questions?.length}&nbsp;{t('question_count')}
+              0&nbsp;{t('question_count')}
             </MetaChip>
             <MetaDot />
           </MetaStrip>

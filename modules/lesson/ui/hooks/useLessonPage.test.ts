@@ -106,9 +106,7 @@ describe('useLessonPage', () => {
         isFavorite: false,
         priority: 'Medium',
         notes: '',
-        links: [],
         vocabularies: [],
-        questions: []
       });
     });
 
@@ -229,11 +227,9 @@ describe('useLessonPage', () => {
       date: '2023-01-01',
       isPinned: true,
       isFavorite: true,
-      priority: 'High',
+      priority: 'High' as const,
       notes: 'Updated notes',
-      links: [],
       vocabularies: [],
-      questions: []
     };
 
     await act(async () => {
@@ -272,11 +268,9 @@ describe('useLessonPage', () => {
         date: '2023-01-01',
         isPinned: false,
         isFavorite: false,
-        priority: 'Medium',
+        priority: 'Medium' as const,
         notes: '',
-        links: [],
         vocabularies: [],
-        questions: []
       });
     });
   });
@@ -292,11 +286,9 @@ describe('useLessonPage', () => {
         isFavorite: false,
         priority: 'Medium',
         notes: '',
-        links: [],
         vocabularies: [
-          { id: 'vocab-1', word: 'old word', meaning: 'old meaning' }
+          { word: 'hello', meaning: 'greeting' } as any,
         ],
-        questions: []
       }
     ];
     (getLessonsFromLocalStorage as jest.Mock).mockResolvedValue(mockLessons);
@@ -308,8 +300,8 @@ describe('useLessonPage', () => {
     });
 
     const updatedVocabularies = [
-      { id: 'vocab-1', word: 'new word', meaning: 'new meaning' },
-      { id: 'vocab-2', word: 'another word', meaning: 'another meaning' }
+      { id: 'vocab-1', word: 'new word', ipa: '/nj/ /wɜrd/', meaning: 'new meaning', partOfSpeech: 'noun', translation: 'translated', pronunciation: 'new-word', example: 'example text' },
+      { id: 'vocab-2', word: 'another word', ipa: '/əˈnʌðər/ /wɜrd/', meaning: 'another meaning', partOfSpeech: 'noun', translation: 'translated', pronunciation: 'another-word', example: 'example text' }
     ];
 
     await act(async () => {
@@ -321,9 +313,7 @@ describe('useLessonPage', () => {
         isFavorite: false,
         priority: 'Medium',
         notes: '',
-        links: [],
         vocabularies: updatedVocabularies,
-        questions: []
       });
     });
   });
@@ -338,9 +328,7 @@ describe('useLessonPage', () => {
       isFavorite: false,
       priority: 'Low',
       notes: '',
-      links: [],
       vocabularies: [],
-      questions: []
     };
     const lesson2 = {
       id: 'lesson-2',
@@ -351,9 +339,7 @@ describe('useLessonPage', () => {
       isFavorite: false,
       priority: 'High',
       notes: 'Some notes',
-      links: [],
       vocabularies: [],
-      questions: []
     };
     const mockLessons = [lesson1, lesson2];
     (getLessonsFromLocalStorage as jest.Mock).mockResolvedValue(mockLessons);
@@ -371,11 +357,9 @@ describe('useLessonPage', () => {
         date: '2023-01-01',
         isPinned: true,
         isFavorite: false,
-        priority: 'Low',
+        priority: 'Low' as const,
         notes: '',
-        links: [],
         vocabularies: [],
-        questions: []
       });
     });
   });
@@ -391,9 +375,7 @@ describe('useLessonPage', () => {
         isFavorite: false,
         priority: 'Low',
         notes: '',
-        links: [],
         vocabularies: [],
-        questions: []
       }
     ];
     (getLessonsFromLocalStorage as jest.Mock).mockResolvedValue(mockLessons);
@@ -413,11 +395,9 @@ describe('useLessonPage', () => {
         date: '2023-01-01',
         isPinned: false,
         isFavorite: false,
-        priority: 'Low',
+        priority: 'Low' as const,
         notes: '',
-        links: [],
         vocabularies: [],
-        questions: []
       });
     });
 

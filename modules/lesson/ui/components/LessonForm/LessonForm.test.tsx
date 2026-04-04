@@ -40,9 +40,7 @@ const makeLesson = (overrides: Partial<ILesson> = {}): ILesson => ({
   priority: 'High',
   isPinned: false,
   isFavorite: true,
-  links: [],
   vocabularies: [],
-  questions: [],
   ...overrides,
 });
 

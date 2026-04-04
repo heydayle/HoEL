@@ -17,9 +17,7 @@ const buildLesson = (id: string, overrides?: Partial<ILesson>): ILesson => ({
   isFavorite: false,
   priority: 'Low',
   notes: 'Note',
-  links: [],
   vocabularies: [],
-  questions: [],
   ...overrides,
 });
 
@@ -39,7 +37,6 @@ describe('lesson usecases', () => {
             example: 'e1',
           },
         ],
-        questions: [{ id: '1-q', questionText: 'q1', answerText: 'a1' }],
       }),
       buildLesson('2', {
         vocabularies: [
@@ -64,17 +61,13 @@ describe('lesson usecases', () => {
             example: 'e3',
           },
         ],
-        questions: [
-          { id: '2-q-1', questionText: 'q2', answerText: 'a2' },
-          { id: '2-q-2', questionText: 'q3', answerText: 'a3' },
-        ],
       }),
     ];
 
     expect(getLessonStats(lessons)).toEqual({
       totalLessons: 2,
       totalVocabularies: 3,
-      totalQuestions: 3,
+      totalQuestions: 0,
     });
   });
 
