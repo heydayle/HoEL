@@ -65,6 +65,7 @@ export const useAuthPage = () => {
 
         if (isSignIn) {
           toast.success(t('sign_in_success'));
+          localStorage.setItem('sb-hpnokwlodebafzgebopj-auth-token', JSON.stringify(result));
         } else {
           toast.success(t('register_success'));
           setAuthMode(AuthMode.SIGN_IN);
