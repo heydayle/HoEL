@@ -44,6 +44,8 @@ const INITIAL_FILTERS: ILessonFilterInput = {
  * @returns View model for rendering lessons list UI
  */
 export const useLessonPage = () => {
+    const [isAdding, setIsAdding] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
   const { mode, resolvedTheme, setThemeMode } = useTheme();
   const { locale, setLocale, t } = useLocale(MESSAGES);
   const [filters, setFilters] = useState<ILessonFilterInput>(INITIAL_FILTERS);
@@ -53,12 +55,23 @@ export const useLessonPage = () => {
    */
   const [lessons, setLessons] = useState<ILesson[]>([]);
 
+  const loadLessons = async () => {
+    const storedLessons = await getLessonsFromLocalStorage();
+    return storedLessons.length > 0 ? storedLessons : [];
+  };
+
   useEffect(() => {
-    const loadLessons = async () => {
-      const storedLessons = await getLessonsFromLocalStorage();
-      setLessons(storedLessons.length > 0 ? storedLessons : LESSON_FALLBACK_DATA);
+    let mounted = true;
+    const fetchLessons = async () => {
+      const lessons = await loadLessons();
+      if (mounted) {
+        setLessons(lessons);
+      }
     };
-    loadLessons();
+    void fetchLessons();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   /**
@@ -68,6 +81,7 @@ export const useLessonPage = () => {
    * @param lesson - Built lesson (without id)
    */
   const addLesson = async (lesson: Omit<ILesson, 'id'>): Promise<void> => {
+    setIsAdding(true);
     const uuid = uuidv4();
     const user = localStorage.getItem('sb-hpnokwlodebafzgebopj-auth-token');
     const userID = JSON.parse(user || '{}')?.user?.id;
@@ -115,6 +129,8 @@ export const useLessonPage = () => {
       const message = (err as Error).message || 'Failed to create lesson';
       console.error('addLesson error:', message);
       toast.error(message);
+    } finally {
+      setIsAdding(false);
     }
   };
 
@@ -126,6 +142,7 @@ export const useLessonPage = () => {
    * @param lesson - Updated lesson data
    */
   const updateLesson = async (lessonId: string, lesson: Omit<ILesson, 'id'>): Promise<void> => {
+    setIsUpdating(true);
     try {
       /** Persist lesson metadata */
       const result = await updateLessonInSupabase(lessonId, lesson);
@@ -166,6 +183,8 @@ export const useLessonPage = () => {
       const message = (err as Error).message || 'Failed to update lesson';
       console.error('updateLesson error:', message);
       toast.error(message);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -294,5 +313,7 @@ export const useLessonPage = () => {
     resetFilters,
     addLesson,
     updateLesson,
+    isAdding,
+    isUpdating,
   };
 };

@@ -52,5 +52,6 @@
   "vocab_meaning_label": "Meaning",
   "vocab_example_label": "Example",
   "vocab_translation_label": "Translation",
-  "load_vocab_description": "Enter vocabulary into the box above and click 'Load vocabulary' to load vocabulary from AI."
+  "load_vocab_description": "Enter vocabulary into the box above and click 'Load vocabulary' to load vocabulary from AI.",
+  "no_vocabularies": "No vocabularies added yet."
 }

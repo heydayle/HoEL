@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useMemo } from 'react';
+import { use, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 
@@ -11,6 +11,9 @@ import { useLessonPage } from '@/modules/lesson/ui/hooks';
 import { LocaleSwitcher, ThemeToggle } from '@/shared/components';
 
 import { BackButton, DetailPageContainer, DetailPageWrapper, LessonTitle } from './styled';
+import { useLessonDetail } from '@/modules/lesson/ui/hooks/useLessonDetail';
+import { Spinner } from '@/components/ui/spinner';
+import { Error as ErrorComponent } from '@/components/ui/error';
 
 interface IEditLessonPageProps {
   params: Promise<{
@@ -27,11 +30,15 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
   const params = use(paramsPromise);
   const router = useRouter();
 
-  const { displayedLessons, updateLesson, resolvedTheme, locale, setLocale, t, toggleTheme } = useLessonPage();
+  const { updateLesson, resolvedTheme, locale, setLocale, t, toggleTheme, isUpdating } = useLessonPage();
+  const { fetchLessonDetail, lesson: detailedLesson, isLoading, error } = useLessonDetail(params.id);
   const lesson = useMemo(
-    () => displayedLessons.find((item) => item.id === params.id) ?? null,
-    [displayedLessons, params.id]
+    () => detailedLesson,
+    [detailedLesson]
   );
+  useEffect(() => {
+    fetchLessonDetail();
+  }, [params.id]);
 
   const handleUpdateLesson = async (updatedLesson: Omit<ILesson, 'id'>) => {
     if (!lesson) {
@@ -41,6 +48,14 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
     await updateLesson(lesson.id, updatedLesson);
     router.push(`/lessons`);
   };
+
+  if (isLoading || isUpdating) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+        <Spinner size={40} />
+      </div>
+    );
+  }
 
   if (!lesson) {
     return (
@@ -62,6 +77,10 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
         </DetailPageContainer>
       </DetailPageWrapper>
     );
+  }
+
+  if (error) {
+    return <ErrorComponent message={error} onRetry={fetchLessonDetail} />;
   }
 
   return (
@@ -87,6 +106,7 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
           initialLesson={lesson}
           onSubmitLesson={handleUpdateLesson}
           onCancel={() => router.push(`/lessons`)}
+          isLoading={isUpdating}
         />
       </DetailPageContainer>
     </DetailPageWrapper>

@@ -1,5 +1,7 @@
 import type { ILesson, IDifyVocabResponse, IVocabulary } from '@/modules/lesson/core/models';
 import { createClient } from '@/shared/utils/supabase/client';
+import { getUserLocal } from '@/shared/hooks/getUserLocal';
+
 
 /**
  * Result shape returned by lesson persistence operations.
@@ -21,10 +23,12 @@ export interface ILessonSaveResult {
  */
 export const getLessonsFromLocalStorage = async (): Promise<ILesson[]> => {
   const supabase = createClient();
+  const { userId } = getUserLocal();
 
   const { data, error } = await supabase
     .from('lessons')
-    .select('*, vocabularies(*)');
+    .select('*, vocabularies(*)')
+    .eq('createdBy', userId);
 
   if (error) {
     console.error('Error fetching lessons:', error);
@@ -61,6 +65,56 @@ export const getLessonsFromLocalStorage = async (): Promise<ILesson[]> => {
   });
 
   return lessons;
+};
+
+export const getLessonById = async (lessonId: string): Promise<ILesson | null> => {
+  const supabase = createClient();
+  const { userId } = getUserLocal();
+
+  const { data, error } = await supabase
+    .from('lessons')
+    .select('*, vocabularies(*)')
+    .eq('id', lessonId)
+    .eq('createdBy', userId)
+    .single();
+
+  if (error) {
+    console.error(`Error fetching lesson with ID ${lessonId}:`, error);
+    return null;
+  }
+
+  if (!data) {
+    console.warn(`No lesson found with ID ${lessonId}`);
+    return null;
+  }
+
+  const vocabRows = (data.vocabularies ?? []) as Array<Record<string, unknown>>;
+
+  const vocabularies: IVocabulary[] = vocabRows.map((v) => ({
+    id: v.id as string,
+    word: (v.word as string) ?? '',
+    ipa: (v.ipa as string) ?? '',
+    partOfSpeech: (v.partOfSpeech as string) ?? '',
+    meaning: (v.meaning as string) ?? '',
+    translation: (v.translation as string) ?? '',
+    pronunciation: (v.pronunciation as string) ?? '',
+    example: (v.example as string) ?? '',
+  }));
+
+  const lesson: ILesson = {
+    id: data.id as string,
+    date: data.date as string,
+    topic: data.topic as string,
+    participantName: data.participantName as string,
+    isPinned: data.isPinned as boolean,
+    isFavorite: data.isFavorite as boolean,
+    priority: data.priority as ILesson['priority'],
+    notes: (data.notes as string) ?? '',
+    createdBy: (data.createdBy as string) ?? undefined,
+    vocabularies,
+  };
+
+  return lesson;
 };
 
 /**

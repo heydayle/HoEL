@@ -1,6 +1,6 @@
 'use client';
 
-import { Plus, Trash2 } from 'lucide-react';
+import { LoaderCircleIcon, Plus, Trash2 } from 'lucide-react';
 import React, { useEffect, useMemo, useRef } from 'react';
 
 import type { ILesson, LessonPriority } from '@/modules/lesson/core/models';
@@ -17,6 +17,8 @@ import {
 
 import { useGenerateVocab } from '../../hooks/useGenerateVocab';
 import {
+  Actions,
+  AIInputForm,
   FooterActions,
   FormCard,
   FormGroup,
@@ -32,6 +34,7 @@ import {
   VocabSection,
   VocabTitle,
 } from './styled';
+import Spinner from '@/components/ui/spinner';
 
 interface ILessonFormProps {
   t: (key: string) => string;
@@ -41,6 +44,7 @@ interface ILessonFormProps {
   initialLesson?: ILesson | null;
   onSubmitLesson: (lesson: Omit<ILesson, 'id'>) => void;
   onCancel: () => void;
+  isLoading?: boolean;
 }
 
 /**
@@ -54,8 +58,9 @@ export function LessonForm({
   initialLesson,
   onSubmitLesson,
   onCancel,
+  isLoading,
 }: ILessonFormProps): React.JSX.Element {
-  const { generate, isLoading, newVocab, setNewVocab, setVocabularies, vocabularies } =
+  const { generate, isLoading: isGenerating, newVocab, setNewVocab, setVocabularies, vocabularies } =
     useGenerateVocab(initialLesson);
   const isEditing = !!initialLesson;
 
@@ -170,7 +175,13 @@ export function LessonForm({
 
     onSubmitLesson(lesson);
   };
-
+  if (isLoading) {
+    return (
+      <FormCard>
+        <Spinner />
+      </FormCard>
+    );
+  }
   return (
     <FormCard>
       <FormSection onSubmit={handleSubmit}>
@@ -222,12 +233,11 @@ export function LessonForm({
         <VocabSection>
           <VocabHeader>
             <VocabTitle>{t('vocab_section_title')}</VocabTitle>
-            <Button type="button" variant="outline" size="sm" onClick={handleAddVocab}>
-              <Plus style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />
-              {t('add_vocab_btn')}
-            </Button>
           </VocabHeader>
-
+          
+          {vocabularies.length === 0 && (
+            <p className='block w-fit !ml-4 p-1 italic bg-primary/40'>{t('no_vocabularies')}</p>
+          )}
           {vocabularies.map((vocab, index) => (
             <VocabItem key={vocab.id}>
               {/* Header: index + remove */}
@@ -235,7 +245,7 @@ export function LessonForm({
                 <VocabIndex>#{index + 1}</VocabIndex>
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="destructive"
                   size="icon"
                   onClick={() => handleRemoveVocab(vocab.id)}
                   aria-label={t('remove_vocab_btn')}
@@ -320,47 +330,59 @@ export function LessonForm({
 
           {/* Scroll anchor — placed after the last vocab item */}
           <div ref={vocabBottomRef} />
-
-          {/* Load vocabulary from AI */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-            <NewVocabRow>
-              <Input
-                id="new-vocab"
-                name="new-vocab"
-                type="text"
-                value={newVocab}
-                onChange={onChangeNewVocab}
-                onKeyDown={handleNewVocabKeyDown}
-                placeholder="ex: happy"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleLoadVocab}
-                disabled={isLoading}
-              >
-                {isLoading ? 'Loading...' : t('load_vocab_btn')}
-              </Button>
-            </NewVocabRow>
-            <p
-              style={{
-                marginTop: '0',
-                paddingLeft: '0.25rem',
-                fontSize: '0.875rem',
-                color: 'hsl(var(--muted-foreground))',
-              }}
-            >
-              {t('load_vocab_description')}
-            </p>
-          </div>
         </VocabSection>
 
         {/* ── Sticky footer ── */}
         <FooterActions>
-          <Button type="button" variant="outline" onClick={onCancel}>
-            {t('cancel')}
-          </Button>
-          <Button type="submit">{submitLabel}</Button>
+          <AIInputForm>
+            {/* Load vocabulary from AI */}
+            <div className='md:flex gap-2 items-start w-full'>
+              <NewVocabRow>
+                <Input
+                  id="new-vocab"
+                  className='w-full'
+                  name="new-vocab"
+                  type="text"
+                  value={newVocab}
+                  onChange={onChangeNewVocab}
+                  onKeyDown={handleNewVocabKeyDown}
+                  placeholder="ex: happy"
+                  disabled={isGenerating}
+                />
+                <p
+                  style={{
+                    marginTop: '0',
+                    paddingLeft: '0.25rem',
+                    fontSize: '0.875rem',
+                    fontStyle: 'italic',
+                    color: 'hsl(var(--muted-foreground))',
+                  }}
+                >
+                  {t('load_vocab_description')}
+                </p>
+              </NewVocabRow>
+              <div className='flex gap-2 items-center '>
+                <Button
+                  type="button"
+                  onClick={handleLoadVocab}
+                  disabled={isGenerating}
+                >
+                  {isGenerating && <LoaderCircleIcon className="animate-spin" />}
+                  {isGenerating ? 'Loading...' : t('load_vocab_btn')}
+                </Button>
+                <Button type="button" variant="outline" size="sm" onClick={handleAddVocab}>
+                  <Plus style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />
+                  {t('add_vocab_btn')}
+                </Button>
+              </div>
+            </div>
+          </AIInputForm>
+          <Actions>
+            <Button type="button" variant="outline" onClick={onCancel}>
+              {t('cancel')}
+            </Button>
+            <Button type="submit">{submitLabel}</Button>
+          </Actions>
         </FooterActions>
       </FormSection>
     </FormCard>

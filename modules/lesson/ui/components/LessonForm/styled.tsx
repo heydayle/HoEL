@@ -106,7 +106,7 @@ export const VocabItem = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
   background: hsl(var(--muted) / 0.5);
   padding: 1rem;
@@ -121,15 +121,15 @@ export const VocabItemHeader = styled.div`
 export const VocabIndex = styled.span`
   font-size: 0.875rem;
   font-weight: 500;
+  background: var(--primary);
+  padding: 0.25rem 2rem 0.25rem 0.5rem;
+  color: var(--primary-foreground);
 `;
 
 /**
  * New-vocab input row — flush, no extra padding.
  */
 export const NewVocabRow = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
 `;
 
 /**
@@ -143,12 +143,41 @@ export const FooterActions = styled.div`
   left: 0;
   right: 0;
   z-index: 50;
-  display: flex;
-  justify-content: flex-end;
   gap: 0.5rem;
   padding: 0.875rem 2rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: start;
   border-top: 1px solid hsl(var(--border) / 0.5);
   background: hsl(var(--background) / 0.94);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+`;
+
+export const AIInputForm = styled.div`
+  width: 100%;
+  max-width: 40rem;
+  margin: auto;
+  padding: 0.5rem 0.5rem 0.75rem 0.5rem;
+  background: var(--background);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  @media (max-width: 600px) {
+    padding: 0.5rem 0.25rem 0.75rem 0.25rem;
+    max-width: 100%;
+  }
+`;
+
+export const Actions = styled.div`
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  @media (max-width: 600px) {
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    justify-content: stretch;
+  }
 `;
