@@ -20,6 +20,8 @@ export interface IModeCard {
   icon: string;
   /** Accent color key for theming */
   accentColor: "accent-primary" | "accent-secondary";
+
+  active?: boolean
 }
 
 /**

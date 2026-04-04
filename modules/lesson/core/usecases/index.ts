@@ -1,6 +1,5 @@
 import type { ILesson, ILessonStats, LessonPriority, IDifyVocabResponse } from '@/modules/lesson/core/models';
 import { fetchGeneratedVocab } from '../../infras';
-
 /**
  * Supported sort options for the lessons list.
  */
@@ -39,7 +38,6 @@ export const LESSON_FALLBACK_DATA: ILesson[] = [
     isFavorite: true,
     priority: 'High',
     notes: 'Focus on greetings, introducing yourself, and asking follow-up questions naturally.',
-    links: ['https://www.bbc.co.uk/learningenglish'],
     vocabularies: [
       {
         id: 'vocab-001',
@@ -52,13 +50,6 @@ export const LESSON_FALLBACK_DATA: ILesson[] = [
         example: 'We used a simple icebreaker before role-play.',
       },
     ],
-    questions: [
-      {
-        id: 'question-001',
-        questionText: 'How do you introduce yourself in a formal context?',
-        answerText: 'Use your name, role, and a polite greeting.',
-      },
-    ],
   },
   {
     id: 'lesson-002',
@@ -69,9 +60,7 @@ export const LESSON_FALLBACK_DATA: ILesson[] = [
     isFavorite: true,
     priority: 'Medium',
     notes: 'Practice asking for directions, booking hotels, and airport conversations.',
-    links: ['https://learnenglish.britishcouncil.org'],
     vocabularies: [],
-    questions: [],
   },
 ];
 
@@ -184,8 +173,8 @@ export const getFilteredLessons = (lessons: ILesson[], filters: ILessonFilterInp
  */
 export const getLessonStats = (lessons: ILesson[]): ILessonStats => {
   const totalLessons = lessons.length;
-  const totalVocabularies = lessons.reduce((sum, lesson) => sum + lesson.vocabularies.length, 0);
-  const totalQuestions = lessons.reduce((sum, lesson) => sum + lesson.questions.length, 0);
+  const totalVocabularies = lessons.reduce((sum, lesson) => sum + (lesson?.vocabularies && lesson?.vocabularies.length || 0), 0);
+  const totalQuestions = lessons.reduce((sum, lesson) => sum + (lesson?.questions && lesson?.questions.length || 0), 0);
 
   return {
     totalLessons,

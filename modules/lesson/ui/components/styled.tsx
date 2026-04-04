@@ -19,6 +19,10 @@ export const LessonHeaderRow = styled.header`
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
+  position: sticky;
+  top: 32px;
+  background: hsl(var(--background) / 0.94);
+  backdrop-filter: blur(10px);
 `;
 
 /**

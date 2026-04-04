@@ -43,21 +43,33 @@ export class UsersTableAuthRepository implements IAuthRepository {
    * @returns The authentication result with user data (excluding password)
    */
   async signIn(data: IAuthFormData): Promise<IAuthResult> {
-    const { data: user, error } = await this.client.auth
+    const { data: userLogged, error } = await this.client.auth
       .signInWithPassword({
         email: data.email,
         password: data.password,
       });
-
+    console.log(await this.client.auth.getClaims());
+    
     if (error) {
       return { success: false, error: error.message };
     }
 
-    if (!user) {
+    if (!userLogged || !userLogged.user) {
       return { success: false, error: 'Invalid email or password' };
     }
 
-    return { success: true };
+    const userResult: Omit<IUser, 'password'> = {
+      id: userLogged.user.id || '',
+      email: userLogged.user.email || '',
+      display_name: userLogged.user.user_metadata?.display_name || '',
+      created_at: userLogged.user.created_at || '',
+    };
+
+    return {
+      success: true,
+      user: userResult,
+      session: userLogged.session ?? undefined,
+    };
   }
 
   /**
@@ -67,39 +79,31 @@ export class UsersTableAuthRepository implements IAuthRepository {
    * @returns The authentication result with user data (excluding password)
    */
   async signUp(data: IAuthFormData): Promise<IAuthResult> {
-    // Check if email already exists
-    const { data: existing, error: lookupError } = await this.client
-      .from('users')
-      .select('id')
-      .eq('email', data.email)
-      .limit(1);
+    const { data: signUpData, error } = await this.client.auth.signUp({
+      email: data.email,
+      password: data.password,
+      options: {
+        emailRedirectTo: `${location.origin}/`, // Optional redirect URL
+      },
+    });
 
-    if (lookupError) {
-      return { success: false, error: lookupError.message };
+    if (error) {
+      return { error: error.message, success: false };
     }
 
-    if (existing && existing.length > 0) {
-      return { success: false, error: 'An account with this email already exists' };
+    let userResult: Omit<IUser, 'password'> | undefined = undefined;
+    if (signUpData && signUpData.user) {
+      userResult = {
+        id: signUpData.user.id || '',
+        email: signUpData.user.email || '',
+        display_name: signUpData.user.user_metadata?.display_name || '',
+        created_at: signUpData.user.created_at || '',
+      };
     }
-
-    const hashedPassword = await hashPassword(data.password);
-
-    const { data: inserted, error: insertError } = await this.client
-      .from('users')
-      .insert({
-        email: data.email,
-        password: hashedPassword,
-        display_name: data.displayName ?? data.email.split('@')[0],
-      })
-      .select('*')
-      .single();
-
-    if (insertError) {
-      return { success: false, error: insertError.message };
-    }
-
-    const { password: _pw, ...userWithoutPassword } = inserted as IUser;
-    return { success: true, user: userWithoutPassword };
+    return {
+      success: true,
+      user: userResult,
+    };
   }
 
   /**

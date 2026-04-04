@@ -5,7 +5,7 @@ import { AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
-import type { IAuthFormData } from '../../core/models';
+import { AuthMode, type IAuthFormData } from '../../core/models';
 import { useAuthPage } from '../hooks/useAuthPage';
 import {
   AuthContentContainer,
@@ -71,7 +71,7 @@ const GitHubIcon = (): React.JSX.Element => (
  */
 export const AuthForm = (): React.JSX.Element => {
   const router = useRouter();
-  const { t, isSignIn, isLoading, error, toggleAuthMode, handleSubmit, handleProviderSignIn } =
+  const { t, isSignIn, isLoading, error, toggleAuthMode, handleSubmit } =
     useAuthPage();
 
   const [email, setEmail] = useState('');
@@ -94,11 +94,11 @@ export const AuthForm = (): React.JSX.Element => {
       };
 
       const result = await handleSubmit(formData);
-
-      if (result.success) {
-        router.push('/');
-        router.refresh();
+      if (result.success && isSignIn) {
+        router.push('/')
+        router.refresh()
       }
+      
     },
     [email, password, displayName, isSignIn, handleSubmit, router],
   );
@@ -113,7 +113,7 @@ export const AuthForm = (): React.JSX.Element => {
 
         <StyledAuthCard>
           <CardHeader>
-            <AuthTitle>{t('page_title')}</AuthTitle>
+            <AuthTitle>{t(isSignIn ? 'page_title' : 'page_title_register')}</AuthTitle>
             <AuthSubtitle>
               {isSignIn ? t('page_subtitle_sign_in') : t('page_subtitle_register')}
             </AuthSubtitle>
@@ -184,7 +184,7 @@ export const AuthForm = (): React.JSX.Element => {
               <ProviderButton
                 type="button"
                 variant="outline"
-                disabled={isLoading}
+                disabled={true}
                 onClick={() => handleProviderSignIn('google')}
               >
                 <GoogleIcon />
@@ -194,7 +194,7 @@ export const AuthForm = (): React.JSX.Element => {
               <ProviderButton
                 type="button"
                 variant="outline"
-                disabled={isLoading}
+                disabled={true}
                 onClick={() => handleProviderSignIn('github')}
               >
                 <GitHubIcon />

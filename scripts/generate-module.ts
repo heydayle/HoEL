@@ -14,7 +14,7 @@ if (!moduleName) {
 const capitalizeName: string = moduleName.charAt(0).toUpperCase() + moduleName.slice(1);
 
 // Định nghĩa đường dẫn gốc của module
-const basePath: string = path.join(process.cwd(), 'app', 'modules', moduleName);
+const basePath: string = path.join(process.cwd(), '', 'modules', moduleName);
 
 // 1. Cấu trúc các thư mục cần tạo
 const directories: string[] = [

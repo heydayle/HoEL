@@ -1,5 +1,6 @@
 {
   "page_title": "Chào Mừng Trở Lại",
+  "page_title_register": "Tạo Tài Khoản",
   "page_subtitle_sign_in": "Đăng nhập để tiếp tục hành trình học tập",
   "page_subtitle_register": "Tạo tài khoản để bắt đầu học",
   "label_email": "Địa Chỉ Email",
@@ -20,5 +21,7 @@
   "error_unexpected": "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
   "divider_or": "hoặc tiếp tục với",
   "provider_google": "Tiếp tục với Google",
-  "provider_github": "Tiếp tục với GitHub"
+  "provider_github": "Tiếp tục với GitHub",
+  "sign_in_success": "Đăng nhập thành công!",
+  "register_success": "Tạo tài khoản thành công!"
 }

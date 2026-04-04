@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import type { ILessonFilterInput, LessonSortOption } from '@/modules/lesson/core/usecases';
 import {
@@ -8,13 +8,15 @@ import {
   getLessonStats,
   LESSON_FALLBACK_DATA,
 } from '@/modules/lesson/core/usecases';
-import type { ILesson } from '@/modules/lesson/core/models';
-import { getLessonsFromLocalStorage, saveLessonsToLocalStorage } from '@/modules/lesson/infras';
+import type { ILesson, IVocabularyCreatePayload } from '@/modules/lesson/core/models';
+import { getLessonsFromLocalStorage, saveLessonsToLocalStorage, updateLessonInSupabase } from '@/modules/lesson/infras';
+import { bulkAddVocabs, syncVocabularies } from '@/modules/lesson/infras/vocabularyApi';
 import enMessages from '@/modules/lesson/messages/en.json';
 import viMessages from '@/modules/lesson/messages/vi.json';
 import { useLocale, useTheme } from '@/shared/hooks';
 import type { Locale, TranslationMessages } from '@/shared/types';
 import { toast } from "sonner"
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Locale messages map for the lesson module.
@@ -42,49 +44,148 @@ const INITIAL_FILTERS: ILessonFilterInput = {
  * @returns View model for rendering lessons list UI
  */
 export const useLessonPage = () => {
+    const [isAdding, setIsAdding] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
   const { mode, resolvedTheme, setThemeMode } = useTheme();
   const { locale, setLocale, t } = useLocale(MESSAGES);
   const [filters, setFilters] = useState<ILessonFilterInput>(INITIAL_FILTERS);
-
   
   /**
    * Reads lessons from local storage and falls back to sample data.
    */
-  const [lessons, setLessons] = useState<ILesson[]>(() => {
-    const localLessons = getLessonsFromLocalStorage();
-    return localLessons.length > 0 ? localLessons : LESSON_FALLBACK_DATA;
-  });
+  const [lessons, setLessons] = useState<ILesson[]>([]);
+
+  const loadLessons = async () => {
+    const storedLessons = await getLessonsFromLocalStorage();
+    return storedLessons.length > 0 ? storedLessons : [];
+  };
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchLessons = async () => {
+      const lessons = await loadLessons();
+      if (mounted) {
+        setLessons(lessons);
+      }
+    };
+    void fetchLessons();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   /**
    * Adds a new lesson to the list and persists it.
-   * @param lesson - Built lesson
+   * Saves the lesson first, then bulk-inserts associated vocabularies.
+   *
+   * @param lesson - Built lesson (without id)
    */
-  const addLesson = (lesson: Omit<ILesson, 'id'>) => {
+  const addLesson = async (lesson: Omit<ILesson, 'id'>): Promise<void> => {
+    setIsAdding(true);
+    const uuid = uuidv4();
+    const user = localStorage.getItem('sb-hpnokwlodebafzgebopj-auth-token');
+    const userID = JSON.parse(user || '{}')?.user?.id;
     const newLesson: ILesson = {
       ...lesson,
-      id: `lesson-${Date.now()}`,
+      id: uuid,
+      createdBy: userID || 'unknown',
     };
-    
-    // Fallback data shouldn't be persist unless explicitly merged, 
-    // but the current spec persists everything if a change is made.
-    const updatedLessons = [newLesson, ...lessons];
-    setLessons(updatedLessons);
-    saveLessonsToLocalStorage(updatedLessons);
-    toast.success(t('lesson_created_toast'));
+
+    try {
+      const result = await saveLessonsToLocalStorage(newLesson);
+
+      if (!result.success) {
+        toast.error(t('lesson_save_error_toast'));
+        return;
+      }
+
+      /** Save vocabularies into the separate `vocabularies` table */
+      if (lesson.vocabularies && lesson.vocabularies.length > 0) {
+        const vocabPayloads: IVocabularyCreatePayload[] = lesson.vocabularies
+          .filter((v) => v.word.trim() !== '')
+          .map((v) => ({
+            word: v.word,
+            ipa: v.ipa,
+            partOfSpeech: v.partOfSpeech,
+            meaning: v.meaning,
+            translation: v.translation,
+            pronunciation: v.pronunciation,
+            example: v.example,
+            lesson_id: uuid,
+          }));
+
+        const savedVocabs = await bulkAddVocabs(vocabPayloads);
+
+        if (savedVocabs.length === 0 && vocabPayloads.length > 0) {
+          console.error('Failed to save vocabularies for lesson:', uuid);
+          toast.error(t('vocab_save_error_toast') || 'Failed to save vocabularies');
+        }
+      }
+
+      const updatedLessons = [newLesson, ...lessons];
+      setLessons(updatedLessons);
+      toast.success(t('lesson_created_toast'));
+    } catch (err: unknown) {
+      const message = (err as Error).message || 'Failed to create lesson';
+      console.error('addLesson error:', message);
+      toast.error(message);
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   /**
-   * Updates an existing lesson and persists it.
+   * Updates an existing lesson and persists both metadata and vocabulary
+   * changes to Supabase.
+   *
    * @param lessonId - ID of lesson to update
    * @param lesson - Updated lesson data
    */
-  const updateLesson = (lessonId: string, lesson: Omit<ILesson, 'id'>) => {
-    const updatedLessons = lessons.map((l) =>
-      l.id === lessonId ? { ...lesson, id: lessonId } : l
-    );
-    setLessons(updatedLessons);
-    saveLessonsToLocalStorage(updatedLessons);
-    toast.success(t('lesson_updated_toast'));
+  const updateLesson = async (lessonId: string, lesson: Omit<ILesson, 'id'>): Promise<void> => {
+    setIsUpdating(true);
+    try {
+      /** Persist lesson metadata */
+      const result = await updateLessonInSupabase(lessonId, lesson);
+
+      if (!result.success) {
+        toast.error(t('lesson_save_error_toast'));
+        return;
+      }
+
+      /** Sync vocabularies — delete old + insert new */
+      if (lesson.vocabularies && lesson.vocabularies.length > 0) {
+        const vocabPayloads: IVocabularyCreatePayload[] = lesson.vocabularies
+          .filter((v) => v.word.trim() !== '')
+          .map((v) => ({
+            word: v.word,
+            ipa: v.ipa,
+            partOfSpeech: v.partOfSpeech,
+            meaning: v.meaning,
+            translation: v.translation,
+            pronunciation: v.pronunciation,
+            example: v.example,
+            lesson_id: lessonId,
+          }));
+
+        await syncVocabularies(lessonId, vocabPayloads);
+      } else {
+        /** No vocabularies submitted — clear existing ones */
+        await syncVocabularies(lessonId, []);
+      }
+
+      /** Update local state */
+      const updatedLessons = lessons.map((l) =>
+        l.id === lessonId ? { ...lesson, id: lessonId } : l,
+      );
+      setLessons(updatedLessons);
+      toast.success(t('lesson_updated_toast'));
+    } catch (err: unknown) {
+      const message = (err as Error).message || 'Failed to update lesson';
+      console.error('updateLesson error:', message);
+      toast.error(message);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   /**
@@ -212,5 +313,7 @@ export const useLessonPage = () => {
     resetFilters,
     addLesson,
     updateLesson,
+    isAdding,
+    isUpdating,
   };
 };

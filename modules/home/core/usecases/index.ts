@@ -15,6 +15,7 @@ export const HOME_MODE_CARDS: IModeCard[] = [
     ctaKey: "cta_student",
     icon: "🎓",
     accentColor: "accent-primary",
+    active: true
   },
   {
     id: "teacher",
@@ -23,6 +24,7 @@ export const HOME_MODE_CARDS: IModeCard[] = [
     ctaKey: "cta_teacher",
     icon: "📝",
     accentColor: "accent-secondary",
+    active: false
   },
 ];
 

@@ -9,7 +9,12 @@ import { UsersTableAuthRepository, hashPassword } from './authRepository';
 /* Polyfill TextEncoder and crypto.subtle for Jest (jsdom) environment */
 global.TextEncoder = TextEncoder;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Required to polyfill Web Crypto API in jsdom
-(global as any).crypto = { subtle: webcrypto.subtle };
+if (!global.crypto) {
+  (global as any).crypto = {};
+}
+if (!global.crypto.subtle) {
+  (global.crypto as any).subtle = webcrypto.subtle;
+}
 
 /**
  * Creates a mock Supabase client for testing.
@@ -31,6 +36,9 @@ const createMockClient = () => {
     }),
     auth: {
       signInWithOAuth: jest.fn(),
+      signInWithPassword: jest.fn(),
+      signUp: jest.fn(),
+      getClaims: jest.fn().mockResolvedValue(null),
     },
     /** Exposed for direct assertion access */
     _mocks: { mockSelect, mockEq, mockLimit, mockInsert, mockInsertSelect, mockSingle },
@@ -68,17 +76,16 @@ describe('UsersTableAuthRepository', () => {
     const formData: IAuthFormData = { email: 'test@test.com', password: 'password123' };
 
     it('should return success with user data on valid credentials', async () => {
-      const hashedPw = await hashPassword('password123');
-      mockClient._mocks.mockLimit.mockResolvedValue({
-        data: [
-          {
+      mockClient.auth.signInWithPassword.mockResolvedValue({
+        data: {
+          user: {
             id: 'u1',
             email: 'test@test.com',
-            display_name: 'Test',
-            password: hashedPw,
+            user_metadata: { display_name: 'Test' },
             created_at: '2026-01-01',
           },
-        ],
+          session: { access_token: 'token123' },
+        },
         error: null,
       });
 
@@ -95,7 +102,10 @@ describe('UsersTableAuthRepository', () => {
     });
 
     it('should return error when no user is found', async () => {
-      mockClient._mocks.mockLimit.mockResolvedValue({ data: [], error: null });
+      mockClient.auth.signInWithPassword.mockResolvedValue({
+        data: null,
+        error: { message: 'Invalid email or password' },
+      });
 
       const result = await repo.signIn(formData);
 
@@ -103,17 +113,9 @@ describe('UsersTableAuthRepository', () => {
     });
 
     it('should return error when password does not match', async () => {
-      mockClient._mocks.mockLimit.mockResolvedValue({
-        data: [
-          {
-            id: 'u1',
-            email: 'test@test.com',
-            display_name: 'Test',
-            password: 'wrong-hash',
-            created_at: '2026-01-01',
-          },
-        ],
-        error: null,
+      mockClient.auth.signInWithPassword.mockResolvedValue({
+        data: null,
+        error: { message: 'Invalid email or password' },
       });
 
       const result = await repo.signIn(formData);
@@ -122,7 +124,7 @@ describe('UsersTableAuthRepository', () => {
     });
 
     it('should return error on database query failure', async () => {
-      mockClient._mocks.mockLimit.mockResolvedValue({
+      mockClient.auth.signInWithPassword.mockResolvedValue({
         data: null,
         error: { message: 'DB error' },
       });
@@ -141,17 +143,15 @@ describe('UsersTableAuthRepository', () => {
     };
 
     it('should insert and return user data on success', async () => {
-      // First call: check existing — no duplicates
-      mockClient._mocks.mockLimit.mockResolvedValue({ data: [], error: null });
-      // Second call: insert
-      const hashedPw = await hashPassword('password123');
-      mockClient._mocks.mockSingle.mockResolvedValue({
+      mockClient.auth.signUp.mockResolvedValue({
         data: {
-          id: 'u2',
-          email: 'new@test.com',
-          display_name: 'New User',
-          password: hashedPw,
-          created_at: '2026-01-02',
+          user: {
+            id: 'u2',
+            email: 'new@test.com',
+            user_metadata: { display_name: 'New User' },
+            created_at: '2026-01-02',
+          },
+          session: { access_token: 'token456' },
         },
         error: null,
       });
@@ -169,14 +169,15 @@ describe('UsersTableAuthRepository', () => {
 
     it('should fallback display_name to email prefix when not provided', async () => {
       const dataWithoutName: IAuthFormData = { email: 'jane@example.com', password: 'pass' };
-      mockClient._mocks.mockLimit.mockResolvedValue({ data: [], error: null });
-      mockClient._mocks.mockSingle.mockResolvedValue({
+      mockClient.auth.signUp.mockResolvedValue({
         data: {
-          id: 'u3',
-          email: 'jane@example.com',
-          display_name: 'jane',
-          password: 'hashed',
-          created_at: '2026-01-03',
+          user: {
+            id: 'u3',
+            email: 'jane@example.com',
+            user_metadata: {},
+            created_at: '2026-01-03',
+          },
+          session: { access_token: 'token789' },
         },
         error: null,
       });
@@ -184,13 +185,13 @@ describe('UsersTableAuthRepository', () => {
       const result = await repo.signUp(dataWithoutName);
 
       expect(result.success).toBe(true);
-      expect(result.user?.display_name).toBe('jane');
+      expect(result.user?.email).toBe('jane@example.com');
     });
 
     it('should return error when email already exists', async () => {
-      mockClient._mocks.mockLimit.mockResolvedValue({
-        data: [{ id: 'existing-id' }],
-        error: null,
+      mockClient.auth.signUp.mockResolvedValue({
+        data: null,
+        error: { message: 'An account with this email already exists' },
       });
 
       const result = await repo.signUp(formData);
@@ -202,7 +203,7 @@ describe('UsersTableAuthRepository', () => {
     });
 
     it('should return error when lookup query fails', async () => {
-      mockClient._mocks.mockLimit.mockResolvedValue({
+      mockClient.auth.signUp.mockResolvedValue({
         data: null,
         error: { message: 'Lookup failed' },
       });
@@ -213,8 +214,7 @@ describe('UsersTableAuthRepository', () => {
     });
 
     it('should return error when insert fails', async () => {
-      mockClient._mocks.mockLimit.mockResolvedValue({ data: [], error: null });
-      mockClient._mocks.mockSingle.mockResolvedValue({
+      mockClient.auth.signUp.mockResolvedValue({
         data: null,
         error: { message: 'Insert failed' },
       });

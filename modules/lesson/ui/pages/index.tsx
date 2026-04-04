@@ -1,16 +1,17 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import type { ILesson } from '@/modules/lesson/core/models';
 import { LessonDetailModal } from '@/modules/lesson/ui/components/LessonDetailModal';
 import { LessonOverview } from '@/modules/lesson/ui/components/LessonOverview';
 import { ControlsGroup, LessonHeaderRow } from '@/modules/lesson/ui/components/styled';
 import { useLessonPage } from '@/modules/lesson/ui/hooks';
-import { Button } from '@/shared/components/Styled';
 import { LocaleSwitcher, ThemeToggle } from '@/shared/components';
+import { Button } from '@/shared/components/Styled';
 
+import LogoutButton from '@/shared/components/atoms/Button/LogoutButton';
 import { LessonContainer, LessonPageWrapper, LessonSubtitle, LessonTitle } from './styled';
 
 /**
@@ -60,6 +61,7 @@ export default function LessonPage(): React.JSX.Element {
             </Button>
             <LocaleSwitcher locale={locale} onLocaleChange={setLocale} />
             <ThemeToggle resolvedTheme={resolvedTheme} onToggle={toggleTheme} />
+            <LogoutButton />
           </ControlsGroup>
         </LessonHeaderRow>
 
