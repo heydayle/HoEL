@@ -96,6 +96,7 @@ export const AuthForm = (): React.JSX.Element => {
       const result = await handleSubmit(formData);
       if (result.success && isSignIn) {
         router.push('/')
+        router.refresh()
       }
       
     },
@@ -177,13 +178,13 @@ export const AuthForm = (): React.JSX.Element => {
               </SubmitButton>
             </form>
 
-            {/*<Divider>{t('divider_or')}</Divider>
+            <Divider>{t('divider_or')}</Divider>
 
-             <ProviderButtonsContainer>
+            <ProviderButtonsContainer>
               <ProviderButton
                 type="button"
                 variant="outline"
-                disabled={isLoading}
+                disabled={true}
                 onClick={() => handleProviderSignIn('google')}
               >
                 <GoogleIcon />
@@ -193,13 +194,13 @@ export const AuthForm = (): React.JSX.Element => {
               <ProviderButton
                 type="button"
                 variant="outline"
-                disabled={isLoading}
+                disabled={true}
                 onClick={() => handleProviderSignIn('github')}
               >
                 <GitHubIcon />
                 {t('provider_github')}
               </ProviderButton>
-            </ProviderButtonsContainer> */}
+            </ProviderButtonsContainer>
 
             <ToggleSection>
               {isSignIn ? t('toggle_to_register') : t('toggle_to_sign_in')}

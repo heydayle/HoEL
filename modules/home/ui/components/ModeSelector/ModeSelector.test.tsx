@@ -48,6 +48,7 @@ const MOCK_MODE_CARDS: IModeCard[] = [
     ctaKey: "cta_student",
     icon: "🎓",
     accentColor: "accent-primary",
+    active: true,
   },
   {
     id: "teacher",
@@ -56,6 +57,7 @@ const MOCK_MODE_CARDS: IModeCard[] = [
     ctaKey: "cta_teacher",
     icon: "📝",
     accentColor: "accent-secondary",
+    active: true,
   },
 ];
 
@@ -115,7 +117,8 @@ describe("ModeSelector Component", () => {
       />
     );
 
-    fireEvent.click(screen.getByLabelText("mode_student_label"));
+    const studentButton = screen.getByRole("button", { name: /mode_student_label/ });
+    fireEvent.click(studentButton);
     expect(mockOnSelectMode).toHaveBeenCalledWith("student");
   });
 
@@ -133,7 +136,8 @@ describe("ModeSelector Component", () => {
       />
     );
 
-    fireEvent.click(screen.getByLabelText("mode_teacher_label"));
+    const teacherButton = screen.getByRole("button", { name: /mode_teacher_label/ });
+    fireEvent.click(teacherButton);
     expect(mockOnSelectMode).toHaveBeenCalledWith("teacher");
   });
 });

@@ -101,7 +101,8 @@ export class UsersTableAuthRepository implements IAuthRepository {
       };
     }
     return {
-      ...userResult, success: true,
+      success: true,
+      user: userResult,
     };
   }
 

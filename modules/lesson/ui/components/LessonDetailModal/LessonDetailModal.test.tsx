@@ -143,13 +143,15 @@ describe('LessonDetailModal — vocabulary list', () => {
   it('renders part of speech badge when present', () => {
     const lesson = makeLesson({ vocabularies: [makeVocab()] });
     render(<LessonDetailModal lesson={lesson} t={t} onClose={jest.fn()} />);
-    expect(screen.getByText('adjective')).toBeInTheDocument();
+    // The CSS applies text-transform: uppercase, but the DOM text is still lowercase
+    // Use a regex to match case-insensitive
+    expect(screen.getByText(/adjective/i)).toBeInTheDocument();
   });
 
   it('does not render PoS badge when absent', () => {
     const lesson = makeLesson({ vocabularies: [makeVocab({ partOfSpeech: '' })] });
     render(<LessonDetailModal lesson={lesson} t={t} onClose={jest.fn()} />);
-    expect(screen.queryByText('adjective')).not.toBeInTheDocument();
+    expect(screen.queryByText(/adjective/i)).not.toBeInTheDocument();
   });
 
   it('renders pronunciation when present', () => {

@@ -82,6 +82,10 @@ export function LessonDetailModal({
               {lesson?.vocabularies?.length}&nbsp;{t('vocab_count')}
             </MetaChip>
             <MetaDot />
+            <MetaChip>
+              {lesson?.questions?.length}&nbsp;{t('question_count')}
+            </MetaChip>
+            <MetaDot />
           </MetaStrip>
         </DetailModalHeader>
 

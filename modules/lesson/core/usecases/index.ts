@@ -174,10 +174,12 @@ export const getFilteredLessons = (lessons: ILesson[], filters: ILessonFilterInp
 export const getLessonStats = (lessons: ILesson[]): ILessonStats => {
   const totalLessons = lessons.length;
   const totalVocabularies = lessons.reduce((sum, lesson) => sum + (lesson?.vocabularies && lesson?.vocabularies.length || 0), 0);
+  const totalQuestions = lessons.reduce((sum, lesson) => sum + (lesson?.questions && lesson?.questions.length || 0), 0);
 
   return {
     totalLessons,
     totalVocabularies,
+    totalQuestions,
   };
 };
 

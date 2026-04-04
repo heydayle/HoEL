@@ -4,10 +4,10 @@ import type { ILesson } from '@/modules/lesson/core/models';
 /**
  * Mock Supabase client used across all infras tests.
  */
-const mockSelect = jest.fn();
-const mockInsert = jest.fn();
-const mockUpdate = jest.fn();
 const mockEq = jest.fn();
+const mockSelect = jest.fn().mockReturnValue({ eq: mockEq });
+const mockUpdate = jest.fn();
+const mockInsert = jest.fn();
 const mockFrom = jest.fn(() => ({
   select: mockSelect,
   insert: mockInsert,
@@ -17,6 +17,14 @@ const mockFrom = jest.fn(() => ({
 jest.mock('@/shared/utils/supabase/client', () => ({
   createClient: () => ({
     from: mockFrom,
+  }),
+}));
+
+jest.mock('@/shared/hooks/getUserLocal', () => ({
+  getUserLocal: () => ({
+    user: null,
+    userId: 'test-user-id',
+    refreshToken: 'test-token',
   }),
 }));
 
@@ -56,19 +64,20 @@ describe('Lesson Infras – Supabase operations', () => {
         ],
       };
 
-      mockSelect.mockResolvedValueOnce({ data: [supabaseRow], error: null });
+      mockEq.mockResolvedValueOnce({ data: [supabaseRow], error: null });
 
       const result = await getLessonsFromLocalStorage();
 
       expect(mockFrom).toHaveBeenCalledWith('lessons');
       expect(mockSelect).toHaveBeenCalledWith('*, vocabularies(*)');
+      expect(mockEq).toHaveBeenCalledWith('createdBy', 'test-user-id');
       expect(result).toHaveLength(1);
       expect(result[0].vocabularies).toHaveLength(1);
       expect(result[0].vocabularies[0].word).toBe('hello');
     });
 
     it('returns empty array on Supabase error', async () => {
-      mockSelect.mockResolvedValueOnce({
+      mockEq.mockResolvedValueOnce({
         data: null,
         error: { message: 'Network error' },
       });
