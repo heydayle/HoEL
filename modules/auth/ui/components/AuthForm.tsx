@@ -103,6 +103,11 @@ export const AuthForm = (): React.JSX.Element => {
     [email, password, displayName, isSignIn, handleSubmit, router],
   );
 
+  const handleProviderSignIn = useCallback((provider: string) => {
+    // For now, just log the provider. The actual sign-in logic is not implemented.
+    console.log(`Sign in with provider: ${provider}`);
+  }, []);
+
   return (
     <AuthPageWrapper>
       <AuthContentContainer>
