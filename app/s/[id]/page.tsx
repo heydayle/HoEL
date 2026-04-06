@@ -1,15 +1,15 @@
 'use client';
 
-import { use, useEffect } from 'react';
 import { BookOpen } from 'lucide-react';
+import { use, useEffect } from 'react';
 
-import { LessonShareView } from '@/modules/lesson/ui/pages/LessonShareView';
-import { usePublicLessonDetail } from '@/modules/lesson/ui/hooks/usePublicLessonDetail';
-import { useLocale } from '@/shared/hooks';
-import type { Locale, TranslationMessages } from '@/shared/types';
+import { Spinner } from '@/components/ui/spinner';
 import enMessages from '@/modules/lesson/messages/en.json';
 import viMessages from '@/modules/lesson/messages/vi.json';
-import { Spinner } from '@/components/ui/spinner';
+import { usePublicLessonDetail } from '@/modules/lesson/ui/hooks/usePublicLessonDetail';
+import { LessonShareView } from '@/modules/lesson/ui/pages/LessonShareView';
+import { useLocale } from '@/shared/hooks';
+import type { Locale, TranslationMessages } from '@/shared/types';
 
 import {
   ShareErrorContainer,

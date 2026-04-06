@@ -49,11 +49,25 @@ describe('FeatureGrid component', () => {
   });
 
   it('should render falling back colors correctly if invalid accent is provided', () => {
-    render(<FeatureGrid {...defaultProps} />);
-    
-    // Check elements for fallback classes ("bg-accent-primary-light") if not found in map
-    const feature2Heading = screen.getByText('Translated_feature_2_title');
-    expect(feature2Heading).toHaveClass('text-accent-primary');
+    const propsWithInvalidAccent = {
+      ...defaultProps,
+      features: [
+        ...mockFeatures,
+        {
+          id: 'f3',
+          titleKey: 'feature_3_title',
+          descriptionKey: 'feature_3_desc',
+          icon: '🔥',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          accentColor: 'accent-unknown' as any, // intentionally invalid to trigger fallback
+        },
+      ],
+    };
+    render(<FeatureGrid {...propsWithInvalidAccent} />);
+
+    // Invalid accent → should fall back to text-accent-primary
+    const feature3Heading = screen.getByText('Translated_feature_3_title');
+    expect(feature3Heading).toHaveClass('text-accent-primary');
   });
 
   it('should render correct class for other accent colors', () => {
