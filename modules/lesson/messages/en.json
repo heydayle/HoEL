@@ -70,5 +70,7 @@
   "share_view_translation": "Translation",
   "share_view_pronunciation": "Pronunciation",
   "share_view_example": "Example",
-  "share_view_readonly_hint": "This is a read-only shared view. Sign in to edit."
+  "share_view_readonly_hint": "This is a read-only shared view. Sign in to edit.",
+  "share_link_copied": "Share link copied!",
+  "share_link_label": "Copy share link"
 }

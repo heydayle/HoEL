@@ -1,9 +1,19 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import type { ILesson, ILessonStats } from '@/modules/lesson/core/models';
 import type { ILessonFilterInput } from '@/modules/lesson/core/usecases';
 
 import { LessonOverview } from './LessonOverview';
+
+/** Mock sonner toast so we can assert toast.success calls */
+jest.mock('sonner', () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
+}));
+
+import { toast } from 'sonner';
 
 /**
  * Mock lesson stats for component testing.
@@ -72,26 +82,27 @@ const MOCK_FILTERS: ILessonFilterInput = {
  */
 const t = (key: string): string => key;
 
+/** Default props shared across all tests */
+const defaultProps = {
+  stats: MOCK_STATS,
+  lessons: MOCK_LESSONS,
+  filters: MOCK_FILTERS,
+  t,
+  onSearchTermChange: jest.fn(),
+  onPinnedFilterChange: jest.fn(),
+  onFavoriteFilterChange: jest.fn(),
+  onPriorityFilterChange: jest.fn(),
+  onStartDateChange: jest.fn(),
+  onEndDateChange: jest.fn(),
+  onSortChange: jest.fn(),
+  onResetFilters: jest.fn(),
+  onSelectLesson: jest.fn(),
+  onEditLesson: jest.fn(),
+};
+
 describe('LessonOverview', () => {
   it('should render summary statistics and a lesson card', () => {
-    render(
-      <LessonOverview
-        stats={MOCK_STATS}
-        lessons={MOCK_LESSONS}
-        filters={MOCK_FILTERS}
-        t={t}
-        onSearchTermChange={jest.fn()}
-        onPinnedFilterChange={jest.fn()}
-        onFavoriteFilterChange={jest.fn()}
-        onPriorityFilterChange={jest.fn()}
-        onStartDateChange={jest.fn()}
-        onEndDateChange={jest.fn()}
-        onSortChange={jest.fn()}
-        onResetFilters={jest.fn()}
-        onSelectLesson={jest.fn()}
-        onEditLesson={jest.fn()}
-      />,
-    );
+    render(<LessonOverview {...defaultProps} />);
 
     expect(screen.getByText('stats_lessons')).toBeInTheDocument();
     expect(screen.getByText('Travel English')).toBeInTheDocument();
@@ -101,24 +112,7 @@ describe('LessonOverview', () => {
   it('should call search handler when user types in search box', () => {
     const onSearchTermChange = jest.fn();
 
-    render(
-      <LessonOverview
-        stats={MOCK_STATS}
-        lessons={MOCK_LESSONS}
-        filters={MOCK_FILTERS}
-        t={t}
-        onSearchTermChange={onSearchTermChange}
-        onPinnedFilterChange={jest.fn()}
-        onFavoriteFilterChange={jest.fn()}
-        onPriorityFilterChange={jest.fn()}
-        onStartDateChange={jest.fn()}
-        onEndDateChange={jest.fn()}
-        onSortChange={jest.fn()}
-        onResetFilters={jest.fn()}
-        onSelectLesson={jest.fn()}
-        onEditLesson={jest.fn()}
-      />,
-    );
+    render(<LessonOverview {...defaultProps} onSearchTermChange={onSearchTermChange} />);
 
     fireEvent.change(screen.getByLabelText('search_aria_label'), {
       target: { value: 'travel' },
@@ -138,11 +132,7 @@ describe('LessonOverview', () => {
 
     render(
       <LessonOverview
-        stats={MOCK_STATS}
-        lessons={MOCK_LESSONS}
-        filters={MOCK_FILTERS}
-        t={t}
-        onSearchTermChange={jest.fn()}
+        {...defaultProps}
         onPinnedFilterChange={onPinnedFilterChange}
         onFavoriteFilterChange={onFavoriteFilterChange}
         onPriorityFilterChange={onPriorityFilterChange}
@@ -150,8 +140,6 @@ describe('LessonOverview', () => {
         onEndDateChange={onEndDateChange}
         onSortChange={onSortChange}
         onResetFilters={onResetFilters}
-        onSelectLesson={jest.fn()}
-        onEditLesson={jest.fn()}
       />,
     );
 
@@ -186,23 +174,89 @@ describe('LessonOverview', () => {
   });
 
   it('renders empty state when lessons array is empty', () => {
-    render(
-      <LessonOverview
-        stats={MOCK_STATS}
-        lessons={[]}
-        filters={MOCK_FILTERS}
-        t={t}
-        onSearchTermChange={jest.fn()}
-        onPinnedFilterChange={jest.fn()}
-        onFavoriteFilterChange={jest.fn()}
-        onPriorityFilterChange={jest.fn()}
-        onStartDateChange={jest.fn()}
-        onEndDateChange={jest.fn()}
-        onSortChange={jest.fn()}
-        onResetFilters={jest.fn()}        onSelectLesson={jest.fn()}
-        onEditLesson={jest.fn()}      />,
-    );
-
+    render(<LessonOverview {...defaultProps} lessons={[]} />);
     expect(screen.getByText('empty_state')).toBeInTheDocument();
   });
+
+  /** ── Share button ── */
+
+  describe('Share button', () => {
+    /** Set up navigator.clipboard mock before each share test */
+    beforeEach(() => {
+      Object.assign(navigator, {
+        clipboard: {
+          writeText: jest.fn().mockResolvedValue(undefined),
+        },
+      });
+      jest.clearAllMocks();
+    });
+
+    it('renders the share button for each lesson card', () => {
+      render(<LessonOverview {...defaultProps} />);
+      expect(screen.getByLabelText('share_link_label')).toBeInTheDocument();
+    });
+
+    it('copies the correct share URL to clipboard when share button is clicked', async () => {
+      render(<LessonOverview {...defaultProps} />);
+
+      const shareBtn = screen.getByLabelText('share_link_label');
+      await act(async () => {
+        fireEvent.click(shareBtn);
+      });
+
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+        `${window.location.origin}/s/lesson-1`,
+      );
+    });
+
+    it('calls toast.success with the share_link_copied key after copying', async () => {
+      render(<LessonOverview {...defaultProps} />);
+
+      const shareBtn = screen.getByLabelText('share_link_label');
+      await act(async () => {
+        fireEvent.click(shareBtn);
+      });
+
+      expect(toast.success).toHaveBeenCalledWith('share_link_copied');
+    });
+
+    it('does not trigger onSelectLesson when share button is clicked (stopPropagation)', async () => {
+      const onSelectLesson = jest.fn();
+      render(<LessonOverview {...defaultProps} onSelectLesson={onSelectLesson} />);
+
+      const shareBtn = screen.getByLabelText('share_link_label');
+      await act(async () => {
+        fireEvent.click(shareBtn);
+      });
+
+      expect(onSelectLesson).not.toHaveBeenCalled();
+    });
+
+    it('resets the copied icon back after 2000 ms', async () => {
+      jest.useFakeTimers();
+
+      render(<LessonOverview {...defaultProps} />);
+
+      const shareBtn = screen.getByLabelText('share_link_label');
+      await act(async () => {
+        fireEvent.click(shareBtn);
+      });
+
+      // After clicking the icon should show the copied state — button still present
+      await waitFor(() =>
+        expect(screen.getByLabelText('share_link_label')).toBeInTheDocument(),
+      );
+
+      // Advance timers past the 2 s reset
+      act(() => {
+        jest.advanceTimersByTime(2100);
+      });
+
+      // Button still rendered (icon reverted to Link2 — no copied state)
+      expect(screen.getByLabelText('share_link_label')).toBeInTheDocument();
+
+      jest.useRealTimers();
+    });
+  });
 });
+

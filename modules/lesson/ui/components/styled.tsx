@@ -271,6 +271,31 @@ export const EditLessonButton = styled.button`
 `;
 
 /**
+ * Button to copy the public share link for a lesson.
+ * Uses a distinct teal accent to differentiate from the edit action.
+ */
+export const ShareLessonButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--foreground-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: hsl(180, 60%, 90%, 0.15);
+    color: hsl(180, 60%, 45%);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+/**
  * Empty state text when list has no result.
  */
 export const EmptyState = styled.p`

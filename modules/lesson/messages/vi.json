@@ -70,5 +70,7 @@
   "share_view_translation": "Dịch nghĩa",
   "share_view_pronunciation": "Cách phát âm",
   "share_view_example": "Ví dụ",
-  "share_view_readonly_hint": "Đây là chế độ xem chia sẻ chỉ đọc. Đăng nhập để chỉnh sửa."
+  "share_view_readonly_hint": "Đây là chế độ xem chia sẻ chỉ đọc. Đăng nhập để chỉnh sửa.",
+  "share_link_copied": "Đã sao chép liên kết chia sẻ!",
+  "share_link_label": "Sao chép liên kết chia sẻ"
 }

@@ -1,6 +1,8 @@
 import type { ILesson, ILessonStats, LessonPriority } from '@/modules/lesson/core/models';
 import type { ILessonFilterInput, LessonSortOption } from '@/modules/lesson/core/usecases';
-import { ExternalLink, Pencil } from 'lucide-react';
+import { Check, Link2, Pencil } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 import {
   EmptyState,
@@ -19,6 +21,7 @@ import {
   NotesContent,
   OpenLessonButton,
   PriorityBadge,
+  ShareLessonButton,
   StatCard,
   StatLabel,
   StatsGrid,
@@ -80,6 +83,27 @@ export function LessonOverview({
   onSelectLesson,
   onEditLesson,
 }: ILessonOverviewProps): React.JSX.Element {
+  /** Tracks which lesson ID (if any) just had its share link copied */
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  /**
+   * Copies the public share URL for `lesson` to the clipboard.
+   * Shows a brief copied indicator, then resets after 2 s.
+   *
+   * @param e - Click event (stopped to prevent card navigation)
+   * @param lesson - The lesson whose share link is being copied
+   */
+  const handleShareLesson = async (
+    e: React.MouseEvent,
+    lesson: ILesson,
+  ): Promise<void> => {
+    e.stopPropagation();
+    const shareUrl = `${window.location.origin}/s/${lesson.id}`;
+    await navigator.clipboard.writeText(shareUrl);
+    setCopiedId(lesson.id);
+    toast.success(t('share_link_copied'));
+    setTimeout(() => setCopiedId(null), 2000);
+  };
   return (
     <>
       <StatsGrid>
@@ -185,6 +209,17 @@ export function LessonOverview({
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <ShareLessonButton
+                    onClick={(e) => void handleShareLesson(e, lesson)}
+                    title={t('share_link_label')}
+                    aria-label={t('share_link_label')}
+                  >
+                    {copiedId === lesson.id ? (
+                      <Check style={{ width: '1rem', height: '1rem', color: 'hsl(150, 60%, 45%)' }} />
+                    ) : (
+                      <Link2 style={{ width: '1rem', height: '1rem' }} />
+                    )}
+                  </ShareLessonButton>
                   <EditLessonButton
                     onClick={(e) => {
                       e.stopPropagation();
