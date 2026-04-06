@@ -53,5 +53,22 @@
   "vocab_example_label": "Ví dụ",
   "vocab_translation_label": "Dịch",
   "load_vocab_description": "Nhập từ vựng vào ô bên trên và nhấn nút \"Load vocabulary\" để tải từ vựng từ AI.",
-  "no_vocabularies": "Chưa có từ vựng nào được thêm."
+  "no_vocabularies": "Chưa có từ vựng nào được thêm.",
+  "Back": "Quay lại",
+  "lesson_not_found": "Không tìm thấy buổi học",
+  "share_view_title": "Buổi Học Được Chia Sẻ",
+  "share_view_badge": "Chế Độ Xem Công Khai",
+  "share_view_participant": "Người tham gia",
+  "share_view_date": "Ngày",
+  "share_view_priority": "Mức ưu tiên",
+  "share_view_notes": "Ghi chú",
+  "share_view_vocabulary": "Từ vựng",
+  "share_view_no_vocab": "Không có từ vựng nào cho buổi học này.",
+  "share_view_ipa": "Phiên âm",
+  "share_view_pos": "Loại từ",
+  "share_view_meaning": "Nghĩa",
+  "share_view_translation": "Dịch nghĩa",
+  "share_view_pronunciation": "Cách phát âm",
+  "share_view_example": "Ví dụ",
+  "share_view_readonly_hint": "Đây là chế độ xem chia sẻ chỉ đọc. Đăng nhập để chỉnh sửa."
 }

@@ -67,6 +67,36 @@ export const getLessonsFromLocalStorage = async (): Promise<ILesson[]> => {
   return lessons;
 };
 
+/**
+ * Fetches a single lesson by ID without requiring authentication.
+ * Used exclusively for the public share view route `/s/[id]`.
+ *
+ * Delegates to the internal `/api/share/[id]` route which uses the
+ * Supabase service role key server-side to bypass RLS, so no auth
+ * token is needed from the browser.
+ *
+ * @param lessonId - UUID of the lesson to retrieve
+ * @returns The lesson with nested vocabularies, or null if not found
+ */
+export const getLessonByIdPublic = async (lessonId: string): Promise<ILesson | null> => {
+  const response = await fetch(`/api/share/${lessonId}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error((body as { error?: string }).error ?? 'Failed to fetch public lesson');
+  }
+
+  return response.json() as Promise<ILesson>;
+};
+
+
 export const getLessonById = async (lessonId: string): Promise<ILesson | null> => {
   const supabase = createClient();
   const { userId } = getUserLocal();
@@ -76,7 +106,7 @@ export const getLessonById = async (lessonId: string): Promise<ILesson | null> =
     .select('*, vocabularies(*)')
     .eq('id', lessonId)
     .eq('createdBy', userId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error(`Error fetching lesson with ID ${lessonId}:`, error);

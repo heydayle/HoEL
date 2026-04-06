@@ -95,7 +95,7 @@ _(Note: These module names match the folder names in `app/modules/`)_
 
 - **Route:** `/lessons` (List View)
   - **Features:** Display lessons belonging to the current `createdBy` user. Includes Search, Filter (`isPinned`, `isFavorite`), and Sort functionalities.
-- **Route:** `/lessons/new` & `/lessons/[id]` (Detail/Edit View)
+- **Route:** `/lessons/new`, `/lessons/[id]` (Detail/Edit View), `/s/[id]` (public share view, not allow edit and not authenticated)
   - **Features:**
     - **Lesson Metadata Form:** Update topic, date, participant, and notes.
     - **Vocabulary Manager:** Add/Edit/Delete records in the `vocabularies` table linked to this `lesson_id`.

@@ -53,5 +53,22 @@
   "vocab_example_label": "Example",
   "vocab_translation_label": "Translation",
   "load_vocab_description": "Enter vocabulary into the box above and click 'Load vocabulary' to load vocabulary from AI.",
-  "no_vocabularies": "No vocabularies added yet."
+  "no_vocabularies": "No vocabularies added yet.",
+  "Back": "Back",
+  "lesson_not_found": "Lesson not found",
+  "share_view_title": "Shared Lesson",
+  "share_view_badge": "Public View",
+  "share_view_participant": "Participant",
+  "share_view_date": "Date",
+  "share_view_priority": "Priority",
+  "share_view_notes": "Notes",
+  "share_view_vocabulary": "Vocabulary",
+  "share_view_no_vocab": "No vocabulary items for this lesson.",
+  "share_view_ipa": "IPA",
+  "share_view_pos": "Part of Speech",
+  "share_view_meaning": "Meaning",
+  "share_view_translation": "Translation",
+  "share_view_pronunciation": "Pronunciation",
+  "share_view_example": "Example",
+  "share_view_readonly_hint": "This is a read-only shared view. Sign in to edit."
 }

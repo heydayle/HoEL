@@ -23,7 +23,7 @@ The folder system must be strictly organized and isolated. Cross-importing again
 ## 2. UI/UX Design Standards
 
 - **Core UI Library:** Use **shadcn/ui** as the primary foundational UI component library.
-- **Centralized Shadcn Components:** All default `shadcn/ui` components must be stored and exported from `app/shared/components/Styled.tsx` (or a dedicated `Styled` directory within shared components) for global access.
+- **Centralized Shadcn Components:** All default `shadcn/ui` components must be stored and exported from `shared/components/Styled.tsx` (or a dedicated `Styled` directory within shared components) for global access.
 - **Styling Engine:** Strictly use **`styled-components`** for all custom styling and layouts across the application.
 - **Styling File Structure (The `styled.tsx` Rule):** For every `/ui` or `/components` directory (regardless of the path level or module), there MUST be a single, shared `styled.tsx` file. All custom `styled-components` and styled wrappers for that specific directory must be declared in this file. Do not create separate `.styled.tsx` files for individual components.
 - **Customizing Shadcn:** When a `shadcn` component requires custom styling, you must wrap the original component using the `styled(ShadcnComponentName)` syntax inside the shared `styled.tsx` file of that directory (e.g., `export const CustomButton = styled(Button)\`...\`;`).
