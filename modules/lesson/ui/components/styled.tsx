@@ -47,7 +47,6 @@ export const StatsGrid = styled.section`
  * Styled statistics card built from shared shadcn Card.
  */
 export const StatCard = styled(Card)`
-  border: 1px solid var(--surface-border);
   background: var(--surface);
   padding: ${LARGE_COMPONENT_PADDING_Y} ${LARGE_COMPONENT_PADDING_X};
 `;
@@ -75,9 +74,8 @@ export const StatValue = styled.p`
  * Filter panel container.
  */
 export const FilterPanel = styled(Card)`
-  border: 1px solid var(--surface-border);
   background: var(--surface);
-  padding: ${LARGE_COMPONENT_PADDING_Y} ${LARGE_COMPONENT_PADDING_X};
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;

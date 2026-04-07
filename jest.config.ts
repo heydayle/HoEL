@@ -2,28 +2,30 @@ import type { Config } from 'jest'
 import nextJest from 'next/jest.js'
 
 const createJestConfig = nextJest({
-  // Provide the path to your Next.js app to load next.config.ts and .env files in your test environment
   dir: './',
 })
 
-// Add any custom config to be passed to Jest
+/** Jest configuration aligned with project guidelines */
 const config: Config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
+  setupFilesAfterSetup: ['<rootDir>/jest.setup.ts'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
   },
+  testMatch: [
+    '**/__tests__/**/*.{test,spec}.{ts,tsx}',
+    '**/*.{test,spec}.{ts,tsx}',
+  ],
   collectCoverage: true,
   collectCoverageFrom: [
-    "app/**/*.{ts,tsx}",
-    "!app/**/*.d.ts",
-    "!app/**/layout.tsx",
-    "!app/**/page.tsx",
-    "!app/shared/components/Styled.tsx", // Centralized export, mostly re-exports
-    "!**/styled.tsx", // Exclude single styled file as styled-component wrappers 
-    "app/modules/home/ui/pages/index.tsx", // Overriding global exclusion to include the module page
-    "!app/**/index.ts", // Simple exports
+    "modules/**/*.{ts,tsx}",
+    "shared/**/*.{ts,tsx}",
+    "!**/*.d.ts",
+    "!**/styled.tsx",
+    "!**/index.ts",
+    "!**/node_modules/**",
   ],
   coverageThreshold: {
     global: {
@@ -35,5 +37,4 @@ const config: Config = {
   }
 }
 
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
 export default createJestConfig(config)

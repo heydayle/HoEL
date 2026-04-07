@@ -4,9 +4,10 @@ import { Check, Link2, Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+import Spinner from '@/shared/components/ui/spinner';
 import {
-  EmptyState,
   EditLessonButton,
+  EmptyState,
   FilterCheckboxLabel,
   FilterGrid,
   FilterInput,
@@ -16,22 +17,23 @@ import {
   LessonCard,
   LessonCardHeader,
   LessonMeta,
-  LessonsList,
   LessonTopic,
+  LessonsList,
   NotesContent,
-  OpenLessonButton,
   PriorityBadge,
   ShareLessonButton,
   StatCard,
   StatLabel,
-  StatsGrid,
   StatValue,
+  StatsGrid,
 } from '../styled';
 
 /**
  * Props for LessonOverview component.
  */
 interface ILessonOverviewProps {
+  /** Loading state */
+  loading: boolean;
   /** Summary statistics for filtered lessons */
   stats: ILessonStats;
   /** Lessons to render in list */
@@ -42,6 +44,8 @@ interface ILessonOverviewProps {
   t: (key: string) => string;
   /** Search updater */
   onSearchTermChange: (value: string) => void;
+  /** Vocabulary keyword filter updater */
+  onVocabSearchTermChange: (value: string) => void;
   /** Pinned filter updater */
   onPinnedFilterChange: (checked: boolean) => void;
   /** Favorite filter updater */
@@ -68,11 +72,13 @@ interface ILessonOverviewProps {
  * @returns Lessons list section with stats, filters, and cards
  */
 export function LessonOverview({
+  loading,
   stats,
   lessons,
   filters,
   t,
   onSearchTermChange,
+  onVocabSearchTermChange,
   onPinnedFilterChange,
   onFavoriteFilterChange,
   onPriorityFilterChange,
@@ -93,10 +99,7 @@ export function LessonOverview({
    * @param e - Click event (stopped to prevent card navigation)
    * @param lesson - The lesson whose share link is being copied
    */
-  const handleShareLesson = async (
-    e: React.MouseEvent,
-    lesson: ILesson,
-  ): Promise<void> => {
+  const handleShareLesson = async (e: React.MouseEvent, lesson: ILesson): Promise<void> => {
     e.stopPropagation();
     const shareUrl = `${window.location.origin}/s/${lesson.id}`;
     await navigator.clipboard.writeText(shareUrl);
@@ -124,6 +127,13 @@ export function LessonOverview({
           onChange={(event) => onSearchTermChange(event.target.value)}
           placeholder={t('search_placeholder')}
           aria-label={t('search_aria_label')}
+        />
+
+        <FilterInput
+          value={filters.vocabSearchTerm}
+          onChange={(event) => onVocabSearchTermChange(event.target.value)}
+          placeholder={t('vocab_search_placeholder')}
+          aria-label={t('vocab_search_placeholder')}
         />
 
         <FilterGrid>
@@ -192,7 +202,11 @@ export function LessonOverview({
       </FilterPanel>
 
       <LessonsList>
-        {lessons.length === 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center">
+            <Spinner className="mx-auto mt-4" />
+          </div>
+        ) : lessons.length === 0 ? (
           <EmptyState>{t('empty_state')}</EmptyState>
         ) : (
           lessons.map((lesson) => (
@@ -215,7 +229,9 @@ export function LessonOverview({
                     aria-label={t('share_link_label')}
                   >
                     {copiedId === lesson.id ? (
-                      <Check style={{ width: '1rem', height: '1rem', color: 'hsl(150, 60%, 45%)' }} />
+                      <Check
+                        style={{ width: '1rem', height: '1rem', color: 'hsl(150, 60%, 45%)' }}
+                      />
                     ) : (
                       <Link2 style={{ width: '1rem', height: '1rem' }} />
                     )}

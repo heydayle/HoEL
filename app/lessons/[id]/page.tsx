@@ -12,8 +12,8 @@ import { LocaleSwitcher, ThemeToggle } from '@/shared/components';
 
 import { BackButton, DetailPageContainer, DetailPageWrapper, LessonTitle } from './styled';
 import { useLessonDetail } from '@/modules/lesson/ui/hooks/useLessonDetail';
-import { Spinner } from '@/components/ui/spinner';
-import { Error as ErrorComponent } from '@/components/ui/error';
+import { Spinner } from '@/shared/components/ui/spinner';
+import { Error as ErrorComponent } from '@/shared/components/ui/error';
 
 interface IEditLessonPageProps {
   params: Promise<{

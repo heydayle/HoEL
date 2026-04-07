@@ -24,6 +24,7 @@ export default function LessonPage(): React.JSX.Element {
   const [selectedLesson, setSelectedLesson] = useState<ILesson | null>(null);
 
   const {
+    loading,
     resolvedTheme,
     locale,
     setLocale,
@@ -33,6 +34,7 @@ export default function LessonPage(): React.JSX.Element {
     displayedLessons,
     stats,
     updateSearchTerm,
+    updateVocabSearchTerm,
     updatePinnedFilter,
     updateFavoriteFilter,
     updatePriorityFilter,
@@ -66,11 +68,13 @@ export default function LessonPage(): React.JSX.Element {
         </LessonHeaderRow>
 
         <LessonOverview
+          loading={loading}
           stats={stats}
           lessons={displayedLessons}
           filters={filters}
           t={t}
           onSearchTermChange={updateSearchTerm}
+          onVocabSearchTermChange={updateVocabSearchTerm}
           onPinnedFilterChange={updatePinnedFilter}
           onFavoriteFilterChange={updateFavoriteFilter}
           onPriorityFilterChange={updatePriorityFilter}

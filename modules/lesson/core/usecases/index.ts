@@ -11,6 +11,8 @@ export type LessonSortOption = 'date_desc' | 'date_asc' | 'priority_desc' | 'top
 export interface ILessonFilterInput {
   /** Full-text term matched against topic, participant name, and notes */
   searchTerm: string;
+  /** Keyword matched against vocabulary fields (word, meaning, translation, example) */
+  vocabSearchTerm: string;
   /** Optional pinned filter */
   isPinned: boolean;
   /** Optional favorite filter */
@@ -93,6 +95,32 @@ export const matchesLessonSearch = (lesson: ILesson, searchTerm: string): boolea
 };
 
 /**
+ * Checks whether any vocabulary in a lesson matches a search term.
+ * Matches against word, meaning, translation, and example fields.
+ * @param lesson - Candidate lesson
+ * @param vocabSearchTerm - Vocabulary search text entered by user
+ * @returns True when the term is empty or at least one vocabulary item matches
+ */
+export const matchesVocabSearch = (lesson: ILesson, vocabSearchTerm: string): boolean => {
+  const normalizedTerm = vocabSearchTerm.trim().toLowerCase();
+
+  if (!normalizedTerm) {
+    return true;
+  }
+
+  if (!lesson.vocabularies || lesson.vocabularies.length === 0) {
+    return false;
+  }
+
+  return lesson.vocabularies.some((vocab) =>
+    [vocab.word, vocab.meaning, vocab.translation, vocab.example]
+      .join(' ')
+      .toLowerCase()
+      .includes(normalizedTerm),
+  );
+};
+
+/**
  * Checks whether a lesson satisfies toggle/priority/date filters.
  * @param lesson - Candidate lesson
  * @param filters - Filter conditions
@@ -161,7 +189,8 @@ export const sortLessons = (lessons: ILesson[], sortBy: LessonSortOption): ILess
 export const getFilteredLessons = (lessons: ILesson[], filters: ILessonFilterInput): ILesson[] => {
   const filteredLessons = lessons
     .filter((lesson) => matchesLessonSearch(lesson, filters.searchTerm))
-    .filter((lesson) => matchesLessonFilters(lesson, filters));
+    .filter((lesson) => matchesLessonFilters(lesson, filters))
+    .filter((lesson) => matchesVocabSearch(lesson, filters.vocabSearchTerm));
 
   return sortLessons(filteredLessons, filters.sortBy);
 };

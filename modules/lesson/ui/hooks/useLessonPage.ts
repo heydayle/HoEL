@@ -2,20 +2,19 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
+import type { ILesson, IVocabularyCreatePayload } from '@/modules/lesson/core/models';
 import type { ILessonFilterInput, LessonSortOption } from '@/modules/lesson/core/usecases';
 import {
   getFilteredLessons,
-  getLessonStats,
-  LESSON_FALLBACK_DATA,
+  getLessonStats
 } from '@/modules/lesson/core/usecases';
-import type { ILesson, IVocabularyCreatePayload } from '@/modules/lesson/core/models';
 import { getLessonsFromLocalStorage, saveLessonsToLocalStorage, updateLessonInSupabase } from '@/modules/lesson/infras';
 import { bulkAddVocabs, syncVocabularies } from '@/modules/lesson/infras/vocabularyApi';
 import enMessages from '@/modules/lesson/messages/en.json';
 import viMessages from '@/modules/lesson/messages/vi.json';
 import { useLocale, useTheme } from '@/shared/hooks';
 import type { Locale, TranslationMessages } from '@/shared/types';
-import { toast } from "sonner"
+import { toast } from "sonner";
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -31,6 +30,7 @@ const MESSAGES: Record<Locale, TranslationMessages> = {
  */
 const INITIAL_FILTERS: ILessonFilterInput = {
   searchTerm: '',
+  vocabSearchTerm: '',
   isPinned: false,
   isFavorite: false,
   priority: 'all',
@@ -44,12 +44,13 @@ const INITIAL_FILTERS: ILessonFilterInput = {
  * @returns View model for rendering lessons list UI
  */
 export const useLessonPage = () => {
-    const [isAdding, setIsAdding] = useState(false);
-    const [isUpdating, setIsUpdating] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const { mode, resolvedTheme, setThemeMode } = useTheme();
   const { locale, setLocale, t } = useLocale(MESSAGES);
   const [filters, setFilters] = useState<ILessonFilterInput>(INITIAL_FILTERS);
-  
+  const [loading, setLoading] = useState(false);
+
   /**
    * Reads lessons from local storage and falls back to sample data.
    */
@@ -63,10 +64,12 @@ export const useLessonPage = () => {
   useEffect(() => {
     let mounted = true;
     const fetchLessons = async () => {
+      setLoading(true);
       const lessons = await loadLessons();
       if (mounted) {
         setLessons(lessons);
       }
+      setLoading(false);
     };
     void fetchLessons();
     return () => {
@@ -210,6 +213,17 @@ export const useLessonPage = () => {
   };
 
   /**
+   * Updates the vocabulary keyword filter.
+   * @param vocabSearchTerm - New vocabulary search term
+   */
+  const updateVocabSearchTerm = (vocabSearchTerm: string): void => {
+    setFilters((currentFilters) => ({
+      ...currentFilters,
+      vocabSearchTerm,
+    }));
+  };
+
+  /**
    * Updates pinned filter toggle.
    * @param isPinned - New pinned state
    */
@@ -295,6 +309,7 @@ export const useLessonPage = () => {
   };
 
   return {
+    loading,
     resolvedTheme,
     locale,
     setLocale,
@@ -304,6 +319,7 @@ export const useLessonPage = () => {
     displayedLessons,
     stats,
     updateSearchTerm,
+    updateVocabSearchTerm,
     updatePinnedFilter,
     updateFavoriteFilter,
     updatePriorityFilter,

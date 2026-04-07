@@ -3,7 +3,7 @@
 import { BookOpen } from 'lucide-react';
 import { use, useEffect } from 'react';
 
-import { Spinner } from '@/components/ui/spinner';
+import { Spinner } from '@/shared/components/ui/spinner';
 import enMessages from '@/modules/lesson/messages/en.json';
 import viMessages from '@/modules/lesson/messages/vi.json';
 import { usePublicLessonDetail } from '@/modules/lesson/ui/hooks/usePublicLessonDetail';
