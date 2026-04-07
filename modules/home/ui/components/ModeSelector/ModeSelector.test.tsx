@@ -4,40 +4,6 @@ import type { IFeatureHighlight, IModeCard } from "@/modules/home/core/models";
 
 import { ModeSelector } from "./ModeSelector";
 
-/** Minimal mock to satisfy styled-components */
-jest.mock("../styled", () => ({
-  OnboardingWrapper: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
-    <section {...props}>{children}</section>
-  ),
-  AppBadge: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
-  PulseDot: () => <span />,
-  OnboardingTitle: ({ children }: React.PropsWithChildren) => (
-    <h1>{children}</h1>
-  ),
-  OnboardingSubtitle: ({ children }: React.PropsWithChildren) => (
-    <p>{children}</p>
-  ),
-  ModeCardsGrid: ({ children }: React.PropsWithChildren) => (
-    <div>{children}</div>
-  ),
-  ModeCard: ({
-    children,
-    onClick,
-    ...props
-  }: React.PropsWithChildren<{ onClick?: () => void; [key: string]: unknown }>) => (
-    <button onClick={onClick} {...props}>
-      {children}
-    </button>
-  ),
-  ModeIcon: ({ children }: React.PropsWithChildren) => <span>{children}</span>,
-  ModeLabel: ({ children }: React.PropsWithChildren) => (
-    <span>{children}</span>
-  ),
-  ModeDescription: ({ children }: React.PropsWithChildren) => (
-    <p>{children}</p>
-  ),
-  ModeCta: ({ children }: React.PropsWithChildren) => <span>{children}</span>,
-}));
 
 /** Test data */
 const MOCK_MODE_CARDS: IModeCard[] = [

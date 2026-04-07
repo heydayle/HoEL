@@ -11,13 +11,6 @@ import { LessonShareView } from '@/modules/lesson/ui/pages/LessonShareView';
 import { useLocale } from '@/shared/hooks';
 import type { Locale, TranslationMessages } from '@/shared/types';
 
-import {
-  ShareErrorContainer,
-  ShareErrorHeading,
-  ShareErrorSub,
-  ShareLoadingContainer,
-} from './styled';
-
 /** Locale messages map for the lesson module */
 const MESSAGES: Record<Locale, TranslationMessages> = {
   en: enMessages as TranslationMessages,
@@ -32,9 +25,6 @@ interface ISharePageClientProps {
 /**
  * Client component for the public share page.
  * Handles data fetching state, loading and error UI, and renders LessonShareView.
- *
- * Separated from the server page.tsx so that page.tsx can export
- * `generateMetadata` (a server-only feature) alongside this client component.
  *
  * @param props - Resolved lesson UUID
  * @returns The rendered share view, loading spinner, or error state
@@ -53,19 +43,19 @@ export default function SharePageClient({
 
   if (isLoading) {
     return (
-      <ShareLoadingContainer aria-busy="true" aria-label="Loading lesson">
+      <div className="flex items-center justify-center min-h-screen bg-background" aria-busy="true" aria-label="Loading lesson">
         <Spinner size={40} />
-      </ShareLoadingContainer>
+      </div>
     );
   }
 
   if (error || !lesson) {
     return (
-      <ShareErrorContainer role="alert">
-        <BookOpen aria-hidden="true" style={{ width: '3rem', height: '3rem', opacity: 0.4 }} />
-        <ShareErrorHeading>{t('lesson_not_found')}</ShareErrorHeading>
-        <ShareErrorSub>{error ?? 'The lesson you requested could not be found.'}</ShareErrorSub>
-      </ShareErrorContainer>
+      <div className="flex flex-col items-center justify-center gap-4 min-h-screen p-8 bg-background text-foreground text-center" role="alert">
+        <BookOpen aria-hidden="true" className="w-12 h-12 opacity-40" />
+        <h1 className="m-0 text-2xl font-bold text-foreground">{t('lesson_not_found')}</h1>
+        <p className="m-0 text-[0.95rem] text-foreground-secondary max-w-[28rem] leading-relaxed">{error ?? 'The lesson you requested could not be found.'}</p>
+      </div>
     );
   }
 

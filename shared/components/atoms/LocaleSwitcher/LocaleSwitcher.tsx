@@ -8,12 +8,6 @@ import {
   SelectValue,
 } from '@/shared/components/Styled';
 import type { Locale } from '@/shared/types';
-import styled from 'styled-components';
-
-const SelectContainer = styled.div`
-  display: flex;
-  align-items: center;
-`;
 
 /**
  * Props for the LocaleSwitcher atom component.
@@ -36,15 +30,15 @@ export default function LocaleSwitcher({
   onLocaleChange,
 }: ILocaleSwitcherProps): React.JSX.Element {
   return (
-    <SelectContainer id="locale-switcher">
+    <div className="flex items-center" id="locale-switcher">
       <Select
         value={locale}
-        onValueChange={(value) => {
-          onLocaleChange(value as Locale);
+        onValueChange={(value: string | null) => {
+          if (value) onLocaleChange(value as Locale);
         }}
       >
         <SelectTrigger className="flex border-surface-border bg-surface-hover text-foreground-secondary px-3!">
-          <SelectValue placeholder="Language" className="">
+          <SelectValue placeholder="Language">
             {locale === 'en' ? 'English' : 'Tiếng Việt'}
           </SelectValue>
         </SelectTrigger>
@@ -57,6 +51,6 @@ export default function LocaleSwitcher({
           </SelectItem>
         </SelectContent>
       </Select>
-    </SelectContainer>
+    </div>
   );
 }

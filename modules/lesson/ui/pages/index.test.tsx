@@ -12,13 +12,6 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-/**
- * Mock styled-components module to avoid test environment issues.
- */
-jest.mock('styled-components', () => {
-  const actual = jest.requireActual('styled-components');
-  return actual;
-});
 
 /**
  * Mock overview component to focus on page composition.
@@ -52,7 +45,9 @@ jest.mock('@/modules/lesson/ui/hooks', () => ({
       totalVocabularies: 1,
       totalQuestions: 1,
     },
+    loading: false,
     updateSearchTerm: jest.fn(),
+    updateVocabSearchTerm: jest.fn(),
     updatePinnedFilter: jest.fn(),
     updateFavoriteFilter: jest.fn(),
     updatePriorityFilter: jest.fn(),

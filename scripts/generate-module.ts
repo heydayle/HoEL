@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-// Lấy tên module từ command line argument
+// Get module name from command line argument
 const moduleName: string | undefined = process.argv[2];
 
 if (!moduleName) {
@@ -10,13 +10,13 @@ if (!moduleName) {
   process.exit(1);
 }
 
-// Chuyển đổi tên module sang PascalCase (vd: dashboard -> Dashboard)
+// Convert module name to PascalCase (e.g.: dashboard -> Dashboard)
 const capitalizeName: string = moduleName.charAt(0).toUpperCase() + moduleName.slice(1);
 
-// Định nghĩa đường dẫn gốc của module
+// Define the base path for the module
 const basePath: string = path.join(process.cwd(), '', 'modules', moduleName);
 
-// 1. Cấu trúc các thư mục cần tạo
+// 1. Directory structure to create
 const directories: string[] = [
   'core/models',
   'core/repositories',
@@ -37,7 +37,7 @@ directories.forEach((dir: string) => {
 });
 
 // ==========================================
-// 2. TẠO CÁC FILE BOILERPLATE CƠ BẢN
+// 2. CREATE CORE BOILERPLATE FILES
 // ==========================================
 
 // --- CORE / MODELS ---
@@ -59,23 +59,20 @@ const i18nViContent: string = `{\n  "title": "Module ${capitalizeName}",\n  "gre
 fs.writeFileSync(path.join(basePath, 'messages', 'vi.json'), i18nViContent);
 
 // ==========================================
-// 3. TẠO TẦNG UI / PAGES (Kèm Test & Styled)
+// 3. CREATE UI / PAGES (with Test)
 // ==========================================
 
-// File: ui/pages/index.tsx
-const pageContent: string = `import { ${capitalizeName}Container, PageTitle } from './styled';
-import { ExampleComponent } from '../components/ExampleComponent';
-
-/**
+// File: ui/pages/index.tsx — uses Tailwind CSS
+const pageContent: string = `/**
  * Main entry page component for the ${capitalizeName} module
- * @returns {JSX.Element} The rendered page component
+ * @returns The rendered page component
  */
-export default function ${capitalizeName}Page(): JSX.Element {
+export default function ${capitalizeName}Page(): React.JSX.Element {
   return (
-    <${capitalizeName}Container>
-      <PageTitle>${capitalizeName} Module</PageTitle>
+    <main className="flex flex-col items-center p-6 min-h-screen bg-background">
+      <h1 className="text-3xl font-semibold text-foreground">${capitalizeName} Module</h1>
       <ExampleComponent />
-    </${capitalizeName}Container>
+    </main>
   );
 }
 `;
@@ -98,54 +95,23 @@ describe('${capitalizeName}Page Component', () => {
 `;
 fs.writeFileSync(path.join(basePath, 'ui/pages', 'index.test.tsx'), pageTestContent);
 
-// File: ui/pages/styled.tsx (Single styled file rule)
-const pageStyledContent: string = `import styled from 'styled-components';
-
-/**
- * Main container for the ${capitalizeName} page
- */
-export const ${capitalizeName}Container = styled.div\`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px;
-  min-height: 100vh;
-  background-color: var(--background);
-\`;
-
-/**
- * Styled title using deep color tones
- */
-export const PageTitle = styled.h1\`
-  font-size: 2rem;
-  font-weight: 600;
-  color: var(--deep-gray-900);
-  
-  /* Dark mode support */
-  .dark & {
-    color: var(--neutral-100);
-  }
-\`;
-`;
-fs.writeFileSync(path.join(basePath, 'ui/pages', 'styled.tsx'), pageStyledContent);
-
 // ==========================================
-// 4. TẠO TẦNG UI / COMPONENTS (Kèm Test & Styled + Shadcn wrapper)
+// 4. CREATE UI / COMPONENTS (with Test)
 // ==========================================
 
-// File: ui/components/ExampleComponent.tsx
-const componentContent: string = `import { ActionCard, CustomButton } from './styled';
+// File: ui/components/ExampleComponent.tsx — uses Tailwind CSS
+const componentContent: string = `import { Button, Card } from '@/shared/components/Styled';
 
 /**
- * Example component demonstrating the use of styled shadcn components
- * @returns {JSX.Element} The rendered component
+ * Example component demonstrating the use of shadcn components with Tailwind
+ * @returns The rendered component
  */
-export const ExampleComponent = (): JSX.Element => {
+export const ExampleComponent = (): React.JSX.Element => {
   return (
-    <ActionCard>
+    <Card className="mt-4 p-5 rounded-xl bg-surface border border-surface-border">
       <p>This is a reusable component for ${moduleName}.</p>
-      <CustomButton variant="default">Click Me</CustomButton>
-    </ActionCard>
+      <Button className="mt-3 w-full font-bold" variant="default">Click Me</Button>
+    </Card>
   );
 };
 `;
@@ -168,33 +134,6 @@ describe('ExampleComponent', () => {
 `;
 fs.writeFileSync(path.join(basePath, 'ui/components', 'ExampleComponent.test.tsx'), componentTestContent);
 
-// File: ui/components/styled.tsx (Single styled file rule + Shadcn integration)
-const componentStyledContent: string = `import styled from 'styled-components';
-// Giả định bạn đã cấu hình export Card, Button từ app/shared/components/Styled
-import { Card, Button } from '@/app/shared/components/Styled';
-
-/**
- * Custom styled wrapper for Shadcn Card
- */
-export const ActionCard = styled(Card)\`
-  margin-top: 16px;
-  padding: 20px;
-  border-radius: 12px;
-  background-color: var(--deep-gray-800);
-  border: 1px solid var(--deep-gray-700);
-\`;
-
-/**
- * Custom styled wrapper for Shadcn Button
- */
-export const CustomButton = styled(Button)\`
-  margin-top: 12px;
-  width: 100%;
-  font-weight: bold;
-\`;
-`;
-fs.writeFileSync(path.join(basePath, 'ui/components', 'styled.tsx'), componentStyledContent);
-
 console.log(`\n🎉 Enterprise Module "${moduleName}" generated successfully!`);
-console.log(`📁 Location: app/modules/${moduleName}`);
+console.log(`📁 Location: modules/${moduleName}`);
 console.log(`🧪 Run tests via: npm run test`);

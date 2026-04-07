@@ -6,13 +6,11 @@ import { useState } from 'react';
 import type { ILesson } from '@/modules/lesson/core/models';
 import { LessonDetailModal } from '@/modules/lesson/ui/components/LessonDetailModal';
 import { LessonOverview } from '@/modules/lesson/ui/components/LessonOverview';
-import { ControlsGroup, LessonHeaderRow } from '@/modules/lesson/ui/components/styled';
 import { useLessonPage } from '@/modules/lesson/ui/hooks';
 import { LocaleSwitcher, ThemeToggle } from '@/shared/components';
 import { Button } from '@/shared/components/Styled';
 
 import LogoutButton from '@/shared/components/atoms/Button/LogoutButton';
-import { LessonContainer, LessonPageWrapper, LessonSubtitle, LessonTitle } from './styled';
 
 /**
  * Main page component for lessons list routes.
@@ -49,23 +47,23 @@ export default function LessonPage(): React.JSX.Element {
   };
 
   return (
-    <LessonPageWrapper>
-      <LessonContainer>
-        <LessonHeaderRow>
+    <main className="min-h-screen py-8 px-4 bg-background text-foreground md:py-10 md:px-8">
+      <div className="w-full max-w-[60rem] !mx-auto flex flex-col gap-4">
+        <header className="flex items-center justify-between gap-4 flex-wrap sticky top-8 bg-background/94 backdrop-blur-[10px]">
           <div>
-            <LessonTitle>{t('page_title')}</LessonTitle>
-            <LessonSubtitle>{t('page_subtitle')}</LessonSubtitle>
+            <h1 className="m-0 text-3xl leading-tight">{t('page_title')}</h1>
+            <p className="m-0 text-foreground-secondary leading-relaxed">{t('page_subtitle')}</p>
           </div>
 
-          <ControlsGroup>
+          <div className="flex items-center gap-3">
             <Button type="button" onClick={() => router.push('/lessons/new')}>
               {t('create_lesson_title')}
             </Button>
             <LocaleSwitcher locale={locale} onLocaleChange={setLocale} />
             <ThemeToggle resolvedTheme={resolvedTheme} onToggle={toggleTheme} />
             <LogoutButton />
-          </ControlsGroup>
-        </LessonHeaderRow>
+          </div>
+        </header>
 
         <LessonOverview
           loading={loading}
@@ -87,7 +85,7 @@ export default function LessonPage(): React.JSX.Element {
         />
 
         <LessonDetailModal lesson={selectedLesson} t={t} onClose={() => setSelectedLesson(null)} />
-      </LessonContainer>
-    </LessonPageWrapper>
+      </div>
+    </main>
   );
 }

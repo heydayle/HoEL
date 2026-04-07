@@ -34,7 +34,7 @@ export {
 export { Input } from "@/shared/components/ui/input";
 export { Textarea } from "@/shared/components/ui/textarea";
 export { Separator } from "@/shared/components/ui/separator";
-export { Toaster } from "@/shared/components/ui/sonner"
+export { Toaster } from "@/shared/components/ui/sonner";
 export {
   Select,
   SelectGroup,

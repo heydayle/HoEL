@@ -67,6 +67,7 @@ const MOCK_LESSONS: ILesson[] = [
  */
 const MOCK_FILTERS: ILessonFilterInput = {
   searchTerm: '',
+  vocabSearchTerm: '',
   isPinned: false,
   isFavorite: false,
   priority: 'all',
@@ -84,11 +85,13 @@ const t = (key: string): string => key;
 
 /** Default props shared across all tests */
 const defaultProps = {
+  loading: false,
   stats: MOCK_STATS,
   lessons: MOCK_LESSONS,
   filters: MOCK_FILTERS,
   t,
   onSearchTermChange: jest.fn(),
+  onVocabSearchTermChange: jest.fn(),
   onPinnedFilterChange: jest.fn(),
   onFavoriteFilterChange: jest.fn(),
   onPriorityFilterChange: jest.fn(),

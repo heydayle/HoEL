@@ -2,13 +2,6 @@
 
 import type { Locale } from "@/shared/types";
 
-import {
-  BrandIconPill,
-  BrandName,
-  BrandWrapper,
-  HeaderBar,
-} from "../styled";
-
 /**
  * Props for the HomeHeader component.
  */
@@ -26,7 +19,6 @@ interface IHomeHeaderProps {
 /**
  * Header bar for the Home onboarding page.
  * Displays the LingoNote brand and controls for theme and locale.
- * Features a frosted-glass background effect.
  * @param props - HomeHeader props including theme and locale controls
  * @returns The rendered HomeHeader element
  */
@@ -37,12 +29,19 @@ export function HomeHeader({
   onLocaleChange,
 }: IHomeHeaderProps): React.JSX.Element {
   return (
-    <HeaderBar id="home-header">
+    <header
+      id="home-header"
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 bg-background/90 backdrop-blur-xl border-b border-surface-border"
+    >
       {/* Brand */}
-      <BrandWrapper>
-        <BrandIconPill aria-hidden="true">📝</BrandIconPill>
-        <BrandName>LingoNote</BrandName>
-      </BrandWrapper>
+      <div className="flex items-center gap-3">
+        <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-accent-primary text-lg" aria-hidden="true">
+          📝
+        </span>
+        <span className="text-xl font-bold tracking-tight bg-[var(--gradient-hero)] bg-clip-text text-transparent">
+          LingoNote
+        </span>
+      </div>
 
       {/* Controls */}
       <div className="flex items-center gap-3">
@@ -50,18 +49,15 @@ export function HomeHeader({
         <div className="flex items-center gap-1 rounded-[var(--radius-md)] bg-surface-hover p-1">
           <button
             id="header-locale-en"
-            onClick={() => {
-              onLocaleChange("en");
-            }}
+            onClick={() => onLocaleChange("en")}
             className={`
               flex cursor-pointer items-center gap-1.5
               rounded-[var(--radius-sm)] px-3 py-1.5
               text-sm font-medium
               transition-all duration-200
-              ${
-                locale === "en"
-                  ? "bg-accent-primary text-white shadow-sm"
-                  : "text-foreground-secondary hover:text-foreground"
+              ${locale === "en"
+                ? "bg-accent-primary text-white shadow-sm"
+                : "text-foreground-secondary hover:text-foreground"
               }
             `}
             aria-label="Switch to English"
@@ -71,18 +67,15 @@ export function HomeHeader({
           </button>
           <button
             id="header-locale-vi"
-            onClick={() => {
-              onLocaleChange("vi");
-            }}
+            onClick={() => onLocaleChange("vi")}
             className={`
               flex cursor-pointer items-center gap-1.5
               rounded-[var(--radius-sm)] px-3 py-1.5
               text-sm font-medium
               transition-all duration-200
-              ${
-                locale === "vi"
-                  ? "bg-accent-primary text-white shadow-sm"
-                  : "text-foreground-secondary hover:text-foreground"
+              ${locale === "vi"
+                ? "bg-accent-primary text-white shadow-sm"
+                : "text-foreground-secondary hover:text-foreground"
               }
             `}
             aria-label="Chuyển sang Tiếng Việt"
@@ -96,55 +89,24 @@ export function HomeHeader({
         <button
           id="header-theme-toggle"
           onClick={onThemeToggle}
-          className="
-            flex h-10 w-10 cursor-pointer items-center justify-center
-            rounded-[var(--radius-md)] bg-surface-hover
-            text-foreground-secondary
-            transition-all duration-200
-            hover:bg-accent-primary-light hover:text-accent-primary
-            active:scale-[0.92]
-          "
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-[var(--radius-md)] bg-surface-hover text-foreground-secondary transition-all duration-200 hover:bg-accent-primary-light hover:text-accent-primary active:scale-[0.92]"
           aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
         >
           {resolvedTheme === "dark" ? (
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="4" />
-              <path d="M12 2v2" />
-              <path d="M12 20v2" />
-              <path d="m4.93 4.93 1.41 1.41" />
-              <path d="m17.66 17.66 1.41 1.41" />
-              <path d="M2 12h2" />
-              <path d="M20 12h2" />
-              <path d="m6.34 17.66-1.41 1.41" />
-              <path d="m19.07 4.93-1.41 1.41" />
+              <path d="M12 2v2" /><path d="M12 20v2" />
+              <path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" />
+              <path d="M2 12h2" /><path d="M20 12h2" />
+              <path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
             </svg>
           ) : (
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
             </svg>
           )}
         </button>
       </div>
-    </HeaderBar>
+    </header>
   );
 }

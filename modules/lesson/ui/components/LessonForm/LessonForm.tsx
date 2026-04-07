@@ -16,24 +16,6 @@ import {
 } from '@/shared/components/Styled';
 
 import { useGenerateVocab } from '../../hooks/useGenerateVocab';
-import {
-  Actions,
-  AIInputForm,
-  FooterActions,
-  FormCard,
-  FormGroup,
-  FormLabel,
-  FormRow,
-  FormSection,
-  NewVocabRow,
-  VocabHeader,
-  VocabIndex,
-  VocabItem,
-  VocabItemHeader,
-  VocabRow4,
-  VocabSection,
-  VocabTitle,
-} from './styled';
 import Spinner from '@/shared/components/ui/spinner';
 
 interface ILessonFormProps {
@@ -79,8 +61,7 @@ export function LessonForm({
   }, [initialLesson]);
 
   /**
-   * Auto-scroll to the bottom of the vocab list whenever a new entry is added
-   * (i.e. after a successful generate or manual add).
+   * Auto-scroll to the bottom of the vocab list whenever a new entry is added.
    */
   useEffect(() => {
     if (vocabularies.length > prevVocabLengthRef.current) {
@@ -97,17 +78,14 @@ export function LessonForm({
 
   /**
    * Triggers vocab generation.
-   * Called on button click or Enter keypress in the new-vocab input.
    */
   const handleLoadVocab = () => {
     if (newVocab.trim() === '') return;
-
     generate(newVocab);
   };
 
   /**
-   * Intercepts Enter key on the new-vocab input to trigger vocab loading
-   * without submitting the outer form.
+   * Intercepts Enter key on the new-vocab input to trigger vocab loading.
    */
   const handleNewVocabKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -175,42 +153,44 @@ export function LessonForm({
 
     onSubmitLesson(lesson);
   };
+
   if (isLoading) {
     return (
-      <FormCard>
+      <div className="flex flex-col min-h-0 border border-border rounded-xl bg-background">
         <Spinner />
-      </FormCard>
+      </div>
     );
   }
-  return (
-    <FormCard>
-      <FormSection onSubmit={handleSubmit}>
-        {/* ── Lesson info ── */}
-        <FormGroup>
-          <FormLabel htmlFor="topic">{t('form_topic')}</FormLabel>
-          <Input id="topic" name="topic" required defaultValue={initialLesson?.topic ?? ''} />
-        </FormGroup>
 
-        <FormRow>
-          <FormGroup>
-            <FormLabel htmlFor="participantName">{t('form_participant')}</FormLabel>
+  return (
+    <div className="flex flex-col min-h-0 border border-border rounded-xl bg-background">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-6 pb-24">
+        {/* ── Lesson info ── */}
+        <div className="flex flex-col gap-2">
+          <label htmlFor="topic" className="text-sm font-medium">{t('form_topic')}</label>
+          <Input id="topic" name="topic" required defaultValue={initialLesson?.topic ?? ''} />
+        </div>
+
+        <div className="flex flex-col gap-4 sm:flex-row sm:[&>*]:flex-1">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="participantName" className="text-sm font-medium">{t('form_participant')}</label>
             <Input
               id="participantName"
               name="participantName"
               required
               defaultValue={initialLesson?.participantName ?? ''}
             />
-          </FormGroup>
+          </div>
 
-          <FormGroup>
-            <FormLabel htmlFor="date">{t('form_date')}</FormLabel>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="date" className="text-sm font-medium">{t('form_date')}</label>
             <Input id="date" name="date" type="date" required defaultValue={defaultDate} />
-          </FormGroup>
-        </FormRow>
+          </div>
+        </div>
 
-        <FormRow>
-          <FormGroup>
-            <FormLabel htmlFor="priority">{t('form_priority')}</FormLabel>
+        <div className="flex flex-col gap-4 sm:flex-row sm:[&>*]:flex-1">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="priority" className="text-sm font-medium">{t('form_priority')}</label>
             <Select name="priority" defaultValue={initialLesson?.priority ?? 'Medium'}>
               <SelectTrigger id="priority">
                 <SelectValue placeholder={t('priority_medium')} />
@@ -221,28 +201,30 @@ export function LessonForm({
                 <SelectItem value="High">{t('priority_high')}</SelectItem>
               </SelectContent>
             </Select>
-          </FormGroup>
+          </div>
 
-          <FormGroup>
-            <FormLabel htmlFor="notes">{t('form_notes')}</FormLabel>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="notes" className="text-sm font-medium">{t('form_notes')}</label>
             <Input id="notes" name="notes" defaultValue={initialLesson?.notes ?? ''} />
-          </FormGroup>
-        </FormRow>
+          </div>
+        </div>
 
         {/* ── Vocabulary ── */}
-        <VocabSection>
-          <VocabHeader>
-            <VocabTitle>{t('vocab_section_title')}</VocabTitle>
-          </VocabHeader>
+        <div className="mt-2 pt-4 border-t border-border flex flex-col gap-4">
+          <div className="flex justify-between items-center">
+            <h3 className="m-0 text-base">{t('vocab_section_title')}</h3>
+          </div>
           
           {vocabularies.length === 0 && (
-            <p className='block w-fit !ml-4 p-1 italic bg-primary/40'>{t('no_vocabularies')}</p>
+            <p className="block w-fit ml-4! p-1 italic bg-primary/40">{t('no_vocabularies')}</p>
           )}
           {vocabularies.map((vocab, index) => (
-            <VocabItem key={vocab.id}>
+            <div key={vocab.id} className="flex flex-col gap-3 border border-border rounded-lg bg-muted/50 p-4">
               {/* Header: index + remove */}
-              <VocabItemHeader>
-                <VocabIndex>#{index + 1}</VocabIndex>
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium bg-primary py-1 px-2 pr-8 text-primary-foreground">
+                  #{index + 1}
+                </span>
                 <Button
                   type="button"
                   variant="destructive"
@@ -250,97 +232,63 @@ export function LessonForm({
                   onClick={() => handleRemoveVocab(vocab.id)}
                   aria-label={t('remove_vocab_btn')}
                 >
-                  <Trash2
-                    style={{ width: '1rem', height: '1rem', color: 'hsl(var(--destructive))' }}
-                  />
+                  <Trash2 className="w-4 h-4 text-destructive" />
                 </Button>
-              </VocabItemHeader>
+              </div>
 
               {/* Row 1: Word · IPA · PoS · Pronunciation — 4 cols on laptop */}
-              <VocabRow4>
-                <FormGroup>
-                  <FormLabel>{t('vocab_word')}*</FormLabel>
-                  <Input
-                    name={`vocab_${index}_word`}
-                    required
-                    defaultValue={vocabularies[index]?.word ?? ''}
-                    placeholder="ex: happy"
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <FormLabel>{t('vocab_ipa')}</FormLabel>
-                  <Input
-                    name={`vocab_${index}_ipa`}
-                    defaultValue={vocabularies[index]?.ipa ?? ''}
-                    placeholder="ex: /ˈhæpi/"
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <FormLabel>{t('vocab_pos')}</FormLabel>
-                  <Input
-                    name={`vocab_${index}_partOfSpeech`}
-                    defaultValue={vocabularies[index]?.partOfSpeech ?? ''}
-                    placeholder="ex: adjective"
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <FormLabel>{t('vocab_pronunciation')}</FormLabel>
-                  <Input
-                    name={`vocab_${index}_pronunciation`}
-                    defaultValue={vocabularies[index]?.pronunciation ?? ''}
-                    placeholder="ex: /ˈhæpi/"
-                  />
-                </FormGroup>
-              </VocabRow4>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium">{t('vocab_word')}*</label>
+                  <Input name={`vocab_${index}_word`} required defaultValue={vocabularies[index]?.word ?? ''} placeholder="ex: happy" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium">{t('vocab_ipa')}</label>
+                  <Input name={`vocab_${index}_ipa`} defaultValue={vocabularies[index]?.ipa ?? ''} placeholder="ex: /ˈhæpi/" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium">{t('vocab_pos')}</label>
+                  <Input name={`vocab_${index}_partOfSpeech`} defaultValue={vocabularies[index]?.partOfSpeech ?? ''} placeholder="ex: adjective" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium">{t('vocab_pronunciation')}</label>
+                  <Input name={`vocab_${index}_pronunciation`} defaultValue={vocabularies[index]?.pronunciation ?? ''} placeholder="ex: /ˈhæpi/" />
+                </div>
+              </div>
 
-              {/* Row 3: Translation */}
-              <FormGroup>
-                <FormLabel>{t('vocab_translation')}*</FormLabel>
-                <Input
-                  name={`vocab_${index}_translation`}
-                  required
-                  defaultValue={vocabularies[index]?.translation ?? ''}
-                  placeholder="ex: vui vẻ"
-                />
-              </FormGroup>
+              {/* Translation */}
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium">{t('vocab_translation')}*</label>
+                <Input name={`vocab_${index}_translation`} required defaultValue={vocabularies[index]?.translation ?? ''} placeholder="ex: vui vẻ" />
+              </div>
 
               {/* Meaning — textarea */}
-              <FormGroup>
-                <FormLabel>{t('vocab_meaning')}*</FormLabel>
-                <Textarea
-                  name={`vocab_${index}_meaning`}
-                  required
-                  defaultValue={vocabularies[index]?.meaning ?? ''}
-                  rows={2}
-                  placeholder="ex: Feeling or showing pleasure or contentment."
-                />
-              </FormGroup>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium">{t('vocab_meaning')}*</label>
+                <Textarea name={`vocab_${index}_meaning`} required defaultValue={vocabularies[index]?.meaning ?? ''} rows={2} placeholder="ex: Feeling or showing pleasure or contentment." />
+              </div>
+
               {/* Example — textarea */}
-              <FormGroup>
-                <FormLabel>{t('vocab_example')}</FormLabel>
-                <Textarea
-                  name={`vocab_${index}_example`}
-                  defaultValue={vocabularies[index]?.example ?? ''}
-                  rows={2}
-                  placeholder="ex: She was happy to see her friends."
-                />
-              </FormGroup>
-            </VocabItem>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium">{t('vocab_example')}</label>
+                <Textarea name={`vocab_${index}_example`} defaultValue={vocabularies[index]?.example ?? ''} rows={2} placeholder="ex: She was happy to see her friends." />
+              </div>
+            </div>
           ))}
 
-          {/* Scroll anchor — placed after the last vocab item */}
+          {/* Scroll anchor */}
           <div ref={vocabBottomRef} />
-        </VocabSection>
+        </div>
 
         {/* ── Sticky footer ── */}
-        <FooterActions>
-          <AIInputForm>
+        <div className="fixed bottom-0 left-0 right-0 z-50 gap-2 py-3.5 px-8 flex justify-end items-start border-t border-border/50 bg-background/94 backdrop-blur-[10px]">
+          <div className="w-full max-w-[40rem] mx-auto p-2 pb-3 bg-background rounded-lg shadow-[0_1px_4px_rgba(0,0,0,0.04)] max-sm:max-w-full max-sm:px-1">
             {/* Load vocabulary from AI */}
-            <div className='md:flex gap-2 items-start w-full'>
-              <NewVocabRow>
+            <div className="md:flex gap-2 items-start w-full">
+              <div>
                 <Input
                   id="new-vocab"
-                  className='w-full'
+                  className="w-full"
                   name="new-vocab"
                   type="text"
                   value={newVocab}
@@ -349,42 +297,30 @@ export function LessonForm({
                   placeholder="ex: happy"
                   disabled={isGenerating}
                 />
-                <p
-                  style={{
-                    marginTop: '0',
-                    paddingLeft: '0.25rem',
-                    fontSize: '0.875rem',
-                    fontStyle: 'italic',
-                    color: 'hsl(var(--muted-foreground))',
-                  }}
-                >
+                <p className="mt-0 pl-1 text-sm italic text-muted-foreground">
                   {t('load_vocab_description')}
                 </p>
-              </NewVocabRow>
-              <div className='flex gap-2 items-center '>
-                <Button
-                  type="button"
-                  onClick={handleLoadVocab}
-                  disabled={isGenerating}
-                >
+              </div>
+              <div className="flex gap-2 items-center">
+                <Button type="button" onClick={handleLoadVocab} disabled={isGenerating}>
                   {isGenerating && <LoaderCircleIcon className="animate-spin" />}
                   {isGenerating ? 'Loading...' : t('load_vocab_btn')}
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={handleAddVocab}>
-                  <Plus style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />
+                  <Plus className="w-4 h-4 mr-2" />
                   {t('add_vocab_btn')}
                 </Button>
               </div>
             </div>
-          </AIInputForm>
-          <Actions>
+          </div>
+          <div className="flex gap-3 justify-end items-center mt-4 flex-wrap max-sm:gap-2 max-sm:mt-2">
             <Button type="button" variant="outline" onClick={onCancel}>
               {t('cancel')}
             </Button>
             <Button type="submit">{submitLabel}</Button>
-          </Actions>
-        </FooterActions>
-      </FormSection>
-    </FormCard>
+          </div>
+        </div>
+      </form>
+    </div>
   );
 }

@@ -1,35 +1,23 @@
 'use client';
+import { cn } from '@/lib/utils';
 import type { ILesson, IVocabulary } from '@/modules/lesson/core/models';
 import { BookOpen, Calendar, Eye, Flag, User, Volume2 } from 'lucide-react';
 import React from 'react';
-import {
-  EmptyVocabHint,
-  InfoGrid,
-  InfoItem,
-  InfoLabel,
-  InfoValue,
-  NotesBlock,
-  PageBadge,
-  PageBanner,
-  PageContainer,
-  PageHeader,
-  PageSubtitle,
-  PageTitle,
-  PageWrapper,
-  PriorityChip,
-  ReadonlyHint,
-  SectionDivider,
-  SectionHeading,
-  VocabCard,
-  VocabCardBody,
-  VocabCardField,
-  VocabCardFieldLabel,
-  VocabCardFieldValue,
-  VocabCardWord,
-  VocabGrid,
-  VocabIpa,
-  VocabMeta,
-} from './styled';
+
+/** Priority colour maps */
+const PRIORITY_COLORS: Record<string, string> = {
+  low: 'hsl(150, 60%, 40%)',
+  medium: 'hsl(38, 92%, 50%)',
+  high: 'hsl(0, 72%, 51%)',
+  pos: 'hsl(var(--primary))',
+};
+const PRIORITY_BG_COLORS: Record<string, string> = {
+  low: 'rgba(34,197,110,0.12)',
+  medium: 'rgba(234,179,8,0.12)',
+  high: 'rgba(239,68,68,0.12)',
+  pos: 'hsl(var(--primary) / 0.12)',
+};
+
 /** ──────────────────────────────────────────────────────────────────────────
  * Sub-component: VocabularyCard
  * ─────────────────────────────────────────────────────────────────────────── */
@@ -39,53 +27,60 @@ interface IVocabularyCardProps {
   /** Translation function */
   t: (key: string) => string;
 }
+
 /**
  * Renders a single vocabulary entry in the public share view.
- * Displays all available fields in a clean, read-only card layout.
- *
  * @param props - Component props
  * @returns Vocabulary card element
  */
 function VocabularyCard({ vocab, t }: IVocabularyCardProps): React.JSX.Element {
   return (
-    <VocabCard>
-      <VocabMeta>
-        <VocabCardWord>{vocab.word}</VocabCardWord>
-        {vocab.ipa && <VocabIpa>{vocab.ipa}</VocabIpa>}
-        {vocab.partOfSpeech && <PriorityChip $variant="pos">{vocab.partOfSpeech}</PriorityChip>}
-      </VocabMeta>
-      <VocabCardBody>
+    <article className="flex flex-col gap-3 p-5 rounded-[0.875rem] bg-[var(--surface)] border border-[var(--surface-border)] transition-all duration-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] hover:border-primary/40 hover:-translate-y-0.5">
+      <div className="flex items-center flex-wrap gap-2">
+        <span className="text-xl font-bold text-foreground bg-[var(--highlight)] px-0.5 rounded-lg">{vocab.word}</span>
+        {vocab.ipa && <span className="text-[0.85rem] text-foreground-secondary italic">{vocab.ipa}</span>}
+        {vocab.partOfSpeech && (
+          <span
+            className="inline-flex items-center py-[0.15rem] px-[0.55rem] rounded-full text-[0.72rem] font-semibold tracking-[0.04em]"
+            style={{ color: PRIORITY_COLORS['pos'], background: PRIORITY_BG_COLORS['pos'], border: `1px solid ${PRIORITY_COLORS['pos']}33` }}
+          >
+            {vocab.partOfSpeech}
+          </span>
+        )}
+      </div>
+      <div className="flex flex-col gap-2.5">
         {vocab.meaning && (
-          <VocabCardField>
-            <VocabCardFieldLabel>{t('share_view_meaning')}</VocabCardFieldLabel>
-            <VocabCardFieldValue>{vocab.meaning}</VocabCardFieldValue>
-          </VocabCardField>
+          <div className="flex flex-col gap-0.5">
+            <span className="flex items-center gap-[0.3rem] text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground-secondary">{t('share_view_meaning')}</span>
+            <span className="text-[0.9rem] text-foreground leading-relaxed">{vocab.meaning}</span>
+          </div>
         )}
         {vocab.translation && (
-          <VocabCardField>
-            <VocabCardFieldLabel>{t('share_view_translation')}</VocabCardFieldLabel>
-            <VocabCardFieldValue>{vocab.translation}</VocabCardFieldValue>
-          </VocabCardField>
+          <div className="flex flex-col gap-0.5">
+            <span className="flex items-center gap-[0.3rem] text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground-secondary">{t('share_view_translation')}</span>
+            <span className="text-[0.9rem] text-foreground leading-relaxed">{vocab.translation}</span>
+          </div>
         )}
         {vocab.pronunciation && (
-          <VocabCardField>
-            <VocabCardFieldLabel>
-              <Volume2 aria-hidden="true" style={{ width: '0.85rem', height: '0.85rem' }} />
+          <div className="flex flex-col gap-0.5">
+            <span className="flex items-center gap-[0.3rem] text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground-secondary">
+              <Volume2 aria-hidden="true" className="w-3.5 h-3.5" />
               {t('share_view_pronunciation')}
-            </VocabCardFieldLabel>
-            <VocabCardFieldValue>{vocab.pronunciation}</VocabCardFieldValue>
-          </VocabCardField>
+            </span>
+            <span className="text-[0.9rem] text-foreground leading-relaxed">{vocab.pronunciation}</span>
+          </div>
         )}
         {vocab.example && (
-          <VocabCardField>
-            <VocabCardFieldLabel>{t('share_view_example')}</VocabCardFieldLabel>
-            <VocabCardFieldValue $italic>{vocab.example}</VocabCardFieldValue>
-          </VocabCardField>
+          <div className="flex flex-col gap-0.5">
+            <span className="flex items-center gap-[0.3rem] text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground-secondary">{t('share_view_example')}</span>
+            <span className="text-[0.9rem] text-foreground-secondary italic leading-relaxed">{vocab.example}</span>
+          </div>
         )}
-      </VocabCardBody>
-    </VocabCard>
+      </div>
+    </article>
   );
 }
+
 /** ──────────────────────────────────────────────────────────────────────────
  * Main component: LessonShareView
  * ─────────────────────────────────────────────────────────────────────────── */
@@ -95,10 +90,10 @@ interface ILessonShareViewProps {
   /** Translation function bound to the lesson module messages */
   t: (key: string) => string;
 }
+
 /**
  * Public, read-only view of a single lesson.
  * Rendered at `/s/[id]` — no authentication required, no editing allowed.
- *
  * @param props - Component props
  * @returns Full page read-only lesson detail UI
  */
@@ -108,78 +103,94 @@ export function LessonShareView({ lesson, t }: ILessonShareViewProps): React.JSX
     month: 'long',
     day: 'numeric',
   });
+
+  const priorityVariant = lesson.priority.toLowerCase() as 'low' | 'medium' | 'high';
+
   return (
-    <PageWrapper>
-      <PageContainer>
+    <div className="min-h-screen bg-background text-foreground py-8 px-4 pb-16">
+      <main className="max-w-[52rem] mx-auto flex flex-col gap-6">
         {/* ── Hero banner ── */}
-        <PageBanner>
-          <PageBadge>
-            <Eye aria-hidden="true" style={{ width: '0.85rem', height: '0.85rem' }} />
+        <section className="flex flex-col gap-4 py-4 rounded-2xl bg-gradient-to-br from-primary/18 to-accent/12 border border-primary/25 backdrop-blur-[8px]">
+          <span className="inline-flex items-center gap-[0.35rem] w-fit py-1 px-3 rounded-full text-xs font-semibold tracking-[0.04em] uppercase bg-primary/15 text-primary border border-primary/30">
+            <Eye aria-hidden="true" className="w-3.5 h-3.5" />
             {t('share_view_badge')}
-          </PageBadge>
-          <PageHeader>
-            <PageTitle>{lesson.topic}</PageTitle>
-            <PageSubtitle>{t('share_view_title')}</PageSubtitle>
-          </PageHeader>
-        </PageBanner>
+          </span>
+          <div className="flex flex-col gap-[0.35rem]">
+            <h1 className="m-0 text-[1.875rem] font-extrabold text-foreground leading-tight tracking-tight sm:text-4xl">{lesson.topic}</h1>
+            <p className="m-0 text-[0.95rem] text-foreground-secondary">{t('share_view_title')}</p>
+          </div>
+        </section>
+
         {/* ── Read-only hint ── */}
-        <ReadonlyHint role="note">{t('share_view_readonly_hint')}</ReadonlyHint>
+        <p role="note" className="m-0 py-3 rounded-lg text-[0.85rem] text-muted-foreground bg-muted/50 border border-dashed border-border italic">
+          {t('share_view_readonly_hint')}
+        </p>
+
         {/* ── Lesson metadata ── */}
-        <InfoGrid>
-          <InfoItem>
-            <InfoLabel>
-              <User aria-hidden="true" style={{ width: '1rem', height: '1rem' }} />
+        <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(12rem,1fr))]">
+          <div className="flex flex-col gap-[0.35rem] py-4 px-5 rounded-xl bg-[var(--surface)] border border-[var(--surface-border)] transition-colors duration-200 hover:border-primary/40">
+            <span className="flex items-center gap-1.5 text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-foreground-secondary">
+              <User aria-hidden="true" className="w-4 h-4" />
               {t('share_view_participant')}
-            </InfoLabel>
-            <InfoValue>{lesson.participantName}</InfoValue>
-          </InfoItem>
-          <InfoItem>
-            <InfoLabel>
-              <Calendar aria-hidden="true" style={{ width: '1rem', height: '1rem' }} />
+            </span>
+            <span className="text-base font-semibold text-foreground flex items-center gap-2">{lesson.participantName}</span>
+          </div>
+          <div className="flex flex-col gap-[0.35rem] py-4 px-5 rounded-xl bg-[var(--surface)] border border-[var(--surface-border)] transition-colors duration-200 hover:border-primary/40">
+            <span className="flex items-center gap-1.5 text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-foreground-secondary">
+              <Calendar aria-hidden="true" className="w-4 h-4" />
               {t('share_view_date')}
-            </InfoLabel>
-            <InfoValue>{formattedDate}</InfoValue>
-          </InfoItem>
-          <InfoItem>
-            <InfoLabel>
-              <Flag aria-hidden="true" style={{ width: '1rem', height: '1rem' }} />
+            </span>
+            <span className="text-base font-semibold text-foreground flex items-center gap-2">{formattedDate}</span>
+          </div>
+          <div className="flex flex-col gap-[0.35rem] py-4 px-5 rounded-xl bg-[var(--surface)] border border-[var(--surface-border)] transition-colors duration-200 hover:border-primary/40">
+            <span className="flex items-center gap-1.5 text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-foreground-secondary">
+              <Flag aria-hidden="true" className="w-4 h-4" />
               {t('share_view_priority')}
-            </InfoLabel>
-            <InfoValue>
-              <PriorityChip $variant={lesson.priority.toLowerCase() as 'low' | 'medium' | 'high'}>
+            </span>
+            <span className="text-base font-semibold text-foreground flex items-center gap-2">
+              <span
+                className="inline-flex items-center py-[0.15rem] px-[0.55rem] rounded-full text-[0.72rem] font-semibold tracking-[0.04em]"
+                style={{ color: PRIORITY_COLORS[priorityVariant], background: PRIORITY_BG_COLORS[priorityVariant], border: `1px solid ${PRIORITY_COLORS[priorityVariant]}33` }}
+              >
                 {lesson.priority}
-              </PriorityChip>
-            </InfoValue>
-          </InfoItem>
-        </InfoGrid>
+              </span>
+            </span>
+          </div>
+        </div>
+
         {/* ── Notes ── */}
         {lesson.notes && (
           <>
-            <SectionDivider />
-            <SectionHeading>
-              <BookOpen aria-hidden="true" style={{ width: '1.1rem', height: '1.1rem' }} />
+            <hr className="m-0 border-none border-t border-[var(--surface-border)]" />
+            <h2 className="m-0 flex items-center gap-2 text-[1.1rem] font-bold text-foreground">
+              <BookOpen aria-hidden="true" className="w-[1.1rem] h-[1.1rem]" />
               {t('share_view_notes')}
-            </SectionHeading>
-            <NotesBlock>{lesson.notes}</NotesBlock>
+            </h2>
+            <p className="m-0 py-5 px-6 rounded-xl bg-[var(--surface)] border border-[var(--surface-border)] text-[0.95rem] leading-[1.7] text-foreground whitespace-pre-wrap break-words">
+              {lesson.notes}
+            </p>
           </>
         )}
+
         {/* ── Vocabulary ── */}
-        <SectionDivider />
-        <SectionHeading>
-          <BookOpen aria-hidden="true" style={{ width: '1.1rem', height: '1.1rem' }} />
+        <hr className="m-0 border-none border-t border-[var(--surface-border)]" />
+        <h2 className="m-0 flex items-center gap-2 text-[1.1rem] font-bold text-foreground">
+          <BookOpen aria-hidden="true" className="w-[1.1rem] h-[1.1rem]" />
           {t('share_view_vocabulary')}
           {lesson.vocabularies.length > 0 && ` (${lesson.vocabularies.length})`}
-        </SectionHeading>
+        </h2>
         {lesson.vocabularies.length === 0 ? (
-          <EmptyVocabHint>{t('share_view_no_vocab')}</EmptyVocabHint>
+          <p className="m-0 py-6 rounded-xl border border-dashed border-[var(--surface-border)] text-foreground-secondary text-[0.9rem] text-center italic">
+            {t('share_view_no_vocab')}
+          </p>
         ) : (
-          <VocabGrid>
+          <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
             {lesson.vocabularies.map((vocab) => (
               <VocabularyCard key={vocab.id} vocab={vocab} t={t} />
             ))}
-          </VocabGrid>
+          </div>
         )}
-      </PageContainer>
-    </PageWrapper>
+      </main>
+    </div>
   );
 }

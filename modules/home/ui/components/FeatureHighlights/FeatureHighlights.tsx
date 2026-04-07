@@ -2,8 +2,6 @@
 
 import type { IFeatureHighlight } from "@/modules/home/core/models";
 
-import { FeaturePill, FeaturesRow, FeaturesSection } from "../styled";
-
 /**
  * Props for the FeatureHighlights component.
  */
@@ -25,15 +23,18 @@ export function FeatureHighlights({
   t,
 }: IFeatureHighlightsProps): React.JSX.Element {
   return (
-    <FeaturesSection id="feature-highlights-section" aria-label="App features">
-      <FeaturesRow>
+    <section id="feature-highlights-section" aria-label="App features" className="w-full">
+      <div className="flex flex-wrap justify-center gap-3">
         {highlights.map((item) => (
-          <FeaturePill key={item.id}>
+          <span
+            key={item.id}
+            className="inline-flex items-center gap-2 py-2 px-4 rounded-full bg-surface border border-surface-border text-sm font-medium text-foreground-secondary transition-all duration-200 hover:border-accent-primary/40 hover:bg-surface-hover"
+          >
             <span aria-hidden="true">{item.icon}</span>
             <span>{t(item.titleKey)}</span>
-          </FeaturePill>
+          </span>
         ))}
-      </FeaturesRow>
-    </FeaturesSection>
+      </div>
+    </section>
   );
 }

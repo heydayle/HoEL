@@ -7,7 +7,10 @@ import type { ILesson, LessonPriority } from '@/modules/lesson/core/models';
 import {
   Button,
   Dialog,
+  DialogContent,
   DialogDescription,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
   Input,
@@ -17,23 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/components/Styled';
-
-import {
-  FormGroup,
-  FormLabel,
-  FormRow,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalForm,
-  ModalHeader,
-  VocabHeader,
-  VocabIndex,
-  VocabItem,
-  VocabItemHeader,
-  VocabSection,
-  VocabTitle,
-} from './styled';
 
 /**
  * Props for CreateLessonModal component.
@@ -73,14 +59,12 @@ export function CreateLessonModal({
   const [vocabularies, setVocabularies] = useState<{ id: string }[]>([]);
   const isEditing = !!editingLesson;
 
-  // Initialize form data when editing
   useEffect(() => {
     if (isEditing && editingLesson) {
       setVocabularies(editingLesson.vocabularies.map((v) => ({ id: v.id })));
     }
   }, [editingLesson, isEditing]);
 
-  // Close modal when editingLesson changes to null
   useEffect(() => {
     if (!isEditing && open) {
       setOpen(false);
@@ -94,30 +78,21 @@ export function CreateLessonModal({
     }
   };
 
-  /**
-   * Appends a new empty vocabulary entry to the list.
-   */
+  /** Appends a new empty vocabulary entry to the list. */
   const handleAddVocab = () => {
     setVocabularies([...vocabularies, { id: `vocab-${Date.now()}` }]);
   };
 
-  /**
-   * Removes a vocabulary entry by its id.
-   * @param id - Vocabulary entry id
-   */
+  /** Removes a vocabulary entry by its id. */
   const handleRemoveVocab = (id: string) => {
     setVocabularies(vocabularies.filter((v) => v.id !== id));
   };
 
-  /**
-   * Evaluates form submission and constructs the lesson object.
-   * @param e - React form event
-   */
+  /** Evaluates form submission and constructs the lesson object. */
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    // We get ISO string of selected date and append a mock time to match expected ISO format
     let dateStr = formData.get('date') as string;
     if (dateStr && !dateStr.includes('T')) {
       dateStr = `${dateStr}T09:00:00.000Z`;
@@ -155,7 +130,6 @@ export function CreateLessonModal({
     setOpen(false);
   };
 
-  // Set open state when editingLesson changes
   useEffect(() => {
     if (editingLesson) {
       setOpen(true);
@@ -170,39 +144,32 @@ export function CreateLessonModal({
         </DialogTrigger>
       )}
 
-      <ModalContent>
-        <ModalHeader>
+      <DialogContent className="flex! flex-col! max-h-[80vh]! overflow-hidden! p-0! gap-0! sm:max-w-[42rem]!">
+        <DialogHeader className="shrink-0! p-6! border-b border-border!">
           <DialogTitle>{isEditing ? 'Edit Lesson' : t('create_lesson_title')}</DialogTitle>
           <DialogDescription>{isEditing ? 'Update lesson details' : t('create_lesson_desc')}</DialogDescription>
-        </ModalHeader>
+        </DialogHeader>
 
-        <ModalForm key={editingLesson?.id || 'create'} onSubmit={handleSubmit}>
-          <ModalBody>
-            <FormGroup>
-              <FormLabel htmlFor="topic">{t('form_topic')}</FormLabel>
+        <form key={editingLesson?.id || 'create'} onSubmit={handleSubmit} className="flex flex-col min-h-0 flex-1">
+          <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
+            <div className="flex flex-col gap-2 mb-1">
+              <label htmlFor="topic" className="text-sm font-medium">{t('form_topic')}</label>
               <Input id="topic" name="topic" required defaultValue={isEditing ? editingLesson?.topic : ''} />
-            </FormGroup>
+            </div>
 
-            <FormRow>
-              <FormGroup>
-                <FormLabel htmlFor="participantName">{t('form_participant')}</FormLabel>
+            <div className="flex flex-col gap-4 sm:flex-row sm:[&>*]:flex-1">
+              <div className="flex flex-col gap-2 mb-1">
+                <label htmlFor="participantName" className="text-sm font-medium">{t('form_participant')}</label>
                 <Input id="participantName" name="participantName" required defaultValue={isEditing ? editingLesson?.participantName : ''} />
-              </FormGroup>
+              </div>
+              <div className="flex flex-col gap-2 mb-1">
+                <label htmlFor="date" className="text-sm font-medium">{t('form_date')}</label>
+                <Input id="date" name="date" type="date" required defaultValue={isEditing ? editingLesson ? new Date(editingLesson.date).toISOString().split('T')[0] : '' : new Date().toISOString().split('T')[0]} />
+              </div>
+            </div>
 
-              <FormGroup>
-                <FormLabel htmlFor="date">{t('form_date')}</FormLabel>
-                <Input
-                  id="date"
-                  name="date"
-                  type="date"
-                  required
-                  defaultValue={isEditing ? editingLesson ? new Date(editingLesson.date).toISOString().split('T')[0] : '' : new Date().toISOString().split('T')[0]}
-                />
-              </FormGroup>
-            </FormRow>
-
-            <FormGroup>
-              <FormLabel htmlFor="priority">{t('form_priority')}</FormLabel>
+            <div className="flex flex-col gap-2 mb-1">
+              <label htmlFor="priority" className="text-sm font-medium">{t('form_priority')}</label>
               <Select name="priority" defaultValue={isEditing ? editingLesson?.priority : 'Medium'}>
                 <SelectTrigger id="priority">
                   <SelectValue placeholder={t('priority_medium')} />
@@ -213,94 +180,61 @@ export function CreateLessonModal({
                   <SelectItem value="High">{t('priority_high')}</SelectItem>
                 </SelectContent>
               </Select>
-            </FormGroup>
+            </div>
 
-            <FormGroup>
-              <FormLabel htmlFor="notes">{t('form_notes')}</FormLabel>
+            <div className="flex flex-col gap-2 mb-1">
+              <label htmlFor="notes" className="text-sm font-medium">{t('form_notes')}</label>
               <Input id="notes" name="notes" defaultValue={isEditing ? editingLesson?.notes : ''} />
-            </FormGroup>
+            </div>
 
-            <VocabSection>
-              <VocabHeader>
-                <VocabTitle>{t('vocab_section_title')}</VocabTitle>
+            {/* Vocabulary Section */}
+            <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-border">
+              <div className="flex justify-between items-center">
+                <h3 className="text-base font-semibold">{t('vocab_section_title')}</h3>
                 <Button type="button" variant="outline" size="sm" onClick={handleAddVocab}>
-                  <Plus style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />
+                  <Plus className="w-4 h-4 mr-2" />
                   {t('add_vocab_btn')}
                 </Button>
-              </VocabHeader>
+              </div>
 
               {vocabularies.map((vocab, index) => (
-                <VocabItem key={vocab.id}>
-                  <VocabItemHeader>
-                    <VocabIndex>#{index + 1}</VocabIndex>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleRemoveVocab(vocab.id)}
-                      aria-label={t('remove_vocab_btn')}
-                    >
-                      <Trash2 style={{ width: '1rem', height: '1rem', color: 'hsl(var(--destructive))' }} />
+                <div key={vocab.id} className="flex flex-col gap-2 p-4 border border-border rounded-lg bg-muted/50">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium">#{index + 1}</span>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveVocab(vocab.id)} aria-label={t('remove_vocab_btn')}>
+                      <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>
-                  </VocabItemHeader>
+                  </div>
 
-                  <FormRow>
-                    <FormGroup>
-                      <FormLabel>{t('vocab_word')}*</FormLabel>
-                      <Input name={`vocab_${index}_word`} required defaultValue={isEditing ? editingLesson?.vocabularies[index]?.word ?? '' : ''} />
-                    </FormGroup>
-                    <FormGroup>
-                      <FormLabel>{t('vocab_ipa')}</FormLabel>
-                      <Input name={`vocab_${index}_ipa`} defaultValue={isEditing ? editingLesson?.vocabularies[index]?.ipa ?? '' : ''} />
-                    </FormGroup>
-                  </FormRow>
+                  <div className="flex flex-col gap-4 sm:flex-row sm:[&>*]:flex-1">
+                    <div className="flex flex-col gap-2"><label className="text-sm font-medium">{t('vocab_word')}*</label><Input name={`vocab_${index}_word`} required defaultValue={isEditing ? editingLesson?.vocabularies[index]?.word ?? '' : ''} /></div>
+                    <div className="flex flex-col gap-2"><label className="text-sm font-medium">{t('vocab_ipa')}</label><Input name={`vocab_${index}_ipa`} defaultValue={isEditing ? editingLesson?.vocabularies[index]?.ipa ?? '' : ''} /></div>
+                  </div>
 
-                  <FormRow>
-                    <FormGroup>
-                      <FormLabel>{t('vocab_pos')}</FormLabel>
-                      <Input name={`vocab_${index}_partOfSpeech`} defaultValue={isEditing ? editingLesson?.vocabularies[index]?.partOfSpeech ?? '' : ''} />
-                    </FormGroup>
-                    <FormGroup>
-                      <FormLabel>{t('vocab_meaning')}*</FormLabel>
-                      <Input name={`vocab_${index}_meaning`} required defaultValue={isEditing ? editingLesson?.vocabularies[index]?.meaning ?? '' : ''} />
-                    </FormGroup>
-                  </FormRow>
+                  <div className="flex flex-col gap-4 sm:flex-row sm:[&>*]:flex-1">
+                    <div className="flex flex-col gap-2"><label className="text-sm font-medium">{t('vocab_pos')}</label><Input name={`vocab_${index}_partOfSpeech`} defaultValue={isEditing ? editingLesson?.vocabularies[index]?.partOfSpeech ?? '' : ''} /></div>
+                    <div className="flex flex-col gap-2"><label className="text-sm font-medium">{t('vocab_meaning')}*</label><Input name={`vocab_${index}_meaning`} required defaultValue={isEditing ? editingLesson?.vocabularies[index]?.meaning ?? '' : ''} /></div>
+                  </div>
 
-                  <FormRow>
-                    <FormGroup>
-                      <FormLabel>{t('vocab_translation')}*</FormLabel>
-                      <Input name={`vocab_${index}_translation`} required defaultValue={isEditing ? editingLesson?.vocabularies[index]?.translation ?? '' : ''} />
-                    </FormGroup>
-                    <FormGroup>
-                      <FormLabel>{t('vocab_pronunciation')}</FormLabel>
-                      <Input name={`vocab_${index}_pronunciation`} defaultValue={isEditing ? editingLesson?.vocabularies[index]?.pronunciation ?? '' : ''} />
-                    </FormGroup>
-                  </FormRow>
+                  <div className="flex flex-col gap-4 sm:flex-row sm:[&>*]:flex-1">
+                    <div className="flex flex-col gap-2"><label className="text-sm font-medium">{t('vocab_translation')}*</label><Input name={`vocab_${index}_translation`} required defaultValue={isEditing ? editingLesson?.vocabularies[index]?.translation ?? '' : ''} /></div>
+                    <div className="flex flex-col gap-2"><label className="text-sm font-medium">{t('vocab_pronunciation')}</label><Input name={`vocab_${index}_pronunciation`} defaultValue={isEditing ? editingLesson?.vocabularies[index]?.pronunciation ?? '' : ''} /></div>
+                  </div>
 
-                  <FormGroup>
-                    <FormLabel>{t('vocab_example')}</FormLabel>
-                    <Input name={`vocab_${index}_example`} defaultValue={isEditing ? editingLesson?.vocabularies[index]?.example ?? '' : ''} />
-                  </FormGroup>
-                </VocabItem>
+                  <div className="flex flex-col gap-2"><label className="text-sm font-medium">{t('vocab_example')}</label><Input name={`vocab_${index}_example`} defaultValue={isEditing ? editingLesson?.vocabularies[index]?.example ?? '' : ''} /></div>
+                </div>
               ))}
-            </VocabSection>
-          </ModalBody>
+            </div>
+          </div>
 
-          <ModalFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setVocabularies([]);
-                setOpen(false);
-              }}
-            >
+          <DialogFooter className="shrink-0! m-0! py-4 px-6! flex! flex-row! justify-end! gap-2! border-t border-border! rounded-b-xl!">
+            <Button type="button" variant="outline" onClick={() => { setVocabularies([]); setOpen(false); }}>
               {t('cancel')}
             </Button>
             <Button type="submit">{isEditing ? t('update_lesson_submit') : t('create_lesson_submit')}</Button>
-          </ModalFooter>
-        </ModalForm>
-      </ModalContent>
+          </DialogFooter>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }
