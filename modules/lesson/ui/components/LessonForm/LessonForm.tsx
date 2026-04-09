@@ -15,8 +15,8 @@ import {
   Textarea,
 } from '@/shared/components/Styled';
 
-import { useGenerateVocab } from '../../hooks/useGenerateVocab';
 import Spinner from '@/shared/components/ui/spinner';
+import { useGenerateVocab } from '../../hooks/useGenerateVocab';
 
 interface ILessonFormProps {
   t: (key: string) => string;
@@ -42,8 +42,14 @@ export function LessonForm({
   onCancel,
   isLoading,
 }: ILessonFormProps): React.JSX.Element {
-  const { generate, isLoading: isGenerating, newVocab, setNewVocab, setVocabularies, vocabularies } =
-    useGenerateVocab(initialLesson);
+  const {
+    generate,
+    isLoading: isGenerating,
+    newVocab,
+    setNewVocab,
+    setVocabularies,
+    vocabularies,
+  } = useGenerateVocab(initialLesson);
   const isEditing = !!initialLesson;
 
   /** Ref pointing to the bottom of the vocab list — used for auto-scroll. */
@@ -167,13 +173,17 @@ export function LessonForm({
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-6 pb-24">
         {/* ── Lesson info ── */}
         <div className="flex flex-col gap-2">
-          <label htmlFor="topic" className="text-sm font-medium">{t('form_topic')}</label>
+          <label htmlFor="topic" className="text-sm font-medium">
+            {t('form_topic')}
+          </label>
           <Input id="topic" name="topic" required defaultValue={initialLesson?.topic ?? ''} />
         </div>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:[&>*]:flex-1">
           <div className="flex flex-col gap-2">
-            <label htmlFor="participantName" className="text-sm font-medium">{t('form_participant')}</label>
+            <label htmlFor="participantName" className="text-sm font-medium">
+              {t('form_participant')}
+            </label>
             <Input
               id="participantName"
               name="participantName"
@@ -183,14 +193,18 @@ export function LessonForm({
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="date" className="text-sm font-medium">{t('form_date')}</label>
+            <label htmlFor="date" className="text-sm font-medium">
+              {t('form_date')}
+            </label>
             <Input id="date" name="date" type="date" required defaultValue={defaultDate} />
           </div>
         </div>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:[&>*]:flex-1">
           <div className="flex flex-col gap-2">
-            <label htmlFor="priority" className="text-sm font-medium">{t('form_priority')}</label>
+            <label htmlFor="priority" className="text-sm font-medium">
+              {t('form_priority')}
+            </label>
             <Select name="priority" defaultValue={initialLesson?.priority ?? 'Medium'}>
               <SelectTrigger id="priority">
                 <SelectValue placeholder={t('priority_medium')} />
@@ -204,7 +218,9 @@ export function LessonForm({
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="notes" className="text-sm font-medium">{t('form_notes')}</label>
+            <label htmlFor="notes" className="text-sm font-medium">
+              {t('form_notes')}
+            </label>
             <Input id="notes" name="notes" defaultValue={initialLesson?.notes ?? ''} />
           </div>
         </div>
@@ -214,12 +230,14 @@ export function LessonForm({
           <div className="flex justify-between items-center">
             <h3 className="m-0 text-base">{t('vocab_section_title')}</h3>
           </div>
-          
           {vocabularies.length === 0 && (
             <p className="block w-fit ml-4! p-1 italic bg-primary/40">{t('no_vocabularies')}</p>
           )}
           {vocabularies.map((vocab, index) => (
-            <div key={vocab.id} className="flex flex-col gap-3 border border-border rounded-lg bg-muted/50 p-4">
+            <div
+              key={vocab.id}
+              className="flex flex-col gap-3 border border-border rounded-lg bg-muted/50 p-4"
+            >
               {/* Header: index + remove */}
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium bg-primary py-1 px-2 pr-8 text-primary-foreground">
@@ -240,38 +258,71 @@ export function LessonForm({
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-medium">{t('vocab_word')}*</label>
-                  <Input name={`vocab_${index}_word`} required defaultValue={vocabularies[index]?.word ?? ''} placeholder="ex: happy" />
+                  <Input
+                    name={`vocab_${index}_word`}
+                    required
+                    defaultValue={vocabularies[index]?.word ?? ''}
+                    placeholder="ex: happy"
+                  />
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-medium">{t('vocab_ipa')}</label>
-                  <Input name={`vocab_${index}_ipa`} defaultValue={vocabularies[index]?.ipa ?? ''} placeholder="ex: /ˈhæpi/" />
+                  <Input
+                    name={`vocab_${index}_ipa`}
+                    defaultValue={vocabularies[index]?.ipa ?? ''}
+                    placeholder="ex: /ˈhæpi/"
+                  />
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-medium">{t('vocab_pos')}</label>
-                  <Input name={`vocab_${index}_partOfSpeech`} defaultValue={vocabularies[index]?.partOfSpeech ?? ''} placeholder="ex: adjective" />
+                  <Input
+                    name={`vocab_${index}_partOfSpeech`}
+                    defaultValue={vocabularies[index]?.partOfSpeech ?? ''}
+                    placeholder="ex: adjective"
+                  />
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-medium">{t('vocab_pronunciation')}</label>
-                  <Input name={`vocab_${index}_pronunciation`} defaultValue={vocabularies[index]?.pronunciation ?? ''} placeholder="ex: /ˈhæpi/" />
+                  <Input
+                    name={`vocab_${index}_pronunciation`}
+                    defaultValue={vocabularies[index]?.pronunciation ?? ''}
+                    placeholder="ex: /ˈhæpi/"
+                  />
                 </div>
               </div>
 
               {/* Translation */}
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium">{t('vocab_translation')}*</label>
-                <Input name={`vocab_${index}_translation`} required defaultValue={vocabularies[index]?.translation ?? ''} placeholder="ex: vui vẻ" />
+                <Input
+                  name={`vocab_${index}_translation`}
+                  required
+                  defaultValue={vocabularies[index]?.translation ?? ''}
+                  placeholder="ex: vui vẻ"
+                />
               </div>
 
               {/* Meaning — textarea */}
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium">{t('vocab_meaning')}*</label>
-                <Textarea name={`vocab_${index}_meaning`} required defaultValue={vocabularies[index]?.meaning ?? ''} rows={2} placeholder="ex: Feeling or showing pleasure or contentment." />
+                <Textarea
+                  name={`vocab_${index}_meaning`}
+                  required
+                  defaultValue={vocabularies[index]?.meaning ?? ''}
+                  rows={2}
+                  placeholder="ex: Feeling or showing pleasure or contentment."
+                />
               </div>
 
               {/* Example — textarea */}
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium">{t('vocab_example')}</label>
-                <Textarea name={`vocab_${index}_example`} defaultValue={vocabularies[index]?.example ?? ''} rows={2} placeholder="ex: She was happy to see her friends." />
+                <Textarea
+                  name={`vocab_${index}_example`}
+                  defaultValue={vocabularies[index]?.example ?? ''}
+                  rows={2}
+                  placeholder="ex: She was happy to see her friends."
+                />
               </div>
             </div>
           ))}
@@ -281,11 +332,11 @@ export function LessonForm({
         </div>
 
         {/* ── Sticky footer ── */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 gap-2 py-3.5 px-8 flex justify-end items-start border-t border-border/50 bg-background/94 backdrop-blur-[10px]">
-          <div className="w-full max-w-[40rem] mx-auto p-2 pb-3 bg-background rounded-lg shadow-[0_1px_4px_rgba(0,0,0,0.04)] max-sm:max-w-full max-sm:px-1">
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background/94 backdrop-blur-[10px]">
+          <div className="w-full max-w-[60rem] !mx-auto px-4 md:px-8 py-3 flex flex-col gap-3">
             {/* Load vocabulary from AI */}
-            <div className="md:flex gap-2 items-start w-full">
-              <div>
+            <div className="flex flex-col md:flex-row gap-2 items-start">
+              <div className="flex-1">
                 <Input
                   id="new-vocab"
                   className="w-full"
@@ -312,12 +363,13 @@ export function LessonForm({
                 </Button>
               </div>
             </div>
-          </div>
-          <div className="flex gap-3 justify-end items-center mt-4 flex-wrap max-sm:gap-2 max-sm:mt-2">
-            <Button type="button" variant="outline" onClick={onCancel}>
-              {t('cancel')}
-            </Button>
-            <Button type="submit">{submitLabel}</Button>
+            {/* Action buttons */}
+            <div className="flex gap-3 justify-end items-center flex-wrap">
+              <Button type="button" variant="outline" onClick={onCancel}>
+                {t('cancel')}
+              </Button>
+              <Button type="submit">{submitLabel}</Button>
+            </div>
           </div>
         </div>
       </form>
