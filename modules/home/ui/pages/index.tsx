@@ -8,12 +8,9 @@ import {
 } from "@/modules/home/ui/components";
 import { useHomePage } from "@/modules/home/ui/hooks";
 
-import { HeaderSpacer, HomeMainContent, HomePageWrapper } from "./styled";
-
 /**
  * Main page component for the Home onboarding module.
  * Composes the header, mode selector, feature highlights, and footer.
- * Wires data and handlers from the useHomePage hook.
  * @returns The complete Home onboarding page view
  */
 export default function HomePage(): React.JSX.Element {
@@ -29,7 +26,7 @@ export default function HomePage(): React.JSX.Element {
   } = useHomePage();
 
   return (
-    <HomePageWrapper>
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <HomeHeader
         resolvedTheme={resolvedTheme}
         onThemeToggle={toggleTheme}
@@ -38,9 +35,9 @@ export default function HomePage(): React.JSX.Element {
       />
 
       {/* Spacer for fixed header */}
-      <HeaderSpacer />
+      <div className="h-20" />
 
-      <HomeMainContent>
+      <main className="flex-1 flex flex-col items-center gap-16 px-4 py-12 max-w-[72rem] mx-auto w-full">
         <ModeSelector
           title={t("onboarding_title")}
           subtitle={t("onboarding_subtitle")}
@@ -52,12 +49,12 @@ export default function HomePage(): React.JSX.Element {
         />
 
         <FeatureHighlights highlights={featureHighlights} t={t} />
-      </HomeMainContent>
+      </main>
 
       <HomeFooter
         footerText={t("footer_text")}
         copyright={t("footer_copyright")}
       />
-    </HomePageWrapper>
+    </div>
   );
 }

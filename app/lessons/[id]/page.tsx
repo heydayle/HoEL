@@ -6,14 +6,13 @@ import { ArrowLeft } from 'lucide-react';
 
 import type { ILesson } from '@/modules/lesson/core/models';
 import { LessonForm } from '@/modules/lesson/ui/components/LessonForm';
-import { ControlsGroup, LessonHeaderRow } from '@/modules/lesson/ui/components/styled';
 import { useLessonPage } from '@/modules/lesson/ui/hooks';
 import { LocaleSwitcher, ThemeToggle } from '@/shared/components';
+import { Button } from '@/shared/components/Styled';
 
-import { BackButton, DetailPageContainer, DetailPageWrapper, LessonTitle } from './styled';
 import { useLessonDetail } from '@/modules/lesson/ui/hooks/useLessonDetail';
-import { Spinner } from '@/components/ui/spinner';
-import { Error as ErrorComponent } from '@/components/ui/error';
+import { Spinner } from '@/shared/components/ui/spinner';
+import { Error as ErrorComponent } from '@/shared/components/ui/error';
 
 interface IEditLessonPageProps {
   params: Promise<{
@@ -51,7 +50,7 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
 
   if (isLoading || isUpdating) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+      <div className="flex justify-center items-center h-[60vh]">
         <Spinner size={40} />
       </div>
     );
@@ -59,23 +58,28 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
 
   if (!lesson) {
     return (
-      <DetailPageWrapper>
-        <DetailPageContainer>
-          <LessonHeaderRow>
-            <BackButton type="button" onClick={() => router.push(`/lessons`)}>
-              <ArrowLeft style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />
+      <div className="min-h-screen bg-background text-foreground">
+        <div className="max-w-[56rem] mx-auto py-8 px-4 md:px-8">
+          <header className="flex items-center justify-between gap-4 flex-wrap sticky top-8 bg-background/94 backdrop-blur-[10px]">
+            <Button
+              type="button"
+              onClick={() => router.push(`/lessons`)}
+              variant="outline"
+              className="flex items-center gap-2 py-2 px-4 cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
               {t('Back')}
-            </BackButton>
+            </Button>
 
-            <ControlsGroup>
+            <div className="flex items-center gap-3">
               <LocaleSwitcher locale={locale} onLocaleChange={setLocale} />
               <ThemeToggle resolvedTheme={resolvedTheme} onToggle={toggleTheme} />
-            </ControlsGroup>
-          </LessonHeaderRow>
+            </div>
+          </header>
 
-          <LessonTitle>{t('lesson_not_found')}</LessonTitle>
-        </DetailPageContainer>
-      </DetailPageWrapper>
+          <h1 className="mt-6 mb-2 text-foreground text-3xl font-bold">{t('lesson_not_found')}</h1>
+        </div>
+      </div>
     );
   }
 
@@ -84,19 +88,24 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
   }
 
   return (
-    <DetailPageWrapper>
-      <DetailPageContainer>
-        <LessonHeaderRow>
-          <BackButton type="button" onClick={() => router.push(`/lessons`)}>
-            <ArrowLeft style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="max-w-[56rem] mx-auto py-8 px-4 md:px-8">
+        <header className="flex items-center justify-between gap-4 flex-wrap sticky top-8 bg-background/94 backdrop-blur-[10px]">
+          <Button
+            type="button"
+            onClick={() => router.push(`/lessons`)}
+            variant="outline"
+            className="flex items-center gap-2 py-2 px-4 cursor-pointer"
+          >
+            <ArrowLeft className="w-4 h-4" />
             {t('Back')}
-          </BackButton>
+          </Button>
 
-          <ControlsGroup>
+          <div className="flex items-center gap-3">
             <LocaleSwitcher locale={locale} onLocaleChange={setLocale} />
             <ThemeToggle resolvedTheme={resolvedTheme} onToggle={toggleTheme} />
-          </ControlsGroup>
-        </LessonHeaderRow>
+          </div>
+        </header>
 
         <LessonForm
           t={t}
@@ -108,7 +117,7 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
           onCancel={() => router.push(`/lessons`)}
           isLoading={isUpdating}
         />
-      </DetailPageContainer>
-    </DetailPageWrapper>
+      </div>
+    </div>
   );
 }

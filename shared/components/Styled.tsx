@@ -6,12 +6,12 @@
  *
  * @example
  * ```tsx
- * import { Button, Card, Badge } from '@/app/shared/components/Styled';
+ * import { Button, Card, Badge } from '@/shared/components/Styled';
  * ```
  */
 
-export { Badge, badgeVariants } from "@/components/ui/badge";
-export { Button, buttonVariants } from "@/components/ui/button";
+export { Badge, badgeVariants } from "@/shared/components/ui/badge";
+export { Button, buttonVariants } from "@/shared/components/ui/button";
 export {
   Card,
   CardAction,
@@ -20,7 +20,7 @@ export {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/shared/components/ui/card";
 export {
   Dialog,
   DialogClose,
@@ -30,11 +30,11 @@ export {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-export { Input } from "@/components/ui/input";
-export { Textarea } from "@/components/ui/textarea";
-export { Separator } from "@/components/ui/separator";
-export { Toaster } from "@/components/ui/sonner"
+} from "@/shared/components/ui/dialog";
+export { Input } from "@/shared/components/ui/input";
+export { Textarea } from "@/shared/components/ui/textarea";
+export { Separator } from "@/shared/components/ui/separator";
+export { Toaster } from "@/shared/components/ui/sonner";
 export {
   Select,
   SelectGroup,
@@ -46,7 +46,7 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
-} from "@/components/ui/select";
+} from "@/shared/components/ui/select";
 export {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -63,4 +63,4 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
-} from "@/components/ui/dropdown-menu";
+} from "@/shared/components/ui/dropdown-menu";

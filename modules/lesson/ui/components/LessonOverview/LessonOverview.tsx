@@ -4,34 +4,15 @@ import { Check, Link2, Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import {
-  EmptyState,
-  EditLessonButton,
-  FilterCheckboxLabel,
-  FilterGrid,
-  FilterInput,
-  FilterPanel,
-  FilterResetButton,
-  FilterSelect,
-  LessonCard,
-  LessonCardHeader,
-  LessonMeta,
-  LessonsList,
-  LessonTopic,
-  NotesContent,
-  OpenLessonButton,
-  PriorityBadge,
-  ShareLessonButton,
-  StatCard,
-  StatLabel,
-  StatsGrid,
-  StatValue,
-} from '../styled';
+import Spinner from '@/shared/components/ui/spinner';
+import { Badge, Card, Input } from '@/shared/components/Styled';
 
 /**
  * Props for LessonOverview component.
  */
 interface ILessonOverviewProps {
+  /** Loading state */
+  loading: boolean;
   /** Summary statistics for filtered lessons */
   stats: ILessonStats;
   /** Lessons to render in list */
@@ -42,6 +23,8 @@ interface ILessonOverviewProps {
   t: (key: string) => string;
   /** Search updater */
   onSearchTermChange: (value: string) => void;
+  /** Vocabulary keyword filter updater */
+  onVocabSearchTermChange: (value: string) => void;
   /** Pinned filter updater */
   onPinnedFilterChange: (checked: boolean) => void;
   /** Favorite filter updater */
@@ -68,11 +51,13 @@ interface ILessonOverviewProps {
  * @returns Lessons list section with stats, filters, and cards
  */
 export function LessonOverview({
+  loading,
   stats,
   lessons,
   filters,
   t,
   onSearchTermChange,
+  onVocabSearchTermChange,
   onPinnedFilterChange,
   onFavoriteFilterChange,
   onPriorityFilterChange,
@@ -93,10 +78,7 @@ export function LessonOverview({
    * @param e - Click event (stopped to prevent card navigation)
    * @param lesson - The lesson whose share link is being copied
    */
-  const handleShareLesson = async (
-    e: React.MouseEvent,
-    lesson: ILesson,
-  ): Promise<void> => {
+  const handleShareLesson = async (e: React.MouseEvent, lesson: ILesson): Promise<void> => {
     e.stopPropagation();
     const shareUrl = `${window.location.origin}/s/${lesson.id}`;
     await navigator.clipboard.writeText(shareUrl);
@@ -104,144 +86,178 @@ export function LessonOverview({
     toast.success(t('share_link_copied'));
     setTimeout(() => setCopiedId(null), 2000);
   };
+
   return (
     <>
-      <StatsGrid>
-        <StatCard>
-          <StatLabel>{t('stats_lessons')}</StatLabel>
-          <StatValue>{stats.totalLessons}</StatValue>
-        </StatCard>
+      {/* Stats Grid */}
+      <section className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]">
+        <Card className="bg-surface p-2.5 px-5">
+          <p className="m-0 text-foreground-secondary text-sm">{t('stats_lessons')}</p>
+          <p className="mt-1 text-foreground text-2xl font-bold">{stats.totalLessons}</p>
+        </Card>
+        <Card className="bg-surface p-2.5 px-5">
+          <p className="m-0 text-foreground-secondary text-sm">{t('stats_vocab')}</p>
+          <p className="mt-1 text-foreground text-2xl font-bold">{stats.totalVocabularies}</p>
+        </Card>
+      </section>
 
-        <StatCard>
-          <StatLabel>{t('stats_vocab')}</StatLabel>
-          <StatValue>{stats.totalVocabularies}</StatValue>
-        </StatCard>
-      </StatsGrid>
-
-      <FilterPanel>
-        <FilterInput
+      {/* Filter Panel */}
+      <Card className="bg-surface p-4 flex flex-col gap-3">
+        <Input
           value={filters.searchTerm}
           onChange={(event) => onSearchTermChange(event.target.value)}
           placeholder={t('search_placeholder')}
           aria-label={t('search_aria_label')}
+          className="w-full py-1.5 px-2.5 md:py-2.5 md:px-4"
         />
 
-        <FilterGrid>
-          <FilterSelect
+        <Input
+          value={filters.vocabSearchTerm}
+          onChange={(event) => onVocabSearchTermChange(event.target.value)}
+          placeholder={t('vocab_search_placeholder')}
+          aria-label={t('vocab_search_placeholder')}
+          className="w-full py-1.5 px-2.5 md:py-2.5 md:px-4"
+        />
+
+        <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(11rem,1fr))]">
+          <select
             value={filters.priority}
             onChange={(event) =>
               onPriorityFilterChange(event.target.value as LessonPriority | 'all')
             }
             aria-label={t('priority_filter_aria_label')}
+            className="w-full h-10 rounded-[var(--radius-md)] border border-surface-border bg-surface text-foreground py-1.5 px-2.5"
           >
             <option value="all">{t('priority_all')}</option>
             <option value="Low">{t('priority_low')}</option>
             <option value="Medium">{t('priority_medium')}</option>
             <option value="High">{t('priority_high')}</option>
-          </FilterSelect>
+          </select>
 
-          <FilterSelect
+          <select
             value={filters.sortBy}
             onChange={(event) => onSortChange(event.target.value as LessonSortOption)}
             aria-label={t('sort_aria_label')}
+            className="w-full h-10 rounded-[var(--radius-md)] border border-surface-border bg-surface text-foreground py-1.5 px-2.5"
           >
             <option value="date_desc">{t('sort_date_desc')}</option>
             <option value="date_asc">{t('sort_date_asc')}</option>
             <option value="priority_desc">{t('sort_priority_desc')}</option>
             <option value="topic_asc">{t('sort_topic_asc')}</option>
-          </FilterSelect>
+          </select>
 
-          <FilterInput
+          <Input
             type="date"
             value={filters.startDate}
             onChange={(event) => onStartDateChange(event.target.value)}
             aria-label={t('start_date_aria_label')}
+            className="w-full py-1.5 px-2.5 md:py-2.5 md:px-4"
           />
 
-          <FilterInput
+          <Input
             type="date"
             value={filters.endDate}
             onChange={(event) => onEndDateChange(event.target.value)}
             aria-label={t('end_date_aria_label')}
+            className="w-full py-1.5 px-2.5 md:py-2.5 md:px-4"
           />
-        </FilterGrid>
+        </div>
 
-        <FilterGrid>
-          <FilterCheckboxLabel>
+        <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(11rem,1fr))]">
+          <label className="inline-flex items-center gap-1.5 text-foreground-secondary text-sm">
             <input
               type="checkbox"
               checked={filters.isPinned}
               onChange={(event) => onPinnedFilterChange(event.target.checked)}
             />
             {t('filter_pinned')}
-          </FilterCheckboxLabel>
+          </label>
 
-          <FilterCheckboxLabel>
+          <label className="inline-flex items-center gap-1.5 text-foreground-secondary text-sm">
             <input
               type="checkbox"
               checked={filters.isFavorite}
               onChange={(event) => onFavoriteFilterChange(event.target.checked)}
             />
             {t('filter_favorite')}
-          </FilterCheckboxLabel>
-        </FilterGrid>
+          </label>
+        </div>
 
-        <FilterResetButton type="button" onClick={onResetFilters}>
+        <button
+          type="button"
+          onClick={onResetFilters}
+          className="w-fit py-1.5 px-2.5 md:py-2.5 md:px-4 rounded-[var(--radius-md)] border border-surface-border bg-surface-hover text-foreground cursor-pointer"
+        >
           {t('reset_filters')}
-        </FilterResetButton>
-      </FilterPanel>
+        </button>
+      </Card>
 
-      <LessonsList>
-        {lessons.length === 0 ? (
-          <EmptyState>{t('empty_state')}</EmptyState>
+      {/* Lessons List */}
+      <section className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3">
+        {loading ? (
+          <div className="flex items-center justify-center">
+            <Spinner className="mx-auto mt-4" />
+          </div>
+        ) : lessons.length === 0 ? (
+          <p className="m-0 py-2.5 px-5 rounded-[var(--radius-md)] border border-dashed border-surface-border text-foreground-secondary">
+            {t('empty_state')}
+          </p>
         ) : (
           lessons.map((lesson) => (
-            <LessonCard key={lesson.id} onClick={() => onSelectLesson(lesson)}>
-              <LessonCardHeader>
+            <Card
+              key={lesson.id}
+              onClick={() => onSelectLesson(lesson)}
+              className="bg-surface p-4 cursor-pointer transition-all duration-200 ease-in-out hover:border-accent-primary hover:bg-surface-hover hover:shadow-md active:scale-[0.98]"
+            >
+              <div className="flex items-start justify-between gap-3">
                 <div>
-                  <LessonTopic>{lesson.topic}</LessonTopic>
-                  <LessonMeta>
+                  <h2 className="m-0 text-foreground text-lg">{lesson.topic}</h2>
+                  <p className="mt-1.5 text-foreground-secondary text-[0.9rem]">
                     {t('participant_label')}: {lesson.participantName}
-                  </LessonMeta>
-                  <LessonMeta>
+                  </p>
+                  <p className="mt-1.5 text-foreground-secondary text-[0.9rem]">
                     {t('date_label')}: {new Date(lesson.date).toLocaleDateString()}
-                  </LessonMeta>
+                  </p>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                  <ShareLessonButton
+                <div className="flex items-start gap-2">
+                  <button
                     onClick={(e) => void handleShareLesson(e, lesson)}
                     title={t('share_link_label')}
                     aria-label={t('share_link_label')}
+                    className="flex items-center justify-center rounded-md bg-transparent text-foreground-secondary cursor-pointer transition-all duration-200 shrink-0 hover:bg-[hsl(180,60%,90%,0.15)] hover:text-[hsl(180,60%,45%)] active:scale-95"
                   >
                     {copiedId === lesson.id ? (
-                      <Check style={{ width: '1rem', height: '1rem', color: 'hsl(150, 60%, 45%)' }} />
+                      <Check className="w-4 h-4 text-[hsl(150,60%,45%)]" />
                     ) : (
-                      <Link2 style={{ width: '1rem', height: '1rem' }} />
+                      <Link2 className="w-4 h-4" />
                     )}
-                  </ShareLessonButton>
-                  <EditLessonButton
+                  </button>
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
                       onEditLesson(lesson);
                     }}
                     title="Edit lesson"
                     aria-label="Edit lesson"
+                    className="flex items-center justify-center rounded-md bg-transparent text-foreground-secondary cursor-pointer transition-all duration-200 shrink-0 hover:bg-surface-hover hover:text-accent-primary active:scale-95"
                   >
-                    <Pencil style={{ width: '1rem', height: '1rem' }} />
-                  </EditLessonButton>
-                  <PriorityBadge>{lesson.priority}</PriorityBadge>
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <Badge className="bg-accent-primary-light text-accent-primary py-1.5 px-2.5">
+                    {lesson.priority}
+                  </Badge>
                 </div>
-              </LessonCardHeader>
+              </div>
 
-              <NotesContent>{lesson.notes}</NotesContent>
-              <LessonMeta>
+              <p className="mt-3 text-foreground leading-relaxed">{lesson.notes}</p>
+              <p className="mt-1.5 text-foreground-secondary text-[0.9rem]">
                 {t('vocab_count')}: {lesson?.vocabularies?.length}
-              </LessonMeta>
-            </LessonCard>
+              </p>
+            </Card>
           ))
         )}
-      </LessonsList>
+      </section>
     </>
   );
 }

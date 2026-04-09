@@ -4,27 +4,17 @@ import { useRouter } from 'next/navigation';
 
 import type { ILesson } from '@/modules/lesson/core/models';
 import { LessonForm } from '@/modules/lesson/ui/components/LessonForm';
-import { ControlsGroup, LessonHeaderRow } from '@/modules/lesson/ui/components/styled';
 import { useLessonPage } from '@/modules/lesson/ui/hooks';
 import { LocaleSwitcher, ThemeToggle } from '@/shared/components';
 
-import { LessonContainer, LessonPageWrapper, LessonSubtitle, LessonTitle } from '@/modules/lesson/ui/pages/styled';
-
 /**
  * Page route for creating a new lesson at /lessons/new.
- * Reuses the existing lesson creation form modal and navigates back on close.
+ * Reuses the existing lesson creation form and navigates back on close.
  * @returns Create lesson page UI
  */
 export default function NewLessonPage(): React.JSX.Element {
   const router = useRouter();
-  const {
-    resolvedTheme,
-    locale,
-    setLocale,
-    t,
-    toggleTheme,
-    addLesson,
-  } = useLessonPage();
+  const { resolvedTheme, locale, setLocale, t, toggleTheme, addLesson } = useLessonPage();
 
   const handleAddLesson = async (lesson: Omit<ILesson, 'id'>) => {
     await addLesson(lesson);
@@ -32,19 +22,21 @@ export default function NewLessonPage(): React.JSX.Element {
   };
 
   return (
-    <LessonPageWrapper>
-      <LessonContainer>
-        <LessonHeaderRow>
+    <main className="min-h-screen py-8 px-4 bg-background text-foreground md:py-10 md:px-8">
+      <div className="w-full max-w-[60rem] !mx-auto flex flex-col gap-4">
+        <header className="flex items-center justify-between gap-4 flex-wrap sticky top-8 bg-background/94 backdrop-blur-[10px]">
           <div>
-            <LessonTitle>{t('create_lesson_title')}</LessonTitle>
-            <LessonSubtitle>{t('create_lesson_desc')}</LessonSubtitle>
+            <h1 className="m-0 text-3xl leading-tight">{t('create_lesson_title')}</h1>
+            <p className="m-0 text-foreground-secondary leading-relaxed">
+              {t('create_lesson_desc')}
+            </p>
           </div>
 
-          <ControlsGroup>
+          <div className="flex items-center gap-3">
             <LocaleSwitcher locale={locale} onLocaleChange={setLocale} />
             <ThemeToggle resolvedTheme={resolvedTheme} onToggle={toggleTheme} />
-          </ControlsGroup>
-        </LessonHeaderRow>
+          </div>
+        </header>
 
         <LessonForm
           t={t}
@@ -54,7 +46,7 @@ export default function NewLessonPage(): React.JSX.Element {
           onSubmitLesson={handleAddLesson}
           onCancel={() => router.push('/lessons')}
         />
-      </LessonContainer>
-    </LessonPageWrapper>
+      </div>
+    </main>
   );
 }

@@ -5,58 +5,6 @@ import type { ILesson } from '@/modules/lesson/core/models';
 
 import { LessonShareView } from './LessonShareView';
 
-/**
- * Mock styled-components exported from `./styled` to plain HTML elements.
- * This avoids SSR/CSS-in-JS issues in the Jest jsdom environment while
- * still verifying the component's rendered output and behaviour.
- */
-jest.mock('./styled', () => {
-  /**
-   * Factory that returns a component rendering as `tag`.
-   * Strips styled-components transient props (`$`-prefixed) to avoid
-   * React DOM warnings about unknown attributes.
-   */
-  const el =
-    (tag: string) =>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ({ children, ...rest }: any) => {
-      // Remove all transient props (prefixed with $) before forwarding to the DOM
-      const domProps = Object.fromEntries(
-        Object.entries(rest).filter(([key]) => !key.startsWith('$')),
-      );
-      return React.createElement(tag, domProps, children);
-    };
-
-  return {
-    PageWrapper: el('div'),
-    PageContainer: el('main'),
-    PageBanner: el('section'),
-    PageBadge: el('span'),
-    PageHeader: el('div'),
-    PageTitle: el('h1'),
-    PageSubtitle: el('p'),
-    ReadonlyHint: el('p'),
-    InfoGrid: el('div'),
-    InfoItem: el('div'),
-    InfoLabel: el('span'),
-    InfoValue: el('span'),
-    SectionDivider: el('hr'),
-    SectionHeading: el('h2'),
-    NotesBlock: el('p'),
-    VocabGrid: el('div'),
-    VocabCard: el('article'),
-    VocabMeta: el('div'),
-    VocabCardWord: el('span'),
-    VocabIpa: el('span'),
-    VocabCardBody: el('div'),
-    VocabCardField: el('div'),
-    VocabCardFieldLabel: el('span'),
-    VocabCardFieldValue: el('span'),
-    PriorityChip: el('span'),
-    EmptyVocabHint: el('p'),
-  };
-});
-
 
 /** Mock lucide-react icons to avoid SVG rendering in jsdom */
 jest.mock('lucide-react', () => ({

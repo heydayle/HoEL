@@ -8,6 +8,7 @@ import type {
   IVocabularyUpdatePayload,
 } from '@/modules/lesson/core/models';
 import {
+  Badge,
   Button,
   Dialog,
   DialogContent,
@@ -19,43 +20,6 @@ import {
   Textarea,
 } from '@/shared/components/Styled';
 import { useVocabulary } from '../../hooks/useVocabulary';
-
-import {
-  AiGenerateRow,
-  AiHelperText,
-  DeleteConfirmText,
-  DeleteHighlight,
-  DraftActions,
-  DraftCard,
-  DraftCardHeader,
-  DraftField,
-  DraftFieldFull,
-  DraftFieldGrid,
-  DraftFieldLabel,
-  DraftLabel,
-  EditDialogGrid,
-  EditDialogInput,
-  EditFieldLabel,
-  EditFormGroup,
-  EditFormGroupFull,
-  VocabCard,
-  VocabCardActions,
-  VocabCardHeader,
-  VocabCardInfo,
-  VocabCountBadge,
-  VocabDetailLabel,
-  VocabDetailRow,
-  VocabDetailValue,
-  VocabEmptyState,
-  VocabExample,
-  VocabIpa,
-  VocabList,
-  VocabManagerHeader,
-  VocabManagerRoot,
-  VocabManagerTitle,
-  VocabPosBadge,
-  VocabWord,
-} from './styled';
 
 /**
  * Props for the VocabularyManager component.
@@ -111,16 +75,12 @@ export function VocabularyManager({
     example: '',
   });
 
-  /**
-   * Fetch vocabulary list on mount.
-   */
+  /** Fetch vocabulary list on mount. */
   useEffect(() => {
     fetchList();
   }, [fetchList]);
 
-  /**
-   * Sync draft form with AI-generated draft data.
-   */
+  /** Sync draft form with AI-generated draft data. */
   useEffect(() => {
     if (draftVocab) {
       setDraftForm({
@@ -135,18 +95,14 @@ export function VocabularyManager({
     }
   }, [draftVocab]);
 
-  /**
-   * Handles the AI generation trigger.
-   */
+  /** Handles the AI generation trigger. */
   const onGenerate = useCallback(() => {
     if (aiWord.trim()) {
       handleGenerate(aiWord);
     }
   }, [aiWord, handleGenerate]);
 
-  /**
-   * Intercepts Enter key to trigger AI generation.
-   */
+  /** Intercepts Enter key to trigger AI generation. */
   const onAiKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
@@ -157,9 +113,7 @@ export function VocabularyManager({
     [onGenerate],
   );
 
-  /**
-   * Updates a single field in the draft form.
-   */
+  /** Updates a single field in the draft form. */
   const updateDraftField = useCallback(
     (field: string, value: string) => {
       setDraftForm((prev) => ({ ...prev, [field]: value }));
@@ -167,27 +121,19 @@ export function VocabularyManager({
     [],
   );
 
-  /**
-   * Saves the reviewed draft as a new vocabulary record.
-   */
+  /** Saves the reviewed draft as a new vocabulary record. */
   const onSaveDraft = useCallback(() => {
     handleCreate(draftForm);
   }, [draftForm, handleCreate]);
 
-  /**
-   * Opens the edit dialog for a specific vocabulary row.
-   */
+  /** Opens the edit dialog for a specific vocabulary row. */
   const onEditClick = useCallback((vocab: IVocabularyRow) => {
     setEditingVocab({ ...vocab });
   }, []);
 
-  /**
-   * Submits the edit dialog changes.
-   */
+  /** Submits the edit dialog changes. */
   const onEditSubmit = useCallback(() => {
-    if (!editingVocab) {
-      return;
-    }
+    if (!editingVocab) return;
 
     const payload: IVocabularyUpdatePayload = {
       word: editingVocab.word,
@@ -203,9 +149,7 @@ export function VocabularyManager({
     setEditingVocab(null);
   }, [editingVocab, handleUpdate]);
 
-  /**
-   * Confirms deletion of the selected vocabulary.
-   */
+  /** Confirms deletion of the selected vocabulary. */
   const onDeleteConfirm = useCallback(() => {
     if (deletingVocab) {
       handleDelete(deletingVocab.id);
@@ -213,9 +157,7 @@ export function VocabularyManager({
     }
   }, [deletingVocab, handleDelete]);
 
-  /**
-   * Adds a blank vocabulary entry for manual input.
-   */
+  /** Adds a blank vocabulary entry for manual input. */
   const onAddManual = useCallback(() => {
     handleCreate({
       word: '',
@@ -229,13 +171,13 @@ export function VocabularyManager({
   }, [handleCreate]);
 
   return (
-    <VocabManagerRoot>
+    <section className="flex flex-col gap-4 mt-4 pt-6 border-t border-border">
       {/* ── Section header ── */}
-      <VocabManagerHeader>
-        <VocabManagerTitle>
+      <div className="flex justify-between items-center flex-wrap gap-3">
+        <h2 className="m-0 text-lg font-semibold flex items-center gap-2">
           {t('vocab_mgr_title')}{' '}
-          <VocabCountBadge>{vocabularies.length}</VocabCountBadge>
-        </VocabManagerTitle>
+          <Badge variant="secondary" className="text-xs font-semibold">{vocabularies.length}</Badge>
+        </h2>
 
         <Button
           type="button"
@@ -245,14 +187,14 @@ export function VocabularyManager({
           disabled={isLoading}
           id="btn-add-vocab-manual"
         >
-          <Plus style={{ width: '1rem', height: '1rem', marginRight: '0.375rem' }} />
+          <Plus className="w-4 h-4 mr-1.5" />
           {t('vocab_mgr_add_manual')}
         </Button>
-      </VocabManagerHeader>
+      </div>
 
       {/* ── AI generation input ── */}
       <div>
-        <AiGenerateRow>
+        <div className="flex gap-2 items-center flex-wrap">
           <Input
             id="ai-vocab-input"
             type="text"
@@ -261,6 +203,7 @@ export function VocabularyManager({
             onKeyDown={onAiKeyDown}
             placeholder={t('vocab_mgr_ai_placeholder')}
             disabled={isLoading}
+            className="flex-1 min-w-[12rem]"
           />
           <Button
             type="button"
@@ -270,200 +213,122 @@ export function VocabularyManager({
             id="btn-generate-ai"
           >
             {isLoading ? (
-              <Loader2
-                style={{
-                  width: '1rem',
-                  height: '1rem',
-                  marginRight: '0.375rem',
-                  animation: 'spin 1s linear infinite',
-                }}
-              />
+              <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
             ) : (
-              <Sparkles
-                style={{ width: '1rem', height: '1rem', marginRight: '0.375rem' }}
-              />
+              <Sparkles className="w-4 h-4 mr-1.5" />
             )}
             {isLoading ? t('vocab_mgr_generating') : t('vocab_mgr_generate_ai')}
           </Button>
-        </AiGenerateRow>
-        <AiHelperText>{t('vocab_mgr_ai_helper')}</AiHelperText>
+        </div>
+        <p className="mt-1.5 pl-1 text-xs text-muted-foreground italic">{t('vocab_mgr_ai_helper')}</p>
       </div>
 
       {/* ── Draft review card ── */}
       {draftVocab && (
-        <DraftCard id="draft-review-card">
-          <DraftCardHeader>
-            <DraftLabel>{t('vocab_mgr_draft_title')}</DraftLabel>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={clearDraft}
-              aria-label={t('cancel')}
-            >
-              <X style={{ width: '1rem', height: '1rem' }} />
+        <div id="draft-review-card" className="p-4 border-2 border-dashed border-accent-primary/40 rounded-xl bg-accent-primary-light">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-sm font-semibold text-accent-primary uppercase tracking-wider">{t('vocab_mgr_draft_title')}</span>
+            <Button type="button" variant="ghost" size="icon" onClick={clearDraft} aria-label={t('cancel')}>
+              <X className="w-4 h-4" />
             </Button>
-          </DraftCardHeader>
+          </div>
 
-          <DraftFieldGrid>
-            <DraftField>
-              <DraftFieldLabel>{t('vocab_word')}*</DraftFieldLabel>
-              <Input
-                value={draftForm.word}
-                onChange={(e) => updateDraftField('word', e.target.value)}
-                placeholder="ex: happy"
-              />
-            </DraftField>
-            <DraftField>
-              <DraftFieldLabel>{t('vocab_ipa')}</DraftFieldLabel>
-              <Input
-                value={draftForm.ipa}
-                onChange={(e) => updateDraftField('ipa', e.target.value)}
-                placeholder="ex: /ˈhæpi/"
-              />
-            </DraftField>
-            <DraftField>
-              <DraftFieldLabel>{t('vocab_pos')}</DraftFieldLabel>
-              <Input
-                value={draftForm.partOfSpeech}
-                onChange={(e) => updateDraftField('partOfSpeech', e.target.value)}
-                placeholder="ex: adjective"
-              />
-            </DraftField>
-            <DraftField>
-              <DraftFieldLabel>{t('vocab_pronunciation')}</DraftFieldLabel>
-              <Input
-                value={draftForm.pronunciation}
-                onChange={(e) => updateDraftField('pronunciation', e.target.value)}
-                placeholder="ex: hap-ee"
-              />
-            </DraftField>
-          </DraftFieldGrid>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-muted-foreground">{t('vocab_word')}*</label>
+              <Input value={draftForm.word} onChange={(e) => updateDraftField('word', e.target.value)} placeholder="ex: happy" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-muted-foreground">{t('vocab_ipa')}</label>
+              <Input value={draftForm.ipa} onChange={(e) => updateDraftField('ipa', e.target.value)} placeholder="ex: /ˈhæpi/" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-muted-foreground">{t('vocab_pos')}</label>
+              <Input value={draftForm.partOfSpeech} onChange={(e) => updateDraftField('partOfSpeech', e.target.value)} placeholder="ex: adjective" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-muted-foreground">{t('vocab_pronunciation')}</label>
+              <Input value={draftForm.pronunciation} onChange={(e) => updateDraftField('pronunciation', e.target.value)} placeholder="ex: hap-ee" />
+            </div>
+          </div>
 
-          <DraftFieldFull>
-            <DraftFieldLabel>{t('vocab_translation')}*</DraftFieldLabel>
-            <Input
-              value={draftForm.translation}
-              onChange={(e) => updateDraftField('translation', e.target.value)}
-              placeholder="ex: vui vẻ"
-            />
-          </DraftFieldFull>
+          <div className="flex flex-col gap-1 mt-3">
+            <label className="text-xs font-medium text-muted-foreground">{t('vocab_translation')}*</label>
+            <Input value={draftForm.translation} onChange={(e) => updateDraftField('translation', e.target.value)} placeholder="ex: vui vẻ" />
+          </div>
 
-          <DraftFieldFull>
-            <DraftFieldLabel>{t('vocab_meaning')}*</DraftFieldLabel>
-            <Textarea
-              value={draftForm.meaning}
-              onChange={(e) => updateDraftField('meaning', e.target.value)}
-              rows={2}
-              placeholder="ex: Feeling or showing pleasure."
-            />
-          </DraftFieldFull>
+          <div className="flex flex-col gap-1 mt-3">
+            <label className="text-xs font-medium text-muted-foreground">{t('vocab_meaning')}*</label>
+            <Textarea value={draftForm.meaning} onChange={(e) => updateDraftField('meaning', e.target.value)} rows={2} placeholder="ex: Feeling or showing pleasure." />
+          </div>
 
-          <DraftFieldFull>
-            <DraftFieldLabel>{t('vocab_example')}</DraftFieldLabel>
-            <Textarea
-              value={draftForm.example}
-              onChange={(e) => updateDraftField('example', e.target.value)}
-              rows={2}
-              placeholder="ex: She was happy to see her friends."
-            />
-          </DraftFieldFull>
+          <div className="flex flex-col gap-1 mt-3">
+            <label className="text-xs font-medium text-muted-foreground">{t('vocab_example')}</label>
+            <Textarea value={draftForm.example} onChange={(e) => updateDraftField('example', e.target.value)} rows={2} placeholder="ex: She was happy to see her friends." />
+          </div>
 
-          <DraftActions>
-            <Button type="button" variant="outline" size="sm" onClick={clearDraft}>
-              {t('vocab_mgr_discard')}
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              onClick={onSaveDraft}
-              disabled={!draftForm.word.trim()}
-              id="btn-save-draft"
-            >
-              {t('vocab_mgr_save')}
-            </Button>
-          </DraftActions>
-        </DraftCard>
+          <div className="flex gap-2 justify-end mt-4">
+            <Button type="button" variant="outline" size="sm" onClick={clearDraft}>{t('vocab_mgr_discard')}</Button>
+            <Button type="button" size="sm" onClick={onSaveDraft} disabled={!draftForm.word.trim()} id="btn-save-draft">{t('vocab_mgr_save')}</Button>
+          </div>
+        </div>
       )}
 
       {/* ── Vocabulary list ── */}
       {vocabularies.length === 0 && !isLoading ? (
-        <VocabEmptyState>{t('vocab_mgr_empty')}</VocabEmptyState>
+        <p className="py-6 px-4 text-center text-muted-foreground border border-dashed border-border rounded-lg italic">{t('vocab_mgr_empty')}</p>
       ) : (
-        <VocabList>
+        <div className="flex flex-col gap-3">
           {vocabularies.map((vocab) => (
-            <VocabCard key={vocab.id} id={`vocab-card-${vocab.id}`}>
-              <VocabCardHeader>
-                <VocabCardInfo>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <VocabWord>{vocab.word}</VocabWord>
+            <div key={vocab.id} id={`vocab-card-${vocab.id}`} className="p-4 border border-border rounded-lg bg-surface transition-all duration-200 hover:border-accent-primary/40 hover:shadow-sm">
+              <div className="flex justify-between items-start gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base font-semibold text-foreground bg-[var(--highlight)] px-1 rounded">{vocab.word}</span>
                     {vocab.partOfSpeech && (
-                      <VocabPosBadge variant="secondary">{vocab.partOfSpeech}</VocabPosBadge>
+                      <Badge variant="secondary" className="text-[0.65rem]">{vocab.partOfSpeech}</Badge>
                     )}
                   </div>
-                  {vocab.ipa && <VocabIpa>{vocab.ipa}</VocabIpa>}
-                </VocabCardInfo>
+                  {vocab.ipa && <p className="mt-0.5 text-sm text-muted-foreground italic">{vocab.ipa}</p>}
+                </div>
 
-                <VocabCardActions>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onEditClick(vocab)}
-                    aria-label={t('vocab_mgr_edit')}
-                    id={`btn-edit-${vocab.id}`}
-                  >
-                    <Edit2 style={{ width: '0.875rem', height: '0.875rem' }} />
+                <div className="flex items-center gap-0.5 shrink-0">
+                  <Button type="button" variant="ghost" size="icon" onClick={() => onEditClick(vocab)} aria-label={t('vocab_mgr_edit')} id={`btn-edit-${vocab.id}`}>
+                    <Edit2 className="w-3.5 h-3.5" />
                   </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setDeletingVocab(vocab)}
-                    aria-label={t('vocab_mgr_delete')}
-                    id={`btn-delete-${vocab.id}`}
-                  >
-                    <Trash2
-                      style={{
-                        width: '0.875rem',
-                        height: '0.875rem',
-                        color: 'hsl(var(--destructive))',
-                      }}
-                    />
+                  <Button type="button" variant="ghost" size="icon" onClick={() => setDeletingVocab(vocab)} aria-label={t('vocab_mgr_delete')} id={`btn-delete-${vocab.id}`}>
+                    <Trash2 className="w-3.5 h-3.5 text-destructive" />
                   </Button>
-                </VocabCardActions>
-              </VocabCardHeader>
+                </div>
+              </div>
 
               {vocab.meaning && (
-                <VocabDetailRow>
-                  <VocabDetailLabel>{t('vocab_meaning')}</VocabDetailLabel>
-                  <VocabDetailValue>{vocab.meaning}</VocabDetailValue>
-                </VocabDetailRow>
+                <div className="mt-2">
+                  <span className="text-[0.7rem] font-semibold text-muted-foreground/60 uppercase tracking-wider">{t('vocab_meaning')}</span>
+                  <p className="mt-0.5 text-sm text-foreground/90 leading-relaxed">{vocab.meaning}</p>
+                </div>
               )}
 
               {vocab.translation && (
-                <VocabDetailRow>
-                  <VocabDetailLabel>{t('vocab_translation')}</VocabDetailLabel>
-                  <VocabDetailValue>{vocab.translation}</VocabDetailValue>
-                </VocabDetailRow>
+                <div className="mt-2">
+                  <span className="text-[0.7rem] font-semibold text-muted-foreground/60 uppercase tracking-wider">{t('vocab_translation')}</span>
+                  <p className="mt-0.5 text-sm text-foreground/90 leading-relaxed">{vocab.translation}</p>
+                </div>
               )}
 
               {vocab.example && (
-                <VocabDetailRow>
-                  <VocabDetailLabel>{t('vocab_example')}</VocabDetailLabel>
-                  <VocabExample>{vocab.example}</VocabExample>
-                </VocabDetailRow>
+                <div className="mt-2">
+                  <span className="text-[0.7rem] font-semibold text-muted-foreground/60 uppercase tracking-wider">{t('vocab_example')}</span>
+                  <p className="mt-0.5 text-sm italic text-muted-foreground leading-relaxed">{vocab.example}</p>
+                </div>
               )}
-            </VocabCard>
+            </div>
           ))}
-        </VocabList>
+        </div>
       )}
 
       {/* ── Edit dialog ── */}
-      <Dialog
-        open={!!editingVocab}
-        onOpenChange={(open) => { if (!open) setEditingVocab(null); }}
-      >
+      <Dialog open={!!editingVocab} onOpenChange={(open) => { if (!open) setEditingVocab(null); }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('vocab_mgr_edit_title')}</DialogTitle>
@@ -471,131 +336,43 @@ export function VocabularyManager({
           </DialogHeader>
 
           {editingVocab && (
-            <EditDialogGrid>
-              <EditFormGroup>
-                <EditFieldLabel>{t('vocab_word')}*</EditFieldLabel>
-                <EditDialogInput
-                  value={editingVocab.word}
-                  onChange={(e) =>
-                    setEditingVocab({ ...editingVocab, word: e.target.value })
-                  }
-                />
-              </EditFormGroup>
-
-              <EditFormGroup>
-                <EditFieldLabel>{t('vocab_ipa')}</EditFieldLabel>
-                <EditDialogInput
-                  value={editingVocab.ipa}
-                  onChange={(e) =>
-                    setEditingVocab({ ...editingVocab, ipa: e.target.value })
-                  }
-                />
-              </EditFormGroup>
-
-              <EditFormGroup>
-                <EditFieldLabel>{t('vocab_pos')}</EditFieldLabel>
-                <EditDialogInput
-                  value={editingVocab.partOfSpeech}
-                  onChange={(e) =>
-                    setEditingVocab({ ...editingVocab, partOfSpeech: e.target.value })
-                  }
-                />
-              </EditFormGroup>
-
-              <EditFormGroup>
-                <EditFieldLabel>{t('vocab_pronunciation')}</EditFieldLabel>
-                <EditDialogInput
-                  value={editingVocab.pronunciation}
-                  onChange={(e) =>
-                    setEditingVocab({ ...editingVocab, pronunciation: e.target.value })
-                  }
-                />
-              </EditFormGroup>
-
-              <EditFormGroupFull>
-                <EditFieldLabel>{t('vocab_translation')}*</EditFieldLabel>
-                <EditDialogInput
-                  value={editingVocab.translation}
-                  onChange={(e) =>
-                    setEditingVocab({ ...editingVocab, translation: e.target.value })
-                  }
-                />
-              </EditFormGroupFull>
-
-              <EditFormGroupFull>
-                <EditFieldLabel>{t('vocab_meaning')}*</EditFieldLabel>
-                <Textarea
-                  value={editingVocab.meaning}
-                  onChange={(e) =>
-                    setEditingVocab({ ...editingVocab, meaning: e.target.value })
-                  }
-                  rows={2}
-                />
-              </EditFormGroupFull>
-
-              <EditFormGroupFull>
-                <EditFieldLabel>{t('vocab_example')}</EditFieldLabel>
-                <Textarea
-                  value={editingVocab.example}
-                  onChange={(e) =>
-                    setEditingVocab({ ...editingVocab, example: e.target.value })
-                  }
-                  rows={2}
-                />
-              </EditFormGroupFull>
-            </EditDialogGrid>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="flex flex-col gap-1"><label className="text-xs font-medium text-muted-foreground">{t('vocab_word')}*</label><Input value={editingVocab.word} onChange={(e) => setEditingVocab({ ...editingVocab, word: e.target.value })} /></div>
+              <div className="flex flex-col gap-1"><label className="text-xs font-medium text-muted-foreground">{t('vocab_ipa')}</label><Input value={editingVocab.ipa} onChange={(e) => setEditingVocab({ ...editingVocab, ipa: e.target.value })} /></div>
+              <div className="flex flex-col gap-1"><label className="text-xs font-medium text-muted-foreground">{t('vocab_pos')}</label><Input value={editingVocab.partOfSpeech} onChange={(e) => setEditingVocab({ ...editingVocab, partOfSpeech: e.target.value })} /></div>
+              <div className="flex flex-col gap-1"><label className="text-xs font-medium text-muted-foreground">{t('vocab_pronunciation')}</label><Input value={editingVocab.pronunciation} onChange={(e) => setEditingVocab({ ...editingVocab, pronunciation: e.target.value })} /></div>
+              <div className="flex flex-col gap-1 sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">{t('vocab_translation')}*</label><Input value={editingVocab.translation} onChange={(e) => setEditingVocab({ ...editingVocab, translation: e.target.value })} /></div>
+              <div className="flex flex-col gap-1 sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">{t('vocab_meaning')}*</label><Textarea value={editingVocab.meaning} onChange={(e) => setEditingVocab({ ...editingVocab, meaning: e.target.value })} rows={2} /></div>
+              <div className="flex flex-col gap-1 sm:col-span-2"><label className="text-xs font-medium text-muted-foreground">{t('vocab_example')}</label><Textarea value={editingVocab.example} onChange={(e) => setEditingVocab({ ...editingVocab, example: e.target.value })} rows={2} /></div>
+            </div>
           )}
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setEditingVocab(null)}
-            >
-              {t('cancel')}
-            </Button>
-            <Button type="button" onClick={onEditSubmit} id="btn-edit-save">
-              {t('vocab_mgr_save')}
-            </Button>
+            <Button type="button" variant="outline" onClick={() => setEditingVocab(null)}>{t('cancel')}</Button>
+            <Button type="button" onClick={onEditSubmit} id="btn-edit-save">{t('vocab_mgr_save')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* ── Delete confirmation dialog ── */}
-      <Dialog
-        open={!!deletingVocab}
-        onOpenChange={(open) => { if (!open) setDeletingVocab(null); }}
-      >
+      <Dialog open={!!deletingVocab} onOpenChange={(open) => { if (!open) setDeletingVocab(null); }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('vocab_mgr_delete_title')}</DialogTitle>
             <DialogDescription>{t('vocab_mgr_delete_desc')}</DialogDescription>
           </DialogHeader>
 
-          <DeleteConfirmText>
+          <p className="text-sm text-foreground/80 py-2">
             {t('vocab_mgr_delete_confirm')}{' '}
-            <DeleteHighlight>{deletingVocab?.word}</DeleteHighlight>?
-          </DeleteConfirmText>
+            <strong className="text-foreground font-semibold">{deletingVocab?.word}</strong>?
+          </p>
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setDeletingVocab(null)}
-            >
-              {t('cancel')}
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={onDeleteConfirm}
-              id="btn-delete-confirm"
-            >
-              {t('vocab_mgr_confirm_delete')}
-            </Button>
+            <Button type="button" variant="outline" onClick={() => setDeletingVocab(null)}>{t('cancel')}</Button>
+            <Button type="button" variant="destructive" onClick={onDeleteConfirm} id="btn-delete-confirm">{t('vocab_mgr_confirm_delete')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </VocabManagerRoot>
+    </section>
   );
 }

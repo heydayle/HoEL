@@ -2,11 +2,6 @@ import { render, screen } from "@testing-library/react";
 
 import HomePage from "./index";
 
-// Mock styled-components to avoid SSR issues in Jest
-jest.mock("styled-components", () => {
-  const actual = jest.requireActual("styled-components");
-  return actual;
-});
 
 // Mock child components since we test page composition only
 jest.mock("@/modules/home/ui/components", () => ({

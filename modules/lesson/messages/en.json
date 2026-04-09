@@ -7,6 +7,7 @@
   "stats_vocab": "Vocabulary",
   "stats_questions": "Questions",
   "search_placeholder": "Search by topic, participant, or notes...",
+  "vocab_search_placeholder": "Filter by vocabulary word, meaning or translation...",
   "search_aria_label": "Search lessons",
   "priority_filter_aria_label": "Filter by priority",
   "sort_aria_label": "Sort lessons",

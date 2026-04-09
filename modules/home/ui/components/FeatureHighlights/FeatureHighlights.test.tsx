@@ -4,18 +4,6 @@ import type { IFeatureHighlight } from "@/modules/home/core/models";
 
 import { FeatureHighlights } from "./FeatureHighlights";
 
-/** Minimal styled mock */
-jest.mock("../styled", () => ({
-  FeaturesSection: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
-    <section {...props}>{children}</section>
-  ),
-  FeaturesRow: ({ children }: React.PropsWithChildren) => (
-    <div>{children}</div>
-  ),
-  FeaturePill: ({ children }: React.PropsWithChildren) => (
-    <div>{children}</div>
-  ),
-}));
 
 const MOCK_HIGHLIGHTS: IFeatureHighlight[] = [
   {

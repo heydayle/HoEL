@@ -1,7 +1,5 @@
 "use client";
 
-import { FooterContent, FooterWrapper } from "../styled";
-
 /**
  * Props for the HomeFooter component.
  */
@@ -23,11 +21,11 @@ export function HomeFooter({
   copyright,
 }: IHomeFooterProps): React.JSX.Element {
   return (
-    <FooterWrapper id="home-footer">
-      <FooterContent>
+    <footer id="home-footer" className="py-6 border-t border-surface-border bg-background">
+      <div className="max-w-[72rem] mx-auto px-6 flex flex-col items-center gap-1">
         <p className="text-sm text-foreground-secondary">{footerText}</p>
         <p className="text-xs text-foreground-muted">{copyright}</p>
-      </FooterContent>
-    </FooterWrapper>
+      </div>
+    </footer>
   );
 }
