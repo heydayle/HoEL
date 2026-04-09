@@ -106,7 +106,7 @@ export function LessonForm({
       ...vocabularies,
       {
         id: `vocab-${Date.now()}`,
-        word: '',
+        word: newVocab ?? '',
         ipa: '',
         partOfSpeech: '',
         meaning: '',
@@ -236,7 +236,7 @@ export function LessonForm({
           {vocabularies.map((vocab, index) => (
             <div
               key={vocab.id}
-              className="flex flex-col gap-3 border border-border rounded-lg bg-muted/50 p-4"
+              className="flex flex-col gap-3 border border-border rounded-lg bg-muted/20 p-4"
             >
               {/* Header: index + remove */}
               <div className="flex justify-between items-center">
