@@ -7,7 +7,7 @@ import enMessages from '@/modules/lesson/messages/en.json';
 import viMessages from '@/modules/lesson/messages/vi.json';
 import { usePublicLessonDetail } from '@/modules/lesson/ui/hooks/usePublicLessonDetail';
 import { LessonShareView } from '@/modules/lesson/ui/pages/LessonShareView';
-import { LocaleSwitcher, ThemeToggle } from '@/shared/components';
+import { Button, LocaleSwitcher, ThemeToggle } from '@/shared/components';
 import { Spinner } from '@/shared/components/ui/spinner';
 import { useLocale, useTheme } from '@/shared/hooks';
 import type { Locale, TranslationMessages } from '@/shared/types';
@@ -50,6 +50,15 @@ export default function SharePageClient({
   /** Locale & theme controls — shared across all states */
   const controls = (
     <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+      <Button
+        className="h-8 bg-primary text-primary-foreground hover:bg-primary/90"
+        size="sm"
+        onClick={() => {
+          window.location.href = '/auth';
+        }}
+      >
+        {t('login')}
+      </Button>
       <LocaleSwitcher locale={locale} onLocaleChange={setLocale} />
       <ThemeToggle resolvedTheme={resolvedTheme} onToggle={toggleTheme} />
     </div>

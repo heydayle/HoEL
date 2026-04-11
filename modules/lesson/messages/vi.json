@@ -85,5 +85,6 @@
   "summary_generating": "Đang tạo...",
   "summary_generated": "Tóm tắt đã được tạo thành công",
   "summary_fetch_error": "Không thể tải tóm tắt",
-  "summary_generate_error": "Không thể tạo tóm tắt"
+  "summary_generate_error": "Không thể tạo tóm tắt",
+  "login": "Đăng Nhập"
 }
