@@ -4,9 +4,9 @@ import { Check, Link2, Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import Spinner from '@/shared/components/ui/spinner';
-import { Card, Input } from '@/shared/components/Styled';
 import { PriorityBadge, resolvePriorityVariant } from '@/shared/components';
+import { Card, Input } from '@/shared/components/Styled';
+import Spinner from '@/shared/components/ui/spinner';
 
 /**
  * Props for LessonOverview component.
@@ -194,7 +194,7 @@ export function LessonOverview({
       </Card>
 
       {/* Lessons List */}
-      <section className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-3">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {loading ? (
           <div className="flex items-center justify-center">
             <Spinner className="mx-auto mt-4" />

@@ -5,7 +5,7 @@ import { AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
-import { AuthMode, type IAuthFormData } from '../../core/models';
+import { type IAuthFormData } from '../../core/models';
 import { useAuthPage } from '../hooks/useAuthPage';
 
 /**
@@ -14,10 +14,22 @@ import { useAuthPage } from '../hooks/useAuthPage';
  */
 const GoogleIcon = (): React.JSX.Element => (
   <svg width="18" height="18" viewBox="0 0 24 24">
-    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
-    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+    <path
+      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
+      fill="#4285F4"
+    />
+    <path
+      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+      fill="#34A853"
+    />
+    <path
+      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+      fill="#FBBC05"
+    />
+    <path
+      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+      fill="#EA4335"
+    />
   </svg>
 );
 
@@ -39,8 +51,7 @@ const GitHubIcon = (): React.JSX.Element => (
  */
 export const AuthForm = (): React.JSX.Element => {
   const router = useRouter();
-  const { t, isSignIn, isLoading, error, toggleAuthMode, handleSubmit } =
-    useAuthPage();
+  const { t, isSignIn, isLoading, error, toggleAuthMode, handleSubmit } = useAuthPage();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -62,10 +73,9 @@ export const AuthForm = (): React.JSX.Element => {
 
       const result = await handleSubmit(formData);
       if (result.success && isSignIn) {
-        router.push('/')
-        router.refresh()
+        router.push('/');
+        router.refresh();
       }
-      
     },
     [email, password, displayName, isSignIn, handleSubmit, router],
   );
@@ -86,17 +96,22 @@ export const AuthForm = (): React.JSX.Element => {
         </div>
 
         {/* Auth Card */}
-        <div className="w-full border border-[var(--surface-border)] bg-[var(--surface)] shadow-[var(--surface-shadow)] rounded-[calc(var(--radius)*1.6)] backdrop-blur-[12px] transition-shadow duration-300 hover:shadow-[var(--surface-shadow-hover)]">
+        <div className="py-4 w-full border border-[var(--surface-border)] bg-[var(--surface)] shadow-[var(--surface-shadow)] rounded-[calc(var(--radius)*1.6)] backdrop-blur-[12px] transition-shadow duration-300 hover:shadow-[var(--surface-shadow-hover)]">
           <CardHeader>
-            <h2 className="text-2xl font-bold text-foreground tracking-tight">{t(isSignIn ? 'page_title' : 'page_title_register')}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <h2 className="text-2xl font-bold text-foreground tracking-tight">
+              {t(isSignIn ? 'page_title' : 'page_title_register')}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground mb-4">
               {isSignIn ? t('page_subtitle_sign_in') : t('page_subtitle_register')}
             </p>
           </CardHeader>
 
           <CardContent>
             {error && (
-              <div role="alert" className="flex items-center gap-2 py-3 px-4 mb-5 rounded-[calc(var(--radius)*1.2)] bg-accent-warm-light border border-[var(--accent-warm)] text-[var(--accent-warm)] text-[0.8125rem] font-medium animate-[fadeInUp_0.3s_ease-out]">
+              <div
+                role="alert"
+                className="flex items-center gap-2 py-3 px-4 mb-5 rounded-[calc(var(--radius)*1.2)] bg-accent-warm-light border border-[var(--accent-warm)] text-[var(--accent-warm)] text-[0.8125rem] font-medium animate-[fadeInUp_0.3s_ease-out]"
+              >
                 <AlertCircle size={16} />
                 {error}
               </div>
@@ -104,7 +119,12 @@ export const AuthForm = (): React.JSX.Element => {
 
             <form onSubmit={onSubmit} id="auth-form">
               <div className="mb-5">
-                <label htmlFor="email" className="text-[0.8125rem] font-medium text-foreground-secondary mb-1.5 block">{t('label_email')}</label>
+                <label
+                  htmlFor="email"
+                  className="text-[0.8125rem] font-medium text-foreground-secondary mb-1.5 block"
+                >
+                  {t('label_email')}
+                </label>
                 <input
                   id="email"
                   name="email"
@@ -118,9 +138,14 @@ export const AuthForm = (): React.JSX.Element => {
                 />
               </div>
 
-              {!isSignIn && (
+              {/* {!isSignIn && (
                 <div className="mb-5">
-                  <label htmlFor="displayName" className="text-[0.8125rem] font-medium text-foreground-secondary mb-1.5 block">{t('label_display_name')}</label>
+                  <label
+                    htmlFor="displayName"
+                    className="text-[0.8125rem] font-medium text-foreground-secondary mb-1.5 block"
+                  >
+                    {t('label_display_name')}
+                  </label>
                   <input
                     id="displayName"
                     name="displayName"
@@ -133,10 +158,15 @@ export const AuthForm = (): React.JSX.Element => {
                     className="w-full h-11 bg-background border border-border rounded-[calc(var(--radius)*1.2)] text-sm px-3 transition-all duration-200 focus:border-accent-primary focus:shadow-[0_0_0_3px_var(--accent-primary-light)] placeholder:text-foreground-muted"
                   />
                 </div>
-              )}
+              )} */}
 
               <div className="mb-5">
-                <label htmlFor="password" className="text-[0.8125rem] font-medium text-foreground-secondary mb-1.5 block">{t('label_password')}</label>
+                <label
+                  htmlFor="password"
+                  className="text-[0.8125rem] font-medium text-foreground-secondary mb-1.5 block"
+                >
+                  {t('label_password')}
+                </label>
                 <input
                   id="password"
                   name="password"
