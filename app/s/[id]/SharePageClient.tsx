@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, Eye } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { use, useEffect } from 'react';
 
 import enMessages from '@/modules/lesson/messages/en.json';

@@ -54,13 +54,6 @@ describe('LessonShareView', () => {
     expect(screen.getByText('share_view_title')).toBeInTheDocument();
   });
 
-  /** ── Read-only hint ── */
-
-  it('renders the readonly hint with role="note"', () => {
-    render(<LessonShareView lesson={baseLesson} summary={null} t={t} />);
-    expect(screen.getByRole('note')).toHaveTextContent('share_view_readonly_hint');
-  });
-
   /** ── Metadata grid ── */
 
   it('renders participant name', () => {
