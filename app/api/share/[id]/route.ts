@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import type { ILesson, IVocabulary } from '@/modules/lesson/core/models';
+import type { ILesson, ISummaryLesson, IVocabulary } from '@/modules/lesson/core/models';
 import { supabasePublic } from '@/shared/utils/supabase/admin';
 
 /**
@@ -48,7 +48,7 @@ export async function GET(
 
     const { data, error } = await supabasePublic
       .from('lessons')
-      .select('*, vocabularies(*)')
+      .select('*, vocabularies(*), summaries(*)')
       .eq('id', id)
       .maybeSingle();
 
@@ -63,6 +63,22 @@ export async function GET(
 
     const vocabRows = (data.vocabularies ?? []) as Array<Record<string, unknown>>;
 
+    /** Extract summary from joined summaries (one-to-one relationship) */
+    const summaryRows = (data.summaries ?? []) as Array<Record<string, unknown>>;
+    const summary: ISummaryLesson | null =
+      summaryRows.length > 0
+        ? {
+            id: summaryRows[0].id as string,
+            paragraph: (summaryRows[0].paragraph as string) ?? '',
+            translate: (summaryRows[0].translate as string) ?? '',
+            question_1: (summaryRows[0].question_1 as string) ?? '',
+            question_2: (summaryRows[0].question_2 as string) ?? '',
+            question_3: (summaryRows[0].question_3 as string) ?? '',
+            lesson_id: (summaryRows[0].lesson_id as string) ?? '',
+            created_at: (summaryRows[0].created_at as string) ?? '',
+          }
+        : null;
+
     const lesson: ILesson = {
       id: data.id as string,
       date: data.date as string,
@@ -74,9 +90,10 @@ export async function GET(
       notes: (data.notes as string) ?? '',
       createdBy: (data.createdBy as string) ?? undefined,
       vocabularies: vocabRows.map(mapVocabRow),
+      summary_id: summary?.id,
     };
 
-    return NextResponse.json(lesson);
+    return NextResponse.json({ lesson, summary });
   } catch (err: unknown) {
     console.error('[share-api] Unexpected error:', err);
     return NextResponse.json(

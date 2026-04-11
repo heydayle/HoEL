@@ -1,0 +1,1 @@
+export { SummaryLesson } from './SummaryLesson';

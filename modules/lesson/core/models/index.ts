@@ -86,7 +86,10 @@ export interface ILesson {
   vocabularies: IVocabulary[];
   /** Related Q&A entries */
   // questions: IQuestion[];
-  createdBy?: string; // Optional field to track which user created the lesson
+  /** Optional field to track which user created the lesson */
+  createdBy?: string;
+  /** Foreign key linking to the associated summary record */
+  summary_id?: string;
 }
 
 /**
@@ -100,6 +103,29 @@ export interface ILessonStats {
   /** Total questions across lessons */
   totalQuestions: number;
 }
+
+export interface ISummaryLesson {
+  id: string;
+  paragraph: string;
+  translate: string;
+  question_1: string;
+  question_2: string;
+  question_3: string;
+  lesson_id: string;
+  created_at: string;
+}
+
+/**
+ * Payload used to create a new summary lesson record in Supabase.
+ * Omits auto-generated fields (`id`, `created_at`).
+ */
+export type ISummaryLessonCreatePayload = Omit<ISummaryLesson, 'id' | 'created_at'>;
+
+/**
+ * Payload used to update an existing summary lesson record.
+ * All fields are optional except for the ones being changed.
+ */
+export type ISummaryLessonUpdatePayload = Partial<Omit<ISummaryLesson, 'id' | 'created_at'>>;
 
 /**
  * Raw response structure from Dify API for vocabulary generation

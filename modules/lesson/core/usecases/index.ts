@@ -1,5 +1,5 @@
-import type { ILesson, ILessonStats, LessonPriority, IDifyVocabResponse } from '@/modules/lesson/core/models';
-import { fetchGeneratedVocab } from '../../infras';
+import type { IDifyVocabResponse, ILesson, ILessonStats, LessonPriority } from '@/modules/lesson/core/models';
+import { fetchGeneratedSummaryLesson, fetchGeneratedVocab } from '../../infras';
 /**
  * Supported sort options for the lessons list.
  */
@@ -234,6 +234,33 @@ export const executeGenerateVocab = async (word: string): Promise<IDifyVocabResp
   } catch (error) {
     // Xử lý lỗi đặc thù của business nếu cần
     console.error('UseCase Error: executeGenerateVocab failed', error);
+    throw error;
+  }
+};
+
+
+/**
+ * UseCase: Xử lý logic nghiệp vụ khi người dùng yêu cầu tạo từ vựng
+ * @param {string} word - Từ vựng nhập vào từ UI
+ * @returns {Promise<IDifyVocabResponse>} Raw response từ Dify API
+ */
+export const executeGenerateSummaryLesson = async (wordList: string[]): Promise<IDifyVocabResponse> => {
+  // 1. Validate đầu vào (Business logic)
+  if (!wordList || wordList.length === 0) {
+    throw new Error('Word list cannot be empty');
+  }
+
+  try {
+    // 2. Gọi tầng Infras để lấy data
+    const summaryLesson = await fetchGeneratedSummaryLesson(wordList);
+
+    // 3. (Optional) Thực hiện các nghiệp vụ khác:
+    // Ví dụ: SaveToLocalStorage(newVocab) hoặc dispatch(addVocab(newVocab))
+
+    return summaryLesson;
+  } catch (error) {
+    // Xử lý lỗi đặc thù của business nếu cần
+    console.error('UseCase Error: executeGenerateSummaryLesson failed', error);
     throw error;
   }
 };

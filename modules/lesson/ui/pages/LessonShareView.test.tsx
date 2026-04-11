@@ -14,6 +14,10 @@ jest.mock('lucide-react', () => ({
   Flag: () => null,
   User: () => null,
   Volume2: () => null,
+  Globe: () => null,
+  HelpCircle: () => null,
+  Loader2: () => null,
+  RefreshCw: () => null,
 }));
 
 /** Minimal translation stub — returns the key as-is */
@@ -36,41 +40,41 @@ describe('LessonShareView', () => {
   /** ── Banner ── */
 
   it('renders the lesson topic as the h1 heading', () => {
-    render(<LessonShareView lesson={baseLesson} t={t} />);
+    render(<LessonShareView lesson={baseLesson} summary={null} t={t} />);
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Past Simple');
   });
 
   it('renders the public-view badge', () => {
-    render(<LessonShareView lesson={baseLesson} t={t} />);
+    render(<LessonShareView lesson={baseLesson} summary={null} t={t} />);
     expect(screen.getByText('share_view_badge')).toBeInTheDocument();
   });
 
   it('renders the share_view_title subtitle', () => {
-    render(<LessonShareView lesson={baseLesson} t={t} />);
+    render(<LessonShareView lesson={baseLesson} summary={null} t={t} />);
     expect(screen.getByText('share_view_title')).toBeInTheDocument();
   });
 
   /** ── Read-only hint ── */
 
   it('renders the readonly hint with role="note"', () => {
-    render(<LessonShareView lesson={baseLesson} t={t} />);
+    render(<LessonShareView lesson={baseLesson} summary={null} t={t} />);
     expect(screen.getByRole('note')).toHaveTextContent('share_view_readonly_hint');
   });
 
   /** ── Metadata grid ── */
 
   it('renders participant name', () => {
-    render(<LessonShareView lesson={baseLesson} t={t} />);
+    render(<LessonShareView lesson={baseLesson} summary={null} t={t} />);
     expect(screen.getByText('John')).toBeInTheDocument();
   });
 
   it('renders the priority chip with the lesson priority value', () => {
-    render(<LessonShareView lesson={baseLesson} t={t} />);
+    render(<LessonShareView lesson={baseLesson} summary={null} t={t} />);
     expect(screen.getByText('High')).toBeInTheDocument();
   });
 
   it('renders a formatted date string', () => {
-    render(<LessonShareView lesson={baseLesson} t={t} />);
+    render(<LessonShareView lesson={baseLesson} summary={null} t={t} />);
     /**
      * toLocaleDateString output is locale-dependent in jsdom, so we only
      * assert that *some* date string is present in the document rather
@@ -82,14 +86,14 @@ describe('LessonShareView', () => {
   /** ── Notes section ── */
 
   it('renders the notes content when notes is non-empty', () => {
-    render(<LessonShareView lesson={baseLesson} t={t} />);
+    render(<LessonShareView lesson={baseLesson} summary={null} t={t} />);
     expect(screen.getByText('Reviewed irregular verbs.')).toBeInTheDocument();
     expect(screen.getByText('share_view_notes')).toBeInTheDocument();
   });
 
   it('does not render the notes section when notes is an empty string', () => {
     const lessonNoNotes: ILesson = { ...baseLesson, notes: '' };
-    render(<LessonShareView lesson={lessonNoNotes} t={t} />);
+    render(<LessonShareView lesson={lessonNoNotes} summary={null} t={t} />);
     expect(screen.queryByText('share_view_notes')).not.toBeInTheDocument();
     expect(screen.queryByText('Reviewed irregular verbs.')).not.toBeInTheDocument();
   });
@@ -97,12 +101,12 @@ describe('LessonShareView', () => {
   /** ── Vocabulary section — empty state ── */
 
   it('shows the empty vocab hint when there are no vocabularies', () => {
-    render(<LessonShareView lesson={baseLesson} t={t} />);
+    render(<LessonShareView lesson={baseLesson} summary={null} t={t} />);
     expect(screen.getByText('share_view_no_vocab')).toBeInTheDocument();
   });
 
   it('does not render the vocab grid when vocabularies are empty', () => {
-    render(<LessonShareView lesson={baseLesson} t={t} />);
+    render(<LessonShareView lesson={baseLesson} summary={null} t={t} />);
     expect(screen.queryByRole('article')).not.toBeInTheDocument();
   });
 
@@ -135,7 +139,7 @@ describe('LessonShareView', () => {
       ],
     };
 
-    render(<LessonShareView lesson={lessonWithVocab} t={t} />);
+    render(<LessonShareView lesson={lessonWithVocab} summary={null} t={t} />);
     expect(screen.getAllByRole('article')).toHaveLength(2);
   });
 
@@ -156,7 +160,7 @@ describe('LessonShareView', () => {
       ],
     };
 
-    render(<LessonShareView lesson={lessonWithVocab} t={t} />);
+    render(<LessonShareView lesson={lessonWithVocab} summary={null} t={t} />);
 
     expect(screen.getByText('run')).toBeInTheDocument();
     // IPA and pronunciation both contain '/rʌn/' in this fixture — assert both are present
@@ -185,7 +189,7 @@ describe('LessonShareView', () => {
       ],
     };
 
-    render(<LessonShareView lesson={lessonWithVocab} t={t} />);
+    render(<LessonShareView lesson={lessonWithVocab} summary={null} t={t} />);
     // Only the word should be in the meta row — no empty ipa or pos chip
     expect(screen.getByText('hello')).toBeInTheDocument();
     expect(screen.queryByText('//')).not.toBeInTheDocument();
@@ -210,14 +214,14 @@ describe('LessonShareView', () => {
       ],
     };
 
-    render(<LessonShareView lesson={lessonWithVocab} t={t} />);
+    render(<LessonShareView lesson={lessonWithVocab} summary={null} t={t} />);
     const headings = screen.getAllByRole('heading', { level: 2 });
     const vocabHeading = headings.find((h) => h.textContent?.includes('(1)'));
     expect(vocabHeading).toBeTruthy();
   });
 
   it('does not show count suffix in vocabulary heading when vocab is empty', () => {
-    render(<LessonShareView lesson={baseLesson} t={t} />);
+    render(<LessonShareView lesson={baseLesson} summary={null} t={t} />);
     const headings = screen.getAllByRole('heading', { level: 2 });
     const vocabHeading = headings.find((h) => h.textContent?.includes('share_view_vocabulary'));
     expect(vocabHeading?.textContent).not.toContain('(0)');

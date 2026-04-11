@@ -5,7 +5,8 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import Spinner from '@/shared/components/ui/spinner';
-import { Badge, Card, Input } from '@/shared/components/Styled';
+import { Card, Input } from '@/shared/components/Styled';
+import { PriorityBadge, resolvePriorityVariant } from '@/shared/components';
 
 /**
  * Props for LessonOverview component.
@@ -244,9 +245,10 @@ export function LessonOverview({
                   >
                     <Pencil className="w-4 h-4" />
                   </button>
-                  <Badge className="bg-accent-primary-light text-accent-primary py-1.5 px-2.5">
-                    {lesson.priority}
-                  </Badge>
+                  <PriorityBadge
+                    label={lesson.priority}
+                    variant={resolvePriorityVariant(lesson.priority)}
+                  />
                 </div>
               </div>
 

@@ -73,5 +73,17 @@
   "share_view_example": "Ví dụ",
   "share_view_readonly_hint": "Đây là chế độ xem chia sẻ chỉ đọc. Đăng nhập để chỉnh sửa.",
   "share_link_copied": "Đã sao chép liên kết chia sẻ!",
-  "share_link_label": "Sao chép liên kết chia sẻ"
+  "share_link_label": "Sao chép liên kết chia sẻ",
+  "summary_section_title": "Tóm Tắt Bài Học",
+  "summary_paragraph_label": "Đoạn văn",
+  "summary_translation_label": "Dịch nghĩa",
+  "summary_questions_label": "Câu Hỏi Hiểu Bài",
+  "summary_loading": "Đang tải tóm tắt...",
+  "summary_empty": "Chưa có tóm tắt nào được tạo.",
+  "summary_generate_btn": "Tạo Tóm Tắt",
+  "summary_regenerate_btn": "Tạo Lại",
+  "summary_generating": "Đang tạo...",
+  "summary_generated": "Tóm tắt đã được tạo thành công",
+  "summary_fetch_error": "Không thể tải tóm tắt",
+  "summary_generate_error": "Không thể tạo tóm tắt"
 }

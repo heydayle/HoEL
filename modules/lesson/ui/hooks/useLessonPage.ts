@@ -8,6 +8,7 @@ import {
   getFilteredLessons,
   getLessonStats
 } from '@/modules/lesson/core/usecases';
+import { generateAndSaveSummary } from '@/modules/lesson/core/usecases/summaryUseCase';
 import { getLessonsFromLocalStorage, saveLessonsToLocalStorage, updateLessonInSupabase } from '@/modules/lesson/infras';
 import { bulkAddVocabs, syncVocabularies } from '@/modules/lesson/infras/vocabularyApi';
 import enMessages from '@/modules/lesson/messages/en.json';
@@ -123,6 +124,16 @@ export const useLessonPage = () => {
           console.error('Failed to save vocabularies for lesson:', uuid);
           toast.error(t('vocab_save_error_toast') || 'Failed to save vocabularies');
         }
+
+        /** Generate summary from vocabulary word list */
+        const wordList = vocabPayloads.map((v) => v.word);
+
+        try {
+          await generateAndSaveSummary(uuid, wordList);
+        } catch (summaryErr: unknown) {
+          console.error('Summary generation failed:', (summaryErr as Error).message);
+          /** Non-blocking: lesson saved successfully even if summary fails */
+        }
       }
 
       const updatedLessons = [newLesson, ...lessons];
@@ -144,7 +155,7 @@ export const useLessonPage = () => {
    * @param lessonId - ID of lesson to update
    * @param lesson - Updated lesson data
    */
-  const updateLesson = async (lessonId: string, lesson: Omit<ILesson, 'id'>): Promise<void> => {
+  const updateLesson = async (lessonId: string, lesson: Omit<ILesson, 'id'>, existingSummaryId?: string): Promise<void> => {
     setIsUpdating(true);
     try {
       /** Persist lesson metadata */

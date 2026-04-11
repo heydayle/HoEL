@@ -73,5 +73,17 @@
   "share_view_example": "Example",
   "share_view_readonly_hint": "This is a read-only shared view. Sign in to edit.",
   "share_link_copied": "Share link copied!",
-  "share_link_label": "Copy share link"
+  "share_link_label": "Copy share link",
+  "summary_section_title": "Lesson Summary",
+  "summary_paragraph_label": "Paragraph",
+  "summary_translation_label": "Translation",
+  "summary_questions_label": "Comprehension Questions",
+  "summary_loading": "Loading summary...",
+  "summary_empty": "No summary generated yet.",
+  "summary_generate_btn": "Generate Summary",
+  "summary_regenerate_btn": "Regenerate",
+  "summary_generating": "Generating...",
+  "summary_generated": "Summary generated successfully",
+  "summary_fetch_error": "Failed to load summary",
+  "summary_generate_error": "Failed to generate summary"
 }

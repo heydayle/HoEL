@@ -69,7 +69,7 @@ describe('Lesson Infras – Supabase operations', () => {
       const result = await getLessonsFromLocalStorage();
 
       expect(mockFrom).toHaveBeenCalledWith('lessons');
-      expect(mockSelect).toHaveBeenCalledWith('*, vocabularies(*)');
+      expect(mockSelect).toHaveBeenCalledWith('*, vocabularies(*), summaries(*)');
       expect(mockEq).toHaveBeenCalledWith('createdBy', 'test-user-id');
       expect(result).toHaveLength(1);
       expect(result[0].vocabularies).toHaveLength(1);

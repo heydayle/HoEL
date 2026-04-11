@@ -1,8 +1,18 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { useEffect } from 'react';
+
 import type { ILesson } from '@/modules/lesson/core/models';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/shared/components/Styled';
+import { SummaryLesson } from '@/modules/lesson/ui/components/SummaryLesson';
+import { useSummaryLesson } from '@/modules/lesson/ui/hooks/useSummaryLesson';
+import { PriorityBadge, resolvePriorityVariant } from '@/shared/components';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/shared/components/Styled';
 
 /**
  * Props for LessonDetailModal component.
@@ -18,6 +28,7 @@ interface ILessonDetailModalProps {
 
 /**
  * Modal dialog for displaying lesson details.
+ * Summary is rendered above vocabularies.
  * Each vocabulary entry is rendered in a minimal layout:
  *   Row 1 – index · word · IPA · part-of-speech · pronunciation
  *   Row 2 – meaning
@@ -31,6 +42,39 @@ export function LessonDetailModal({
   t,
   onClose,
 }: ILessonDetailModalProps): React.JSX.Element {
+  const {
+    summary,
+    isLoading: isSummaryLoading,
+    isGenerating: isSummaryGenerating,
+    fetchSummary,
+    handleGenerateSummary,
+  } = useSummaryLesson(t);
+
+  /** Fetch summary when the modal opens with a lesson */
+  useEffect(() => {
+    if (lesson?.id) {
+      fetchSummary(lesson.id);
+    }
+  }, [lesson?.id, fetchSummary]);
+
+  /**
+   * Triggers summary (re)generation for the selected lesson
+   * using its existing vocabulary words.
+   */
+  const handleRegenerateSummary = () => {
+    if (!lesson) {
+      return;
+    }
+
+    const wordList = (lesson.vocabularies ?? []).map((v) => v.word).filter((w) => w.trim() !== '');
+
+    if (wordList.length === 0) {
+      return;
+    }
+
+    handleGenerateSummary(lesson.id, wordList, summary?.id);
+  };
+
   if (!lesson) return <></>;
 
   return (
@@ -38,36 +82,52 @@ export function LessonDetailModal({
       <DialogContent className="flex! flex-col! max-h-[80vh]! overflow-hidden! p-0! gap-0! sm:max-w-[44rem]!">
         <DialogHeader className="shrink-0! p-4! border-b border-border/50!">
           <DialogTitle>{lesson.topic}</DialogTitle>
-          <DialogDescription>{t('form_participant')}: {lesson.participantName}</DialogDescription>
+          <DialogDescription>
+            {t('form_participant')}: {lesson.participantName}
+          </DialogDescription>
 
           {/* Meta Strip */}
           <div className="flex flex-wrap items-center gap-[0.3rem] pb-3 border-b border-border/40">
-            <span
-              className="text-xs whitespace-nowrap max-w-[18ch] overflow-hidden text-ellipsis rounded py-[0.05rem] px-[0.35rem]"
-              style={{
-                color: 'var(--background)',
-                background: lesson.priority === 'High' ? 'var(--accent-primary)' : lesson.priority === 'Medium' ? 'var(--accent-secondary)' : 'var(--green)',
-              }}
-            >
-              {lesson.priority}
-            </span>
+            <PriorityBadge
+              label={lesson.priority}
+              variant={resolvePriorityVariant(lesson.priority)}
+            />
             {lesson.notes && (
               <>
                 <span className="w-[3px] h-[3px] rounded-full bg-muted-foreground/30 shrink-0" />
-                <span className="text-xs text-muted-foreground/55 whitespace-nowrap max-w-[18ch] overflow-hidden text-ellipsis">{lesson.notes}</span>
+                <span className="text-xs text-muted-foreground/55 whitespace-nowrap max-w-[18ch] overflow-hidden text-ellipsis">
+                  {lesson.notes}
+                </span>
               </>
             )}
             <span className="w-[3px] h-[3px] rounded-full bg-muted-foreground/30 shrink-0" />
-            <span className="text-xs text-muted-foreground whitespace-nowrap">{new Date(lesson.date).toLocaleDateString()}</span>
+            <span className="text-xs text-muted-foreground whitespace-nowrap">
+              {new Date(lesson.date).toLocaleDateString()}
+            </span>
             <span className="w-[3px] h-[3px] rounded-full bg-muted-foreground/30 shrink-0" />
-            <span className="text-xs text-muted-foreground whitespace-nowrap">{lesson?.vocabularies?.length}&nbsp;{t('vocab_count')}</span>
+            <span className="text-xs text-muted-foreground whitespace-nowrap">
+              {lesson?.vocabularies?.length}&nbsp;{t('vocab_count')}
+            </span>
             <span className="w-[3px] h-[3px] rounded-full bg-muted-foreground/30 shrink-0" />
-            <span className="text-xs text-muted-foreground whitespace-nowrap">0&nbsp;{t('question_count')}</span>
+            <span className="text-xs text-muted-foreground whitespace-nowrap">
+              0&nbsp;{t('question_count')}
+            </span>
             <span className="w-[3px] h-[3px] rounded-full bg-muted-foreground/30 shrink-0" />
           </div>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto px-4 flex flex-col gap-4">
+          {/* Summary section — displayed above vocabularies */}
+          <div className="mt-3">
+            <SummaryLesson
+              summary={summary}
+              isLoading={isSummaryLoading}
+              isGenerating={isSummaryGenerating}
+              t={t}
+              onRegenerate={handleRegenerateSummary}
+            />
+          </div>
+
           {/* Vocabulary list */}
           {lesson?.vocabularies?.length > 0 && (
             <div className="flex flex-col gap-2">
@@ -77,7 +137,10 @@ export function LessonDetailModal({
 
               <div className="flex flex-col gap-4 pb-4">
                 {lesson.vocabularies.map((vocab, index) => (
-                  <div key={vocab.id} className="p-3.5 border border-border rounded-lg bg-background">
+                  <div
+                    key={vocab.id}
+                    className="p-3.5 border border-border rounded-lg bg-background"
+                  >
                     {/* Row 1: index · word · IPA · PoS · pronunciation */}
                     <div className="flex items-baseline flex-wrap gap-2 mb-1.5">
                       <span className="text-[0.85rem] font-medium text-muted-foreground/60 min-w-4 shrink-0">
@@ -96,9 +159,7 @@ export function LessonDetailModal({
                       </span>
 
                       {vocab.partOfSpeech && (
-                        <span className="text-[0.65rem] font-medium text-muted-foreground/70 uppercase tracking-[0.04em] border border-border/50 rounded py-[0.05rem] px-[0.35rem] shrink-0 bg-accent-primary-light">
-                          {vocab.partOfSpeech}
-                        </span>
+                        <PriorityBadge label={vocab.partOfSpeech} variant="pos" />
                       )}
 
                       {vocab.pronunciation && (
@@ -114,7 +175,10 @@ export function LessonDetailModal({
                         <span className="text-[0.7rem] font-medium uppercase tracking-[0.05em] text-muted-foreground/50 mr-1.5">
                           {t('vocab_meaning_label')}:<br />
                         </span>
-                        - <span className="text-foreground/85 text-[0.875rem] leading-relaxed">{vocab.meaning}</span>
+                        -{' '}
+                        <span className="text-foreground/85 text-[0.875rem] leading-relaxed">
+                          {vocab.meaning}
+                        </span>
                       </div>
                     )}
 
@@ -124,7 +188,11 @@ export function LessonDetailModal({
                         <span className="text-[0.7rem] font-medium uppercase tracking-[0.05em] text-muted-foreground/50 mr-1.5">
                           {t('vocab_example_label')}:<br />
                         </span>
-                        - <span className="inline text-muted-foreground text-[0.85rem] italic leading-relaxed [&_b]:bg-[var(--highlight)] [&_b]:px-1" dangerouslySetInnerHTML={{ __html: vocab.example }} />
+                        -{' '}
+                        <span
+                          className="inline text-muted-foreground text-[0.85rem] italic leading-relaxed [&_b]:text-white [&_b]:bg-[var(--highlight)] [&_b]:px-1"
+                          dangerouslySetInnerHTML={{ __html: vocab.example }}
+                        />
                       </div>
                     )}
 
@@ -134,7 +202,10 @@ export function LessonDetailModal({
                         <span className="text-[0.7rem] font-medium uppercase tracking-[0.05em] text-muted-foreground/50 mr-1.5">
                           {t('vocab_translation_label')}:<br />
                         </span>
-                        - <span className="text-muted-foreground/75 text-[0.825rem] leading-relaxed">{vocab.translation}</span>
+                        -{' '}
+                        <span className="text-muted-foreground/75 text-[0.825rem] leading-relaxed">
+                          {vocab.translation}
+                        </span>
                       </div>
                     )}
                   </div>

@@ -1,6 +1,6 @@
-import type { ILesson, IDifyVocabResponse, IVocabulary } from '@/modules/lesson/core/models';
-import { createClient } from '@/shared/utils/supabase/client';
+import type { IDifyVocabResponse, ILesson, ISummaryLesson, IVocabulary } from '@/modules/lesson/core/models';
 import { getUserLocal } from '@/shared/hooks/getUserLocal';
+import { createClient } from '@/shared/utils/supabase/client';
 
 
 /**
@@ -27,7 +27,7 @@ export const getLessonsFromLocalStorage = async (): Promise<ILesson[]> => {
 
   const { data, error } = await supabase
     .from('lessons')
-    .select('*, vocabularies(*)')
+    .select('*, vocabularies(*), summaries(*)')
     .eq('createdBy', userId);
 
   if (error) {
@@ -50,6 +50,10 @@ export const getLessonsFromLocalStorage = async (): Promise<ILesson[]> => {
       example: (v.example as string) ?? '',
     }));
 
+    /** Extract summary_id from joined summaries (one-to-one) */
+    const summaryRows = (row.summaries ?? []) as Array<Record<string, unknown>>;
+    const summaryId = summaryRows.length > 0 ? (summaryRows[0].id as string) : undefined;
+
     return {
       id: row.id as string,
       date: row.date as string,
@@ -61,11 +65,22 @@ export const getLessonsFromLocalStorage = async (): Promise<ILesson[]> => {
       notes: (row.notes as string) ?? '',
       createdBy: (row.createdBy as string) ?? undefined,
       vocabularies,
+      summary_id: summaryId,
     };
   });
 
   return lessons;
 };
+
+/**
+ * Response shape from the public share API.
+ */
+export interface IPublicLessonResponse {
+  /** The lesson data */
+  lesson: ILesson;
+  /** The associated summary, or null if none exists */
+  summary: ISummaryLesson | null;
+}
 
 /**
  * Fetches a single lesson by ID without requiring authentication.
@@ -76,9 +91,9 @@ export const getLessonsFromLocalStorage = async (): Promise<ILesson[]> => {
  * token is needed from the browser.
  *
  * @param lessonId - UUID of the lesson to retrieve
- * @returns The lesson with nested vocabularies, or null if not found
+ * @returns The lesson with nested vocabularies and summary, or null if not found
  */
-export const getLessonByIdPublic = async (lessonId: string): Promise<ILesson | null> => {
+export const getLessonByIdPublic = async (lessonId: string): Promise<IPublicLessonResponse | null> => {
   const response = await fetch(`/api/share/${lessonId}`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
@@ -93,7 +108,7 @@ export const getLessonByIdPublic = async (lessonId: string): Promise<ILesson | n
     throw new Error((body as { error?: string }).error ?? 'Failed to fetch public lesson');
   }
 
-  return response.json() as Promise<ILesson>;
+  return response.json() as Promise<IPublicLessonResponse>;
 };
 
 
@@ -103,7 +118,7 @@ export const getLessonById = async (lessonId: string): Promise<ILesson | null> =
 
   const { data, error } = await supabase
     .from('lessons')
-    .select('*, vocabularies(*)')
+    .select('*, vocabularies(*), summaries(*)')
     .eq('id', lessonId)
     .eq('createdBy', userId)
     .maybeSingle();
@@ -131,6 +146,10 @@ export const getLessonById = async (lessonId: string): Promise<ILesson | null> =
     example: (v.example as string) ?? '',
   }));
 
+  /** Extract summary_id from joined summaries (one-to-one) */
+  const summaryRows = (data.summaries ?? []) as Array<Record<string, unknown>>;
+  const summaryId = summaryRows.length > 0 ? (summaryRows[0].id as string) : undefined;
+
   const lesson: ILesson = {
     id: data.id as string,
     date: data.date as string,
@@ -142,10 +161,16 @@ export const getLessonById = async (lessonId: string): Promise<ILesson | null> =
     notes: (data.notes as string) ?? '',
     createdBy: (data.createdBy as string) ?? undefined,
     vocabularies,
+    summary_id: summaryId,
   };
 
   return lesson;
 };
+
+const TYPES_REQUEST = {
+  VOCAB: 1,
+  SUMMARY_LESSON: 2,
+}
 
 /**
  * Sends a request to the Dify AI workflow API to generate vocabulary data.
@@ -157,7 +182,27 @@ export const fetchGeneratedVocab = async (word: string): Promise<IDifyVocabRespo
   const response = await fetch('/api/workflow/add', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ word }),
+    body: JSON.stringify({ word, type: TYPES_REQUEST.VOCAB }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to generate vocabulary from server');
+  }
+
+  return response.json();
+};
+
+/**
+ * Sends a request to the Dify AI workflow API to generate vocabulary data.
+ *
+ * @param word - The English word to look up
+ * @returns Raw response payload from the Dify API
+ */
+export const fetchGeneratedSummaryLesson = async (wordList: string[]): Promise<IDifyVocabResponse> => {
+  const response = await fetch('/api/workflow/add', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ word_list: wordList.join(','), type: TYPES_REQUEST.SUMMARY_LESSON }),
   });
 
   if (!response.ok) {

@@ -1,22 +1,9 @@
 'use client';
-import { cn } from '@/lib/utils';
-import type { ILesson, IVocabulary } from '@/modules/lesson/core/models';
+import type { ILesson, ISummaryLesson, IVocabulary } from '@/modules/lesson/core/models';
+import { SummaryLesson } from '@/modules/lesson/ui/components/SummaryLesson';
+import { PriorityBadge, resolvePriorityVariant } from '@/shared/components';
 import { BookOpen, Calendar, Eye, Flag, User, Volume2 } from 'lucide-react';
 import React from 'react';
-
-/** Priority colour maps */
-const PRIORITY_COLORS: Record<string, string> = {
-  low: 'hsl(150, 60%, 40%)',
-  medium: 'hsl(38, 92%, 50%)',
-  high: 'hsl(0, 72%, 51%)',
-  pos: 'hsl(var(--primary))',
-};
-const PRIORITY_BG_COLORS: Record<string, string> = {
-  low: 'rgba(34,197,110,0.12)',
-  medium: 'rgba(234,179,8,0.12)',
-  high: 'rgba(239,68,68,0.12)',
-  pos: 'hsl(var(--primary) / 0.12)',
-};
 
 /** ──────────────────────────────────────────────────────────────────────────
  * Sub-component: VocabularyCard
@@ -37,28 +24,31 @@ function VocabularyCard({ vocab, t }: IVocabularyCardProps): React.JSX.Element {
   return (
     <article className="flex flex-col gap-3 p-5 rounded-[0.875rem] bg-[var(--surface)] border border-[var(--surface-border)] transition-all duration-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] hover:border-primary/40 hover:-translate-y-0.5">
       <div className="flex items-center flex-wrap gap-2">
-        <span className="text-xl font-bold text-foreground bg-[var(--highlight)] px-0.5 rounded-lg">{vocab.word}</span>
-        {vocab.ipa && <span className="text-[0.85rem] text-foreground-secondary italic">{vocab.ipa}</span>}
-        {vocab.partOfSpeech && (
-          <span
-            className="inline-flex items-center py-[0.15rem] px-[0.55rem] rounded-full text-[0.72rem] font-semibold tracking-[0.04em]"
-            style={{ color: PRIORITY_COLORS['pos'], background: PRIORITY_BG_COLORS['pos'], border: `1px solid ${PRIORITY_COLORS['pos']}33` }}
-          >
-            {vocab.partOfSpeech}
-          </span>
+        <span className="text-xl font-bold text-foreground bg-[var(--highlight)] px-2 rounded-lg">
+          {vocab.word}
+        </span>
+        {vocab.ipa && (
+          <span className="text-[0.85rem] text-foreground-secondary italic">{vocab.ipa}</span>
         )}
+        {vocab.partOfSpeech && <PriorityBadge label={vocab.partOfSpeech} variant="pos" />}
       </div>
       <div className="flex flex-col gap-2.5">
         {vocab.meaning && (
           <div className="flex flex-col gap-0.5">
-            <span className="flex items-center gap-[0.3rem] text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground-secondary">{t('share_view_meaning')}</span>
+            <span className="flex items-center gap-[0.3rem] text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground-secondary">
+              {t('share_view_meaning')}
+            </span>
             <span className="text-[0.9rem] text-foreground leading-relaxed">{vocab.meaning}</span>
           </div>
         )}
         {vocab.translation && (
           <div className="flex flex-col gap-0.5">
-            <span className="flex items-center gap-[0.3rem] text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground-secondary">{t('share_view_translation')}</span>
-            <span className="text-[0.9rem] text-foreground leading-relaxed">{vocab.translation}</span>
+            <span className="flex items-center gap-[0.3rem] text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground-secondary">
+              {t('share_view_translation')}
+            </span>
+            <span className="text-[0.9rem] text-foreground leading-relaxed">
+              {vocab.translation}
+            </span>
           </div>
         )}
         {vocab.pronunciation && (
@@ -67,13 +57,19 @@ function VocabularyCard({ vocab, t }: IVocabularyCardProps): React.JSX.Element {
               <Volume2 aria-hidden="true" className="w-3.5 h-3.5" />
               {t('share_view_pronunciation')}
             </span>
-            <span className="text-[0.9rem] text-foreground leading-relaxed">{vocab.pronunciation}</span>
+            <span className="text-[0.9rem] text-foreground leading-relaxed">
+              {vocab.pronunciation}
+            </span>
           </div>
         )}
         {vocab.example && (
           <div className="flex flex-col gap-0.5">
-            <span className="flex items-center gap-[0.3rem] text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground-secondary">{t('share_view_example')}</span>
-            <span className="text-[0.9rem] text-foreground-secondary italic leading-relaxed">{vocab.example}</span>
+            <span className="flex items-center gap-[0.3rem] text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground-secondary">
+              {t('share_view_example')}
+            </span>
+            <span className="text-[0.9rem] text-foreground-secondary italic leading-relaxed">
+              {vocab.example}
+            </span>
           </div>
         )}
       </div>
@@ -87,6 +83,8 @@ function VocabularyCard({ vocab, t }: IVocabularyCardProps): React.JSX.Element {
 interface ILessonShareViewProps {
   /** Fully loaded lesson entity to display */
   lesson: ILesson;
+  /** Associated summary data, or null if none exists */
+  summary: ISummaryLesson | null;
   /** Translation function bound to the lesson module messages */
   t: (key: string) => string;
 }
@@ -97,32 +95,37 @@ interface ILessonShareViewProps {
  * @param props - Component props
  * @returns Full page read-only lesson detail UI
  */
-export function LessonShareView({ lesson, t }: ILessonShareViewProps): React.JSX.Element {
+export function LessonShareView({ lesson, summary, t }: ILessonShareViewProps): React.JSX.Element {
   const formattedDate = new Date(lesson.date).toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
 
-  const priorityVariant = lesson.priority.toLowerCase() as 'low' | 'medium' | 'high';
+  const priorityVariant = resolvePriorityVariant(lesson.priority);
 
   return (
     <div className="min-h-screen bg-background text-foreground py-8 px-4 pb-16">
       <main className="max-w-[52rem] mx-auto flex flex-col gap-6">
         {/* ── Hero banner ── */}
-        <section className="flex flex-col gap-4 py-4 rounded-2xl bg-gradient-to-br from-primary/18 to-accent/12 border border-primary/25 backdrop-blur-[8px]">
-          <span className="inline-flex items-center gap-[0.35rem] w-fit py-1 px-3 rounded-full text-xs font-semibold tracking-[0.04em] uppercase bg-primary/15 text-primary border border-primary/30">
+        <section className="flex flex-col gap-4 p-4 rounded-2xl bg-gradient-to-br from-primary/18 to-accent/12 border border-primary/25 backdrop-blur-[8px]">
+          <span className="inline-flex items-center gap-[0.35rem] w-fit py-1 !px-3 rounded-full text-xs font-semibold tracking-[0.04em] uppercase bg-primary/15 text-primary border border-primary/30">
             <Eye aria-hidden="true" className="w-3.5 h-3.5" />
             {t('share_view_badge')}
           </span>
           <div className="flex flex-col gap-[0.35rem]">
-            <h1 className="m-0 text-[1.875rem] font-extrabold text-foreground leading-tight tracking-tight sm:text-4xl">{lesson.topic}</h1>
+            <h1 className="m-0 text-[1.875rem] font-extrabold text-foreground leading-tight tracking-tight sm:text-4xl">
+              {lesson.topic}
+            </h1>
             <p className="m-0 text-[0.95rem] text-foreground-secondary">{t('share_view_title')}</p>
           </div>
         </section>
 
         {/* ── Read-only hint ── */}
-        <p role="note" className="m-0 py-3 rounded-lg text-[0.85rem] text-muted-foreground bg-muted/50 border border-dashed border-border italic">
+        <p
+          role="note"
+          className="m-0 py-3 rounded-lg text-[0.85rem] text-muted-foreground bg-muted/50 border border-dashed border-border italic"
+        >
           {t('share_view_readonly_hint')}
         </p>
 
@@ -133,14 +136,18 @@ export function LessonShareView({ lesson, t }: ILessonShareViewProps): React.JSX
               <User aria-hidden="true" className="w-4 h-4" />
               {t('share_view_participant')}
             </span>
-            <span className="text-base font-semibold text-foreground flex items-center gap-2">{lesson.participantName}</span>
+            <span className="text-base font-semibold text-foreground flex items-center gap-2">
+              {lesson.participantName}
+            </span>
           </div>
           <div className="flex flex-col gap-[0.35rem] py-4 px-5 rounded-xl bg-[var(--surface)] border border-[var(--surface-border)] transition-colors duration-200 hover:border-primary/40">
             <span className="flex items-center gap-1.5 text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-foreground-secondary">
               <Calendar aria-hidden="true" className="w-4 h-4" />
               {t('share_view_date')}
             </span>
-            <span className="text-base font-semibold text-foreground flex items-center gap-2">{formattedDate}</span>
+            <span className="text-base font-semibold text-foreground flex items-center gap-2">
+              {formattedDate}
+            </span>
           </div>
           <div className="flex flex-col gap-[0.35rem] py-4 px-5 rounded-xl bg-[var(--surface)] border border-[var(--surface-border)] transition-colors duration-200 hover:border-primary/40">
             <span className="flex items-center gap-1.5 text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-foreground-secondary">
@@ -148,12 +155,7 @@ export function LessonShareView({ lesson, t }: ILessonShareViewProps): React.JSX
               {t('share_view_priority')}
             </span>
             <span className="text-base font-semibold text-foreground flex items-center gap-2">
-              <span
-                className="inline-flex items-center py-[0.15rem] px-[0.55rem] rounded-full text-[0.72rem] font-semibold tracking-[0.04em]"
-                style={{ color: PRIORITY_COLORS[priorityVariant], background: PRIORITY_BG_COLORS[priorityVariant], border: `1px solid ${PRIORITY_COLORS[priorityVariant]}33` }}
-              >
-                {lesson.priority}
-              </span>
+              <PriorityBadge label={lesson.priority} variant={priorityVariant} />
             </span>
           </div>
         </div>
@@ -171,6 +173,9 @@ export function LessonShareView({ lesson, t }: ILessonShareViewProps): React.JSX
             </p>
           </>
         )}
+
+        {/* ── Summary ── */}
+        <SummaryLesson summary={summary} isLoading={false} isGenerating={false} t={t} />
 
         {/* ── Vocabulary ── */}
         <hr className="m-0 border-none border-t border-[var(--surface-border)]" />

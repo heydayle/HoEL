@@ -19,6 +19,13 @@ const mockLesson = {
   notes: 'Great session!',
   vocabularies: [],
 };
+
+/** Mock response matching the IPublicLessonResponse shape */
+const mockResponse = {
+  lesson: mockLesson,
+  summary: null,
+};
+
 describe('usePublicLessonDetail', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -28,15 +35,17 @@ describe('usePublicLessonDetail', () => {
     const { result } = renderHook(() => usePublicLessonDetail('lesson-123'));
     expect(result.current.isLoading).toBe(true);
     expect(result.current.lesson).toBeNull();
+    expect(result.current.summary).toBeNull();
     expect(result.current.error).toBeNull();
   });
-  it('should set lesson on successful fetch', async () => {
-    mockGetLessonByIdPublic.mockResolvedValue(mockLesson);
+  it('should set lesson and summary on successful fetch', async () => {
+    mockGetLessonByIdPublic.mockResolvedValue(mockResponse);
     const { result } = renderHook(() => usePublicLessonDetail('lesson-123'));
     await act(async () => {
       await result.current.fetchPublicLesson();
     });
     expect(result.current.lesson).toEqual(mockLesson);
+    expect(result.current.summary).toBeNull();
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBeNull();
   });
@@ -62,7 +71,7 @@ describe('usePublicLessonDetail', () => {
   it('should reset error on subsequent successful fetch', async () => {
     mockGetLessonByIdPublic
       .mockRejectedValueOnce(new Error('fail'))
-      .mockResolvedValueOnce(mockLesson);
+      .mockResolvedValueOnce(mockResponse);
     const { result } = renderHook(() => usePublicLessonDetail('lesson-123'));
     await act(async () => {
       await result.current.fetchPublicLesson();
@@ -75,7 +84,7 @@ describe('usePublicLessonDetail', () => {
     expect(result.current.lesson).toEqual(mockLesson);
   });
   it('should call getLessonByIdPublic with the provided lessonId', async () => {
-    mockGetLessonByIdPublic.mockResolvedValue(mockLesson);
+    mockGetLessonByIdPublic.mockResolvedValue(mockResponse);
     const { result } = renderHook(() => usePublicLessonDetail('lesson-abc'));
     await act(async () => {
       await result.current.fetchPublicLesson();

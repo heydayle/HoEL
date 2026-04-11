@@ -6,11 +6,13 @@ import { ArrowLeft } from 'lucide-react';
 
 import type { ILesson } from '@/modules/lesson/core/models';
 import { LessonForm } from '@/modules/lesson/ui/components/LessonForm';
+import { SummaryLesson } from '@/modules/lesson/ui/components/SummaryLesson';
 import { useLessonPage } from '@/modules/lesson/ui/hooks';
 import { AppHeader } from '@/shared/components';
 import { Button } from '@/shared/components/Styled';
 
 import { useLessonDetail } from '@/modules/lesson/ui/hooks/useLessonDetail';
+import { useSummaryLesson } from '@/modules/lesson/ui/hooks/useSummaryLesson';
 import { Spinner } from '@/shared/components/ui/spinner';
 import { Error as ErrorComponent } from '@/shared/components/ui/error';
 
@@ -21,7 +23,10 @@ interface IEditLessonPageProps {
 }
 
 /**
- * Page route for editing a lesson at /lessons/[id]/edit.
+ * Page route for editing a lesson at /lessons/[id].
+ * Loads the lesson detail including summary and vocabularies.
+ * Summary is displayed above the lesson form.
+ *
  * @param props - Route params including lesson ID
  * @returns Edit lesson page UI
  */
@@ -31,21 +36,55 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
 
   const { updateLesson, resolvedTheme, locale, setLocale, t, toggleTheme, isUpdating } = useLessonPage();
   const { fetchLessonDetail, lesson: detailedLesson, isLoading, error } = useLessonDetail(params.id);
+  const {
+    summary,
+    isLoading: isSummaryLoading,
+    isGenerating: isSummaryGenerating,
+    fetchSummary,
+    handleGenerateSummary,
+  } = useSummaryLesson(t);
+
   const lesson = useMemo(
     () => detailedLesson,
-    [detailedLesson]
+    [detailedLesson],
   );
+
   useEffect(() => {
     fetchLessonDetail();
+    fetchSummary(params.id);
   }, [params.id]);
 
+  /**
+   * Handles lesson update, passing the existing summary_id so the
+   * summary is regenerated (updated) rather than duplicated.
+   */
   const handleUpdateLesson = async (updatedLesson: Omit<ILesson, 'id'>) => {
     if (!lesson) {
       return;
     }
 
-    await updateLesson(lesson.id, updatedLesson);
+    await updateLesson(lesson.id, updatedLesson, lesson.summary_id);
     router.push(`/lessons`);
+  };
+
+  /**
+   * Triggers summary (re)generation for the current lesson
+   * using its existing vocabulary words.
+   */
+  const handleRegenerateSummary = () => {
+    if (!lesson) {
+      return;
+    }
+
+    const wordList = (lesson.vocabularies ?? [])
+      .map((v) => v.word)
+      .filter((w) => w.trim() !== '');
+
+    if (wordList.length === 0) {
+      return;
+    }
+
+    handleGenerateSummary(lesson.id, wordList, summary?.id);
   };
 
   /** Shared back-button element used in the header's left slot */
@@ -98,6 +137,17 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
     <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-[56rem] mx-auto py-8 px-4 md:px-8">
         <AppHeader {...headerProps} />
+
+        {/* Summary section — displayed above the form */}
+        <div className="mt-6 mb-4">
+          <SummaryLesson
+            summary={summary}
+            isLoading={isSummaryLoading}
+            isGenerating={isSummaryGenerating}
+            t={t}
+            onRegenerate={handleRegenerateSummary}
+          />
+        </div>
 
         <LessonForm
           t={t}

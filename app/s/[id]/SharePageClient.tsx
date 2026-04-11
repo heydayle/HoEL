@@ -34,7 +34,7 @@ export default function SharePageClient({
 }: ISharePageClientProps): React.JSX.Element {
   const params = use(paramsPromise);
   const { t } = useLocale(MESSAGES);
-  const { lesson, isLoading, error, fetchPublicLesson } = usePublicLessonDetail(params.id);
+  const { lesson, summary, isLoading, error, fetchPublicLesson } = usePublicLessonDetail(params.id);
 
   useEffect(() => {
     void fetchPublicLesson();
@@ -59,5 +59,5 @@ export default function SharePageClient({
     );
   }
 
-  return <LessonShareView lesson={lesson} t={t} />;
+  return <LessonShareView lesson={lesson} summary={summary} t={t} />;
 }
