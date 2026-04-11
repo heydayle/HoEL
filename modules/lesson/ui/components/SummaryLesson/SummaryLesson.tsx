@@ -121,7 +121,7 @@ export function SummaryLesson({
             {t('summary_translation_label')}
           </summary>
           <p
-            className="m-0 mt-1.5 text-[0.85rem] leading-relaxed text-muted-foreground/80 italic [&_b]:text-white [&_b]:bg-[var(--highlight)] [&_b]:px-1"
+            className="m-0 mt-1.5 text-[0.85rem] leading-relaxed text-foreground-secondary italic [&_b]:text-foreground"
             dangerouslySetInnerHTML={{ __html: summary.translate }}
           ></p>
         </details>

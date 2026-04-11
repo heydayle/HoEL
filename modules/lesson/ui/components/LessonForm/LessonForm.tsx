@@ -1,7 +1,7 @@
 'use client';
 
 import { LoaderCircleIcon, Plus, Trash2 } from 'lucide-react';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ILesson, LessonPriority } from '@/modules/lesson/core/models';
 import {
@@ -24,7 +24,7 @@ interface ILessonFormProps {
   description: string;
   submitLabel: string;
   initialLesson?: ILesson | null;
-  onSubmitLesson: (lesson: Omit<ILesson, 'id'>) => void;
+  onSubmitLesson: (lesson: Omit<ILesson, 'id'>) => void | Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
 }
@@ -51,6 +51,9 @@ export function LessonForm({
     vocabularies,
   } = useGenerateVocab(initialLesson);
   const isEditing = !!initialLesson;
+
+  /** Tracks whether the form is being submitted (awaiting onSubmitLesson). */
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   /** Ref pointing to the bottom of the vocab list — used for auto-scroll. */
   const vocabBottomRef = useRef<HTMLDivElement>(null);
@@ -126,8 +129,10 @@ export function LessonForm({
   };
 
   /** Reads form data and calls the submit callback. */
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isSubmitting) return;
+
     const formData = new FormData(event.currentTarget);
 
     let date = formData.get('date') as string;
@@ -157,7 +162,13 @@ export function LessonForm({
         .filter((vocab) => vocab.word.trim() !== ''),
     };
 
-    onSubmitLesson(lesson);
+    setIsSubmitting(true);
+
+    try {
+      await onSubmitLesson(lesson);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isLoading) {
@@ -365,10 +376,13 @@ export function LessonForm({
             </div>
             {/* Action buttons */}
             <div className="flex gap-3 justify-end items-center flex-wrap">
-              <Button type="button" variant="outline" onClick={onCancel}>
+              <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
                 {t('cancel')}
               </Button>
-              <Button type="submit">{submitLabel}</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting && <LoaderCircleIcon className="w-4 h-4 mr-2 animate-spin" />}
+                {submitLabel}
+              </Button>
             </div>
           </div>
         </div>

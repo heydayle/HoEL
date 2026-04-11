@@ -67,9 +67,10 @@ function VocabularyCard({ vocab, t }: IVocabularyCardProps): React.JSX.Element {
             <span className="flex items-center gap-[0.3rem] text-[0.72rem] font-semibold uppercase tracking-[0.05em] text-foreground-secondary">
               {t('share_view_example')}
             </span>
-            <span className="text-[0.9rem] text-foreground-secondary italic leading-relaxed">
-              {vocab.example}
-            </span>
+            <p
+              className="m-0 mt-1.5 text-[0.85rem] leading-relaxed text-foreground-secondary italic [&_b]:text-foreground"
+              dangerouslySetInnerHTML={{ __html: vocab.example }}
+            ></p>
           </div>
         )}
       </div>
@@ -108,7 +109,7 @@ export function LessonShareView({ lesson, summary, t }: ILessonShareViewProps): 
     <div className="min-h-screen bg-background text-foreground py-8 px-4 pb-16">
       <main className="max-w-[52rem] mx-auto flex flex-col gap-6">
         {/* ── Hero banner ── */}
-        <section className="flex flex-col gap-4 p-4 rounded-2xl bg-gradient-to-br from-primary/18 to-accent/12 border border-primary/25 backdrop-blur-[8px]">
+        <section className="flex flex-col gap-4 p-4 rounded-2xl border border-primary/25 backdrop-blur-[8px]">
           <span className="inline-flex items-center gap-[0.35rem] w-fit py-1 !px-3 rounded-full text-xs font-semibold tracking-[0.04em] uppercase bg-primary/15 text-primary border border-primary/30">
             <Eye aria-hidden="true" className="w-3.5 h-3.5" />
             {t('share_view_badge')}
@@ -120,14 +121,6 @@ export function LessonShareView({ lesson, summary, t }: ILessonShareViewProps): 
             <p className="m-0 text-[0.95rem] text-foreground-secondary">{t('share_view_title')}</p>
           </div>
         </section>
-
-        {/* ── Read-only hint ── */}
-        <p
-          role="note"
-          className="m-0 py-3 rounded-lg text-[0.85rem] text-muted-foreground bg-muted/50 border border-dashed border-border italic"
-        >
-          {t('share_view_readonly_hint')}
-        </p>
 
         {/* ── Lesson metadata ── */}
         <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(12rem,1fr))]">
