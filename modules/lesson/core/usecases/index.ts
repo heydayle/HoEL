@@ -160,6 +160,11 @@ export const matchesLessonFilters = (lesson: ILesson, filters: ILessonFilterInpu
 
 /**
  * Sorts lessons with a selected strategy.
+ *
+ * For `date_desc` / `date_asc`, sorting uses the database `created_at`
+ * timestamp (when the lesson was created) with a fallback to `date`
+ * for records that don't have `created_at` (e.g. fallback sample data).
+ *
  * @param lessons - Lessons before sorting
  * @param sortBy - Sort strategy option
  * @returns New sorted lesson array
@@ -167,16 +172,20 @@ export const matchesLessonFilters = (lesson: ILesson, filters: ILessonFilterInpu
 export const sortLessons = (lessons: ILesson[], sortBy: LessonSortOption): ILesson[] => {
   const copiedLessons = [...lessons];
 
+  /** Helper to resolve the created-at timestamp, falling back to lesson date. */
+  const getCreatedAt = (lesson: ILesson): number =>
+    new Date(lesson.created_at ?? lesson.date).getTime();
+
   switch (sortBy) {
     case 'date_asc':
-      return copiedLessons.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      return copiedLessons.sort((a, b) => getCreatedAt(a) - getCreatedAt(b));
     case 'priority_desc':
       return copiedLessons.sort((a, b) => PRIORITY_RANK[b.priority] - PRIORITY_RANK[a.priority]);
     case 'topic_asc':
       return copiedLessons.sort((a, b) => a.topic.localeCompare(b.topic));
     case 'date_desc':
     default:
-      return copiedLessons.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      return copiedLessons.sort((a, b) => getCreatedAt(b) - getCreatedAt(a));
   }
 };
 

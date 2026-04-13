@@ -23,6 +23,16 @@ export interface IVocabulary {
   pronunciation: string;
   /** Example sentence */
   example: string;
+  /**
+   * Transient UI-only flag indicating this entry is still being fetched.
+   * Never persisted to the database.
+   */
+  _loading?: boolean;
+  /**
+   * Transient UI-only field showing the word currently being loaded.
+   * Displayed on the skeleton card while the API call is in progress.
+   */
+  _loadingWord?: string;
 }
 
 /**
@@ -88,6 +98,8 @@ export interface ILesson {
   // questions: IQuestion[];
   /** Optional field to track which user created the lesson */
   createdBy?: string;
+  /** Timestamp when the lesson record was created in the database */
+  created_at?: string;
   /** Foreign key linking to the associated summary record */
   summary_id?: string;
 }

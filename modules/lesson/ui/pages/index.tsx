@@ -38,6 +38,7 @@ export default function LessonPage(): React.JSX.Element {
     updateEndDate,
     updateSortBy,
     resetFilters,
+    deleteLesson,
   } = useLessonPage();
 
   const onEditLesson = (lesson: ILesson) => {
@@ -86,7 +87,7 @@ export default function LessonPage(): React.JSX.Element {
           onEditLesson={onEditLesson}
         />
 
-        <LessonDetailModal lesson={selectedLesson} t={t} onClose={() => setSelectedLesson(null)} />
+        <LessonDetailModal lesson={selectedLesson} t={t} onClose={() => setSelectedLesson(null)} onEditLesson={onEditLesson} onDeleteLesson={deleteLesson} />
       </div>
     </main>
   );

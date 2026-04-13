@@ -17,6 +17,7 @@ import {
 
 import Spinner from '@/shared/components/ui/spinner';
 import { useGenerateVocab } from '../../hooks/useGenerateVocab';
+import { VocabCardSkeleton } from './VocabCardSkeleton';
 
 interface ILessonFormProps {
   t: (key: string) => string;
@@ -149,6 +150,7 @@ export function LessonForm({
       isPinned: isEditing ? initialLesson!.isPinned : false,
       isFavorite: isEditing ? initialLesson!.isFavorite : false,
       vocabularies: vocabularies
+        .filter((vocab) => !vocab._loading)
         .map((vocab, index) => ({
           id: vocab.id,
           word: (formData.get(`vocab_${index}_word`) as string) || '',
@@ -244,99 +246,110 @@ export function LessonForm({
           {vocabularies.length === 0 && (
             <p className="block w-fit ml-4! p-1 italic bg-primary/40">{t('no_vocabularies')}</p>
           )}
-          {vocabularies.map((vocab, index) => (
-            <div
-              key={vocab.id}
-              className="flex flex-col gap-3 border border-border rounded-lg bg-muted/20 p-4"
-            >
-              {/* Header: index + remove */}
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium bg-primary py-1 px-2 pr-8 text-primary-foreground">
-                  #{index + 1}
-                </span>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="icon"
-                  onClick={() => handleRemoveVocab(vocab.id)}
-                  aria-label={t('remove_vocab_btn')}
-                >
-                  <Trash2 className="w-4 h-4 text-destructive" />
-                </Button>
-              </div>
+          {vocabularies.map((vocab, index) => {
+            /* ── Skeleton placeholder for a loading vocabulary ── */
+            if (vocab._loading) {
+              return <VocabCardSkeleton key={vocab.id} loadingWord={vocab._loadingWord} t={t} />;
+            }
 
-              {/* Row 1: Word · IPA · PoS · Pronunciation — 4 cols on laptop */}
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
+            /* ── Rendered (non-loading) vocabulary index ── */
+            const renderedIndex = vocabularies.slice(0, index).filter((v) => !v._loading).length;
+
+            return (
+              <div
+                key={vocab.id}
+                className="flex flex-col gap-3 border border-border rounded-lg bg-muted/20 p-4"
+              >
+                {/* Header: index + remove */}
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium bg-primary py-1 px-2 pr-8 text-primary-foreground">
+                    #{renderedIndex + 1}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    onClick={() => handleRemoveVocab(vocab.id)}
+                    aria-label={t('remove_vocab_btn')}
+                    className="cursor-pointer"
+                  >
+                    <Trash2 className="w-4 h-4 text-destructive" />
+                  </Button>
+                </div>
+
+                {/* Row 1: Word · IPA · PoS · Pronunciation — 4 cols on laptop */}
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium">{t('vocab_word')}*</label>
+                    <Input
+                      name={`vocab_${renderedIndex}_word`}
+                      required
+                      defaultValue={vocab.word ?? ''}
+                      placeholder="ex: happy"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium">{t('vocab_ipa')}</label>
+                    <Input
+                      name={`vocab_${renderedIndex}_ipa`}
+                      defaultValue={vocab.ipa ?? ''}
+                      placeholder="ex: /ˈhæpi/"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium">{t('vocab_pos')}</label>
+                    <Input
+                      name={`vocab_${renderedIndex}_partOfSpeech`}
+                      defaultValue={vocab.partOfSpeech ?? ''}
+                      placeholder="ex: adjective"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium">{t('vocab_pronunciation')}</label>
+                    <Input
+                      name={`vocab_${renderedIndex}_pronunciation`}
+                      defaultValue={vocab.pronunciation ?? ''}
+                      placeholder="ex: /ˈhæpi/"
+                    />
+                  </div>
+                </div>
+
+                {/* Translation */}
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium">{t('vocab_word')}*</label>
+                  <label className="text-sm font-medium">{t('vocab_translation')}*</label>
                   <Input
-                    name={`vocab_${index}_word`}
+                    name={`vocab_${renderedIndex}_translation`}
                     required
-                    defaultValue={vocabularies[index]?.word ?? ''}
-                    placeholder="ex: happy"
+                    defaultValue={vocab.translation ?? ''}
+                    placeholder="ex: vui vẻ"
                   />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium">{t('vocab_ipa')}</label>
-                  <Input
-                    name={`vocab_${index}_ipa`}
-                    defaultValue={vocabularies[index]?.ipa ?? ''}
-                    placeholder="ex: /ˈhæpi/"
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium">{t('vocab_pos')}</label>
-                  <Input
-                    name={`vocab_${index}_partOfSpeech`}
-                    defaultValue={vocabularies[index]?.partOfSpeech ?? ''}
-                    placeholder="ex: adjective"
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-medium">{t('vocab_pronunciation')}</label>
-                  <Input
-                    name={`vocab_${index}_pronunciation`}
-                    defaultValue={vocabularies[index]?.pronunciation ?? ''}
-                    placeholder="ex: /ˈhæpi/"
-                  />
-                </div>
-              </div>
 
-              {/* Translation */}
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium">{t('vocab_translation')}*</label>
-                <Input
-                  name={`vocab_${index}_translation`}
-                  required
-                  defaultValue={vocabularies[index]?.translation ?? ''}
-                  placeholder="ex: vui vẻ"
-                />
-              </div>
+                {/* Meaning — textarea */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium">{t('vocab_meaning')}*</label>
+                  <Textarea
+                    name={`vocab_${renderedIndex}_meaning`}
+                    required
+                    defaultValue={vocab.meaning ?? ''}
+                    rows={2}
+                    placeholder="ex: Feeling or showing pleasure or contentment."
+                  />
+                </div>
 
-              {/* Meaning — textarea */}
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium">{t('vocab_meaning')}*</label>
-                <Textarea
-                  name={`vocab_${index}_meaning`}
-                  required
-                  defaultValue={vocabularies[index]?.meaning ?? ''}
-                  rows={2}
-                  placeholder="ex: Feeling or showing pleasure or contentment."
-                />
+                {/* Example — textarea */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium">{t('vocab_example')}</label>
+                  <Textarea
+                    name={`vocab_${renderedIndex}_example`}
+                    defaultValue={vocab.example ?? ''}
+                    rows={2}
+                    placeholder="ex: She was happy to see her friends."
+                  />
+                </div>
               </div>
-
-              {/* Example — textarea */}
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium">{t('vocab_example')}</label>
-                <Textarea
-                  name={`vocab_${index}_example`}
-                  defaultValue={vocabularies[index]?.example ?? ''}
-                  rows={2}
-                  placeholder="ex: She was happy to see her friends."
-                />
-              </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/* Scroll anchor */}
           <div ref={vocabBottomRef} />
@@ -357,16 +370,14 @@ export function LessonForm({
                   onChange={onChangeNewVocab}
                   onKeyDown={handleNewVocabKeyDown}
                   placeholder="ex: happy"
-                  disabled={isGenerating}
                 />
                 <p className="mt-0 pl-1 text-sm italic text-muted-foreground">
                   {t('load_vocab_description')}
                 </p>
               </div>
               <div className="flex gap-2 items-center">
-                <Button type="button" onClick={handleLoadVocab} disabled={isGenerating}>
-                  {isGenerating && <LoaderCircleIcon className="animate-spin" />}
-                  {isGenerating ? 'Loading...' : t('load_vocab_btn')}
+                <Button type="button" onClick={handleLoadVocab}>
+                  {t('load_vocab_btn')}
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={handleAddVocab}>
                   <Plus className="w-4 h-4 mr-2" />

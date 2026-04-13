@@ -1,8 +1,8 @@
 'use client';
 
-import { use, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { use, useEffect, useMemo } from 'react';
 
 import type { ILesson } from '@/modules/lesson/core/models';
 import { LessonForm } from '@/modules/lesson/ui/components/LessonForm';
@@ -13,8 +13,9 @@ import { Button } from '@/shared/components/Styled';
 
 import { useLessonDetail } from '@/modules/lesson/ui/hooks/useLessonDetail';
 import { useSummaryLesson } from '@/modules/lesson/ui/hooks/useSummaryLesson';
-import { Spinner } from '@/shared/components/ui/spinner';
+import { FullPageLoading } from '@/shared/components';
 import { Error as ErrorComponent } from '@/shared/components/ui/error';
+import { Spinner } from '@/shared/components/ui/spinner';
 
 interface IEditLessonPageProps {
   params: Promise<{
@@ -30,12 +31,20 @@ interface IEditLessonPageProps {
  * @param props - Route params including lesson ID
  * @returns Edit lesson page UI
  */
-export default function EditLessonPage({ params: paramsPromise }: IEditLessonPageProps): React.JSX.Element {
+export default function EditLessonPage({
+  params: paramsPromise,
+}: IEditLessonPageProps): React.JSX.Element {
   const params = use(paramsPromise);
   const router = useRouter();
 
-  const { updateLesson, resolvedTheme, locale, setLocale, t, toggleTheme, isUpdating } = useLessonPage();
-  const { fetchLessonDetail, lesson: detailedLesson, isLoading, error } = useLessonDetail(params.id);
+  const { updateLesson, resolvedTheme, locale, setLocale, t, toggleTheme, isUpdating } =
+    useLessonPage();
+  const {
+    fetchLessonDetail,
+    lesson: detailedLesson,
+    isLoading,
+    error,
+  } = useLessonDetail(params.id);
   const {
     summary,
     isLoading: isSummaryLoading,
@@ -44,10 +53,7 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
     handleGenerateSummary,
   } = useSummaryLesson(t);
 
-  const lesson = useMemo(
-    () => detailedLesson,
-    [detailedLesson],
-  );
+  const lesson = useMemo(() => detailedLesson, [detailedLesson]);
 
   useEffect(() => {
     fetchLessonDetail();
@@ -64,7 +70,6 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
     }
 
     await updateLesson(lesson.id, updatedLesson, lesson.summary_id);
-    router.push(`/lessons`);
   };
 
   /**
@@ -76,9 +81,7 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
       return;
     }
 
-    const wordList = (lesson.vocabularies ?? [])
-      .map((v) => v.word)
-      .filter((w) => w.trim() !== '');
+    const wordList = (lesson.vocabularies ?? []).map((v) => v.word).filter((w) => w.trim() !== '');
 
     if (wordList.length === 0) {
       return;
@@ -110,7 +113,7 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
     onToggleTheme: toggleTheme,
   };
 
-  if (isLoading || isUpdating) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
         <Spinner size={40} />
@@ -135,6 +138,9 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {isUpdating && (
+        <FullPageLoading message={t('updating_lesson')} hint={t('updating_lesson_hint')} />
+      )}
       <div className="max-w-[56rem] mx-auto py-8 px-4 md:px-8">
         <AppHeader {...headerProps} />
 
@@ -146,6 +152,9 @@ export default function EditLessonPage({ params: paramsPromise }: IEditLessonPag
             isGenerating={isSummaryGenerating}
             t={t}
             onRegenerate={handleRegenerateSummary}
+            onReload={() => fetchSummary(params.id)}
+            showProcessingState={(lesson?.vocabularies?.length ?? 0) > 0}
+            vocabCount={lesson?.vocabularies?.length ?? 0}
           />
         </div>
 

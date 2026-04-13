@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { LessonDetailModal } from './LessonDetailModal';
 import type { ILesson } from '@/modules/lesson/core/models';
 
@@ -226,5 +226,161 @@ describe('LessonDetailModal — close behaviour', () => {
     // Simulate pressing Escape — radix Dialog fires onOpenChange(false)
     fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
     expect(onClose).toHaveBeenCalled();
+  });
+});
+
+describe('LessonDetailModal — edit button', () => {
+  it('renders the Edit button when onEditLesson is provided', () => {
+    render(
+      <LessonDetailModal
+        lesson={makeLesson()}
+        t={t}
+        onClose={jest.fn()}
+        onEditLesson={jest.fn()}
+      />,
+    );
+    expect(screen.getByLabelText('modal_edit_btn')).toBeInTheDocument();
+  });
+
+  it('does NOT render the Edit button when onEditLesson is not provided', () => {
+    render(<LessonDetailModal lesson={makeLesson()} t={t} onClose={jest.fn()} />);
+    expect(screen.queryByLabelText('modal_edit_btn')).not.toBeInTheDocument();
+  });
+
+  it('calls onEditLesson with the lesson and onClose when clicked', () => {
+    const onEditLesson = jest.fn();
+    const onClose = jest.fn();
+    const lesson = makeLesson();
+    render(
+      <LessonDetailModal
+        lesson={lesson}
+        t={t}
+        onClose={onClose}
+        onEditLesson={onEditLesson}
+      />,
+    );
+
+    fireEvent.click(screen.getByLabelText('modal_edit_btn'));
+    expect(onEditLesson).toHaveBeenCalledWith(lesson);
+    expect(onClose).toHaveBeenCalled();
+  });
+});
+
+describe('LessonDetailModal — share button', () => {
+  beforeEach(() => {
+    // Mock clipboard API
+    Object.assign(navigator, {
+      clipboard: { writeText: jest.fn().mockResolvedValue(undefined) },
+    });
+  });
+
+  it('renders the Share button', () => {
+    render(<LessonDetailModal lesson={makeLesson()} t={t} onClose={jest.fn()} />);
+    expect(screen.getByLabelText('share_link_label')).toBeInTheDocument();
+  });
+
+  it('copies the share URL to clipboard when clicked', async () => {
+    const lesson = makeLesson({ id: 'test-123' });
+    render(<LessonDetailModal lesson={lesson} t={t} onClose={jest.fn()} />);
+
+    fireEvent.click(screen.getByLabelText('share_link_label'));
+
+    await waitFor(() => {
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+        `${window.location.origin}/s/test-123`,
+      );
+    });
+  });
+
+  it('shows the copied checkmark text after clicking share', async () => {
+    render(<LessonDetailModal lesson={makeLesson()} t={t} onClose={jest.fn()} />);
+
+    fireEvent.click(screen.getByLabelText('share_link_label'));
+
+    await waitFor(() => {
+      expect(screen.getByText('share_link_copied')).toBeInTheDocument();
+    });
+  });
+});
+
+describe('LessonDetailModal — delete button', () => {
+  it('renders the Delete button when onDeleteLesson is provided', () => {
+    render(
+      <LessonDetailModal
+        lesson={makeLesson()}
+        t={t}
+        onClose={jest.fn()}
+        onDeleteLesson={jest.fn()}
+      />,
+    );
+    expect(screen.getByLabelText('modal_delete_btn')).toBeInTheDocument();
+  });
+
+  it('does NOT render the Delete button when onDeleteLesson is not provided', () => {
+    render(<LessonDetailModal lesson={makeLesson()} t={t} onClose={jest.fn()} />);
+    expect(screen.queryByLabelText('modal_delete_btn')).not.toBeInTheDocument();
+  });
+
+  it('shows confirmation dialog when delete button is clicked', () => {
+    render(
+      <LessonDetailModal
+        lesson={makeLesson()}
+        t={t}
+        onClose={jest.fn()}
+        onDeleteLesson={jest.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByLabelText('modal_delete_btn'));
+    expect(screen.getByText('delete_confirm_title')).toBeInTheDocument();
+    expect(screen.getByText('delete_confirm_description')).toBeInTheDocument();
+  });
+
+  it('calls onDeleteLesson and onClose when confirmed', async () => {
+    const onDeleteLesson = jest.fn().mockResolvedValue(true);
+    const onClose = jest.fn();
+    const lesson = makeLesson({ id: 'del-123' });
+
+    render(
+      <LessonDetailModal
+        lesson={lesson}
+        t={t}
+        onClose={onClose}
+        onDeleteLesson={onDeleteLesson}
+      />,
+    );
+
+    // Open the confirmation dialog
+    fireEvent.click(screen.getByLabelText('modal_delete_btn'));
+    // Click the confirm button
+    fireEvent.click(screen.getByText('delete_confirm_action'));
+
+    await waitFor(() => {
+      expect(onDeleteLesson).toHaveBeenCalledWith('del-123');
+      expect(onClose).toHaveBeenCalled();
+    });
+  });
+
+  it('does NOT close modal when delete fails', async () => {
+    const onDeleteLesson = jest.fn().mockResolvedValue(false);
+    const onClose = jest.fn();
+
+    render(
+      <LessonDetailModal
+        lesson={makeLesson()}
+        t={t}
+        onClose={onClose}
+        onDeleteLesson={onDeleteLesson}
+      />,
+    );
+
+    fireEvent.click(screen.getByLabelText('modal_delete_btn'));
+    fireEvent.click(screen.getByText('delete_confirm_action'));
+
+    await waitFor(() => {
+      expect(onDeleteLesson).toHaveBeenCalled();
+    });
+    // Modal should NOT close when deletion failed
+    expect(onClose).not.toHaveBeenCalled();
   });
 });

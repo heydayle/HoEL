@@ -1,6 +1,6 @@
 import type { ILesson, ILessonStats, LessonPriority } from '@/modules/lesson/core/models';
 import type { ILessonFilterInput, LessonSortOption } from '@/modules/lesson/core/usecases';
-import { Check, Link2, Pencil } from 'lucide-react';
+import { Check, Pencil, Share2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -194,7 +194,7 @@ export function LessonOverview({
       </Card>
 
       {/* Lessons List */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="">
         {loading ? (
           <div className="flex items-center justify-center">
             <Spinner className="mx-auto mt-4" />
@@ -204,62 +204,64 @@ export function LessonOverview({
             {t('empty_state')}
           </p>
         ) : (
-          lessons.map((lesson) => (
-            <Card
-              key={lesson.id}
-              onClick={() => onSelectLesson(lesson)}
-              className="bg-surface p-4 cursor-pointer transition-all duration-200 ease-in-out hover:border-accent-primary hover:bg-surface-hover hover:shadow-md active:scale-[0.98]"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h2 className="m-0 text-foreground text-lg">{lesson.topic}</h2>
-                  <p className="mt-1.5 text-foreground-secondary text-[0.9rem]">
-                    {t('participant_label')}: {lesson.participantName}
-                  </p>
-                  <p className="mt-1.5 text-foreground-secondary text-[0.9rem]">
-                    {t('date_label')}: {new Date(lesson.date).toLocaleDateString()}
-                  </p>
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {lessons.map((lesson) => (
+              <Card
+                key={lesson.id}
+                onClick={() => onSelectLesson(lesson)}
+                className="bg-surface p-4 cursor-pointer transition-all duration-200 ease-in-out hover:border-accent-primary hover:bg-surface-hover hover:shadow-md active:scale-[0.98]"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h2 className="m-0 text-foreground text-lg">{lesson.topic}</h2>
+                    <p className="mt-1.5 text-foreground-secondary text-[0.9rem]">
+                      {t('participant_label')}: {lesson.participantName}
+                    </p>
+                    <p className="mt-1.5 text-foreground-secondary text-[0.9rem]">
+                      {t('date_label')}: {new Date(lesson.date).toLocaleDateString()}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <PriorityBadge
+                      label={lesson.priority}
+                      variant={resolvePriorityVariant(lesson.priority)}
+                    />
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEditLesson(lesson);
+                      }}
+                      title="Edit lesson"
+                      aria-label="Edit lesson"
+                      className="flex items-center justify-center rounded-md bg-transparent text-foreground-secondary cursor-pointer transition-all duration-200 shrink-0 hover:bg-surface-hover hover:text-accent-primary active:scale-95"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={(e) => void handleShareLesson(e, lesson)}
+                      title={t('share_link_label')}
+                      aria-label={t('share_link_label')}
+                      className="flex items-center justify-center rounded-md bg-transparent text-foreground-secondary cursor-pointer transition-all duration-200 shrink-0 hover:bg-[hsl(180,60%,90%,0.15)] hover:text-[hsl(180,60%,45%)] active:scale-95"
+                    >
+                      {copiedId === lesson.id ? (
+                        <Check className="w-4 h-4 text-[hsl(150,60%,45%)]" />
+                      ) : (
+                        <Share2 className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
 
-                <div className="flex items-start gap-2">
-                  <button
-                    onClick={(e) => void handleShareLesson(e, lesson)}
-                    title={t('share_link_label')}
-                    aria-label={t('share_link_label')}
-                    className="flex items-center justify-center rounded-md bg-transparent text-foreground-secondary cursor-pointer transition-all duration-200 shrink-0 hover:bg-[hsl(180,60%,90%,0.15)] hover:text-[hsl(180,60%,45%)] active:scale-95"
-                  >
-                    {copiedId === lesson.id ? (
-                      <Check className="w-4 h-4 text-[hsl(150,60%,45%)]" />
-                    ) : (
-                      <Link2 className="w-4 h-4" />
-                    )}
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEditLesson(lesson);
-                    }}
-                    title="Edit lesson"
-                    aria-label="Edit lesson"
-                    className="flex items-center justify-center rounded-md bg-transparent text-foreground-secondary cursor-pointer transition-all duration-200 shrink-0 hover:bg-surface-hover hover:text-accent-primary active:scale-95"
-                  >
-                    <Pencil className="w-4 h-4" />
-                  </button>
-                  <PriorityBadge
-                    label={lesson.priority}
-                    variant={resolvePriorityVariant(lesson.priority)}
-                  />
-                </div>
-              </div>
-
-              <p className="mt-3 text-foreground leading-relaxed">{lesson.notes}</p>
-              <p className="mt-1.5 text-foreground-secondary text-[0.9rem]">
-                {t('vocab_count')}: {lesson?.vocabularies?.length}
-              </p>
-            </Card>
-          ))
+                <p className="mt-3 text-foreground leading-relaxed">{lesson.notes}</p>
+                <p className="mt-1.5 text-foreground-secondary text-[0.9rem]">
+                  {t('vocab_count')}: {lesson?.vocabularies?.length}
+                </p>
+              </Card>
+            ))}
+          </section>
         )}
-      </section>
+      </div>
     </>
   );
 }

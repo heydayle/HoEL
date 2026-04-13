@@ -24,9 +24,7 @@ function VocabularyCard({ vocab, t }: IVocabularyCardProps): React.JSX.Element {
   return (
     <article className="flex flex-col gap-3 p-5 rounded-[0.875rem] bg-[var(--surface)] border border-[var(--surface-border)] transition-all duration-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] hover:border-primary/40 hover:-translate-y-0.5">
       <div className="flex items-center flex-wrap gap-2">
-        <span className="text-xl font-bold text-foreground bg-[var(--highlight)] px-2 rounded-lg">
-          {vocab.word}
-        </span>
+        <span className="text-xl font-bold text-[var(--highlight)] rounded-lg">{vocab.word}</span>
         {vocab.ipa && (
           <span className="text-[0.85rem] text-foreground-secondary italic">{vocab.ipa}</span>
         )}

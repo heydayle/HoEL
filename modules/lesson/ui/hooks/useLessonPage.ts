@@ -9,7 +9,7 @@ import {
   getLessonStats
 } from '@/modules/lesson/core/usecases';
 import { generateAndSaveSummary } from '@/modules/lesson/core/usecases/summaryUseCase';
-import { getLessonsFromLocalStorage, saveLessonsToLocalStorage, updateLessonInSupabase } from '@/modules/lesson/infras';
+import { deleteLessonFromSupabase, getLessonsFromLocalStorage, saveLessonsToLocalStorage, updateLessonInSupabase } from '@/modules/lesson/infras';
 import { bulkAddVocabs, syncVocabularies } from '@/modules/lesson/infras/vocabularyApi';
 import enMessages from '@/modules/lesson/messages/en.json';
 import viMessages from '@/modules/lesson/messages/vi.json';
@@ -83,8 +83,9 @@ export const useLessonPage = () => {
    * Saves the lesson first, then bulk-inserts associated vocabularies.
    *
    * @param lesson - Built lesson (without id)
+   * @returns The UUID of the created lesson, or `null` on failure
    */
-  const addLesson = async (lesson: Omit<ILesson, 'id'>): Promise<void> => {
+  const addLesson = async (lesson: Omit<ILesson, 'id'>): Promise<string | null> => {
     setIsAdding(true);
     const uuid = uuidv4();
     const user = localStorage.getItem('sb-hpnokwlodebafzgebopj-auth-token');
@@ -100,7 +101,7 @@ export const useLessonPage = () => {
 
       if (!result.success) {
         toast.error(t('lesson_save_error_toast'));
-        return;
+        return null;
       }
 
       /** Save vocabularies into the separate `vocabularies` table */
@@ -125,24 +126,31 @@ export const useLessonPage = () => {
           toast.error(t('vocab_save_error_toast') || 'Failed to save vocabularies');
         }
 
-        /** Generate summary from vocabulary word list */
+        /**
+         * Fire-and-forget: generate summary in the background.
+         * The lesson is already saved — we don't block the user
+         * waiting for the AI summary to complete.
+         * Only trigger when there are at least 5 vocabulary items.
+         */
         const wordList = vocabPayloads.map((v) => v.word);
 
-        try {
-          await generateAndSaveSummary(uuid, wordList);
-        } catch (summaryErr: unknown) {
-          console.error('Summary generation failed:', (summaryErr as Error).message);
-          /** Non-blocking: lesson saved successfully even if summary fails */
+        if (wordList.length >= 5) {
+          generateAndSaveSummary(uuid, wordList).catch((summaryErr: unknown) => {
+            console.error('Background summary generation failed:', (summaryErr as Error).message);
+          });
         }
       }
 
       const updatedLessons = [newLesson, ...lessons];
       setLessons(updatedLessons);
       toast.success(t('lesson_created_toast'));
+
+      return uuid;
     } catch (err: unknown) {
       const message = (err as Error).message || 'Failed to create lesson';
       console.error('addLesson error:', message);
       toast.error(message);
+      return null;
     } finally {
       setIsAdding(false);
     }
@@ -308,6 +316,32 @@ export const useLessonPage = () => {
   };
 
   /**
+   * Deletes a lesson by ID from Supabase and removes it from local state.
+   *
+   * @param lessonId - UUID of the lesson to delete
+   * @returns Whether the deletion succeeded
+   */
+  const deleteLesson = async (lessonId: string): Promise<boolean> => {
+    try {
+      const result = await deleteLessonFromSupabase(lessonId);
+
+      if (!result.success) {
+        toast.error(t('lesson_delete_error'));
+        return false;
+      }
+
+      setLessons((prev) => prev.filter((l) => l.id !== lessonId));
+      toast.success(t('lesson_deleted_toast'));
+      return true;
+    } catch (err: unknown) {
+      const message = (err as Error).message || 'Failed to delete lesson';
+      console.error('deleteLesson error:', message);
+      toast.error(message);
+      return false;
+    }
+  };
+
+  /**
    * Toggles light/dark mode with system-mode awareness.
    */
   const toggleTheme = (): void => {
@@ -340,6 +374,7 @@ export const useLessonPage = () => {
     resetFilters,
     addLesson,
     updateLesson,
+    deleteLesson,
     isAdding,
     isUpdating,
   };

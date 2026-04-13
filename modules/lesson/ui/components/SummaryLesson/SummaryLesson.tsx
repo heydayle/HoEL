@@ -6,6 +6,9 @@ import React from 'react';
 import type { ISummaryLesson } from '@/modules/lesson/core/models';
 import { Button } from '@/shared/components/Styled';
 
+/** Minimum number of vocabulary items required to generate a summary */
+const MIN_VOCAB_FOR_SUMMARY = 5;
+
 /**
  * Props for the SummaryLesson component.
  */
@@ -20,6 +23,23 @@ interface ISummaryLessonProps {
   t: (key: string) => string;
   /** Callback to regenerate / generate summary */
   onRegenerate?: () => void;
+  /**
+   * Callback to reload (re-fetch) the summary from the database.
+   * Used when the summary is still being processed in the background.
+   */
+  onReload?: () => void;
+  /**
+   * When true, if no summary exists the component shows a "processing"
+   * state with a reload button instead of the default empty state.
+   * This is useful for newly created lessons whose summary is being
+   * generated in the background.
+   */
+  showProcessingState?: boolean;
+  /**
+   * Number of vocabulary items the lesson currently has.
+   * When below {@link MIN_VOCAB_FOR_SUMMARY}, generate buttons are disabled.
+   */
+  vocabCount?: number;
 }
 
 /**
@@ -36,12 +56,47 @@ export function SummaryLesson({
   isGenerating,
   t,
   onRegenerate,
+  onReload,
+  showProcessingState = false,
+  vocabCount = 0,
 }: ISummaryLessonProps): React.JSX.Element {
+  /** Whether the vocabulary count is below the minimum required for generation */
+  const isBelowMinVocab = vocabCount < MIN_VOCAB_FOR_SUMMARY;
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-6 border border-border rounded-xl bg-muted/10">
         <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         <span className="ml-2 text-sm text-muted-foreground">{t('summary_loading')}</span>
+      </div>
+    );
+  }
+
+  if (!summary && showProcessingState) {
+    return (
+      <div
+        data-testid="summary-processing"
+        className="flex flex-col items-center gap-3 p-6 border border-primary/30 rounded-xl bg-primary/5 animate-pulse"
+      >
+        <div className="flex items-center gap-2">
+          <Loader2 className="w-5 h-5 animate-spin text-primary" />
+          <span className="text-sm font-medium text-primary">{t('summary_processing')}</span>
+        </div>
+        <p className="text-xs text-muted-foreground/70 text-center m-0">
+          {t('summary_processing_hint')}
+        </p>
+        {onReload && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onReload}
+            className="gap-2 mt-1"
+          >
+            <RefreshCw className="w-4 h-4" />
+            {t('summary_reload_btn')}
+          </Button>
+        )}
       </div>
     );
   }
@@ -52,21 +107,26 @@ export function SummaryLesson({
         <BookOpen className="w-8 h-8 text-muted-foreground/40" />
         <p className="text-sm text-muted-foreground/60 italic">{t('summary_empty')}</p>
         {onRegenerate && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onRegenerate}
-            disabled={isGenerating}
-            className="gap-2"
-          >
-            {isGenerating ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <RefreshCw className="w-4 h-4" />
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onRegenerate}
+              disabled={isGenerating || isBelowMinVocab}
+              className="gap-2"
+            >
+              {isGenerating ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4" />
+              )}
+              {isGenerating ? t('summary_generating') : t('summary_generate_btn')}
+            </Button>
+            {isBelowMinVocab && (
+              <p className="text-xs text-muted-foreground/50 m-0">{t('summary_min_vocab_hint')}</p>
             )}
-            {isGenerating ? t('summary_generating') : t('summary_generate_btn')}
-          </Button>
+          </>
         )}
       </div>
     );
@@ -86,7 +146,7 @@ export function SummaryLesson({
             variant="ghost"
             size="sm"
             onClick={onRegenerate}
-            disabled={isGenerating}
+            disabled={isGenerating || isBelowMinVocab}
             className="gap-1.5 text-xs h-7"
           >
             {isGenerating ? (
@@ -106,7 +166,7 @@ export function SummaryLesson({
             {t('summary_paragraph_label')}
           </span>
           <p
-            className="m-0 text-[0.9rem] leading-relaxed text-foreground/90 [&_b]:bg-[var(--highlight)] [&_b]:px-1"
+            className="m-0 text-[0.9rem] leading-relaxed [&_b]:text-[var(--highlight)]"
             dangerouslySetInnerHTML={{ __html: summary.paragraph }}
           ></p>
         </div>

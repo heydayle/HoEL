@@ -5,24 +5,35 @@ import { useRouter } from 'next/navigation';
 import type { ILesson } from '@/modules/lesson/core/models';
 import { LessonForm } from '@/modules/lesson/ui/components/LessonForm';
 import { useLessonPage } from '@/modules/lesson/ui/hooks';
-import { AppHeader } from '@/shared/components';
+import { AppHeader, FullPageLoading } from '@/shared/components';
 
 /**
  * Page route for creating a new lesson at /lessons/new.
  * Reuses the existing lesson creation form and navigates back on close.
+ * Shows a full-page loading overlay while the lesson is being persisted.
  * @returns Create lesson page UI
  */
 export default function NewLessonPage(): React.JSX.Element {
   const router = useRouter();
-  const { resolvedTheme, locale, setLocale, t, toggleTheme, addLesson } = useLessonPage();
+  const { resolvedTheme, locale, setLocale, t, toggleTheme, addLesson, isAdding } = useLessonPage();
 
   const handleAddLesson = async (lesson: Omit<ILesson, 'id'>) => {
-    await addLesson(lesson);
-    router.push('/lessons');
+    const lessonId = await addLesson(lesson);
+
+    if (lessonId) {
+      router.push(`/lessons/${lessonId}`);
+    }
   };
 
   return (
     <main className="min-h-screen py-8 px-4 bg-background text-foreground md:py-10 md:px-8">
+      {isAdding && (
+        <FullPageLoading
+          message={t('creating_lesson')}
+          hint={t('creating_lesson_hint')}
+        />
+      )}
+
       <div className="w-full max-w-[60rem] !mx-auto flex flex-col gap-4">
         <AppHeader
           left={

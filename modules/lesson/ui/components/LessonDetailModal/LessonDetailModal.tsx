@@ -1,12 +1,23 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Check, Pencil, Share2, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import type { ILesson } from '@/modules/lesson/core/models';
 import { SummaryLesson } from '@/modules/lesson/ui/components/SummaryLesson';
 import { useSummaryLesson } from '@/modules/lesson/ui/hooks/useSummaryLesson';
 import { PriorityBadge, resolvePriorityVariant } from '@/shared/components';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -24,6 +35,10 @@ interface ILessonDetailModalProps {
   t: (key: string) => string;
   /** Callback when modal should close */
   onClose: () => void;
+  /** Callback to navigate to the edit page for this lesson */
+  onEditLesson?: (lesson: ILesson) => void;
+  /** Callback to delete the lesson */
+  onDeleteLesson?: (lessonId: string) => Promise<boolean>;
 }
 
 /**
@@ -41,6 +56,8 @@ export function LessonDetailModal({
   lesson,
   t,
   onClose,
+  onEditLesson,
+  onDeleteLesson,
 }: ILessonDetailModalProps): React.JSX.Element {
   const {
     summary,
@@ -49,6 +66,17 @@ export function LessonDetailModal({
     fetchSummary,
     handleGenerateSummary,
   } = useSummaryLesson(t);
+
+  /** Tracks whether the share link was just copied */
+  const [isCopied, setIsCopied] = useState(false);
+
+  /** Whether the delete confirmation dialog is shown */
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  /** Reset copied state when the modal lesson changes */
+  useEffect(() => {
+    setIsCopied(false);
+  }, [lesson?.id]);
 
   /** Fetch summary when the modal opens with a lesson */
   useEffect(() => {
@@ -75,16 +103,109 @@ export function LessonDetailModal({
     handleGenerateSummary(lesson.id, wordList, summary?.id);
   };
 
+  /**
+   * Re-fetches the summary from the database.
+   * Used when the summary is still being processed in the background.
+   */
+  const handleReloadSummary = () => {
+    if (lesson?.id) {
+      fetchSummary(lesson.id);
+    }
+  };
+
+  /**
+   * Copies the public share URL for the current lesson to the clipboard.
+   * Shows a brief checkmark indicator, then resets after 2s.
+   */
+  const handleShare = async () => {
+    if (!lesson) {
+      return;
+    }
+
+    const shareUrl = `${window.location.origin}/s/${lesson.id}`;
+    await navigator.clipboard.writeText(shareUrl);
+    setIsCopied(true);
+    toast.success(t('share_link_copied'));
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  /**
+   * Navigates to the edit page and closes the modal.
+   */
+  const handleEdit = () => {
+    if (!lesson || !onEditLesson) {
+      return;
+    }
+
+    onEditLesson(lesson);
+    onClose();
+  };
+
+  /** Whether the lesson has vocabularies (i.e. a summary may be processing) */
+  const hasVocabularies = (lesson?.vocabularies?.length ?? 0) > 0;
+
   if (!lesson) return <></>;
 
   return (
+    <>
     <Dialog open={!!lesson} onOpenChange={onClose}>
       <DialogContent className="flex! flex-col! max-h-[80vh]! overflow-hidden! p-0! gap-0! sm:max-w-[44rem]!">
         <DialogHeader className="shrink-0! p-4! border-b border-border/50!">
-          <DialogTitle>{lesson.topic}</DialogTitle>
-          <DialogDescription>
-            {t('form_participant')}: {lesson.participantName}
-          </DialogDescription>
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <DialogTitle>{lesson.topic}</DialogTitle>
+              <DialogDescription>
+                {t('form_participant')}: {lesson.participantName}
+              </DialogDescription>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex items-center gap-1 shrink-0 mt-4">
+              {onEditLesson && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleEdit}
+                  aria-label={t('modal_edit_btn')}
+                  className="gap-1.5 h-8 px-2.5 cursor-pointer text-muted-foreground hover:text-primary"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline text-xs">{t('modal_edit_btn')}</span>
+                </Button>
+              )}
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => void handleShare()}
+                aria-label={t('share_link_label')}
+                className="gap-1.5 h-8 px-2.5 cursor-pointer text-muted-foreground hover:text-primary"
+              >
+                {isCopied ? (
+                  <Check className="w-3.5 h-3.5 text-green" />
+                ) : (
+                  <Share2 className="w-3.5 h-3.5" />
+                )}
+                <span className="hidden sm:inline text-xs">
+                  {isCopied ? t('share_link_copied') : t('modal_share_btn')}
+                </span>
+              </Button>
+              {onDeleteLesson && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  aria-label={t('modal_delete_btn')}
+                  className="gap-1.5 h-8 px-2.5 cursor-pointer text-muted-foreground hover:text-destructive"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline text-xs">{t('modal_delete_btn')}</span>
+                </Button>
+              )}
+            </div>
+          </div>
 
           {/* Meta Strip */}
           <div className="flex flex-wrap items-center gap-[0.3rem] pb-3 border-b border-border/40">
@@ -110,7 +231,7 @@ export function LessonDetailModal({
             </span>
             <span className="w-[3px] h-[3px] rounded-full bg-muted-foreground/30 shrink-0" />
             <span className="text-xs text-muted-foreground whitespace-nowrap">
-              0&nbsp;{t('question_count')}
+              {summary?.id ? 3 : 0}&nbsp;{t('question_count')}
             </span>
             <span className="w-[3px] h-[3px] rounded-full bg-muted-foreground/30 shrink-0" />
           </div>
@@ -125,6 +246,9 @@ export function LessonDetailModal({
               isGenerating={isSummaryGenerating}
               t={t}
               onRegenerate={handleRegenerateSummary}
+              onReload={handleReloadSummary}
+              showProcessingState={hasVocabularies}
+              vocabCount={lesson?.vocabularies?.length ?? 0}
             />
           </div>
 
@@ -216,5 +340,36 @@ export function LessonDetailModal({
         </div>
       </DialogContent>
     </Dialog>
+
+    {/* Delete confirmation dialog */}
+    <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t('delete_confirm_title')}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {t('delete_confirm_description')}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+          <AlertDialogAction
+            className="bg-destructive text-white hover:bg-destructive/90 cursor-pointer"
+            onClick={async () => {
+              if (lesson && onDeleteLesson) {
+                const deleted = await onDeleteLesson(lesson.id);
+
+                if (deleted) {
+                  setShowDeleteConfirm(false);
+                  onClose();
+                }
+              }
+            }}
+          >
+            {t('delete_confirm_action')}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }

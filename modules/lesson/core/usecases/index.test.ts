@@ -103,6 +103,45 @@ describe('lesson usecases', () => {
 
     expect(sorted.map((lesson) => lesson.priority)).toEqual(['High', 'Medium', 'Low']);
   });
+
+  it('should sort lessons by created_at descending (newest first)', () => {
+    const sorted = sortLessons(
+      [
+        buildLesson('1', { created_at: '2026-03-10T09:00:00.000Z' }),
+        buildLesson('2', { created_at: '2026-03-14T09:00:00.000Z' }),
+        buildLesson('3', { created_at: '2026-03-12T09:00:00.000Z' }),
+      ],
+      'date_desc',
+    );
+
+    expect(sorted.map((l) => l.id)).toEqual(['2', '3', '1']);
+  });
+
+  it('should sort lessons by created_at ascending (oldest first)', () => {
+    const sorted = sortLessons(
+      [
+        buildLesson('1', { created_at: '2026-03-14T09:00:00.000Z' }),
+        buildLesson('2', { created_at: '2026-03-10T09:00:00.000Z' }),
+        buildLesson('3', { created_at: '2026-03-12T09:00:00.000Z' }),
+      ],
+      'date_asc',
+    );
+
+    expect(sorted.map((l) => l.id)).toEqual(['2', '3', '1']);
+  });
+
+  it('should fall back to lesson date when created_at is undefined', () => {
+    const sorted = sortLessons(
+      [
+        buildLesson('1', { date: '2026-03-14T09:00:00.000Z' }),
+        buildLesson('2', { date: '2026-03-10T09:00:00.000Z' }),
+        buildLesson('3', { date: '2026-03-12T09:00:00.000Z' }),
+      ],
+      'date_desc',
+    );
+
+    expect(sorted.map((l) => l.id)).toEqual(['1', '3', '2']);
+  });
 });
 
 describe('matchesVocabSearch', () => {

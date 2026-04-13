@@ -64,6 +64,7 @@ export const getLessonsFromLocalStorage = async (): Promise<ILesson[]> => {
       priority: row.priority as ILesson['priority'],
       notes: (row.notes as string) ?? '',
       createdBy: (row.createdBy as string) ?? undefined,
+      created_at: (row.created_at as string) ?? undefined,
       vocabularies,
       summary_id: summaryId,
     };
@@ -160,6 +161,7 @@ export const getLessonById = async (lessonId: string): Promise<ILesson | null> =
     priority: data.priority as ILesson['priority'],
     notes: (data.notes as string) ?? '',
     createdBy: (data.createdBy as string) ?? undefined,
+    created_at: (data.created_at as string) ?? undefined,
     vocabularies,
     summary_id: summaryId,
   };
@@ -238,6 +240,31 @@ export const saveLessonsToLocalStorage = async (lesson: ILesson): Promise<ILesso
 
   if (error) {
     console.error('Error adding lesson:', error);
+    return { success: false, error: true, data: error };
+  }
+
+  return { success: true, data };
+};
+
+/**
+ * Deletes a lesson record from Supabase.
+ * Related vocabularies and summaries are cascade-deleted by database FK constraints.
+ *
+ * @param lessonId - UUID of the lesson to delete
+ * @returns Result indicating success or failure
+ */
+export const deleteLessonFromSupabase = async (
+  lessonId: string,
+): Promise<ILessonSaveResult> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('lessons')
+    .delete()
+    .eq('id', lessonId);
+
+  if (error) {
+    console.error('Error deleting lesson:', error);
     return { success: false, error: true, data: error };
   }
 
