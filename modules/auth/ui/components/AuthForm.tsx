@@ -51,7 +51,8 @@ const GitHubIcon = (): React.JSX.Element => (
  */
 export const AuthForm = (): React.JSX.Element => {
   const router = useRouter();
-  const { t, isSignIn, isLoading, error, toggleAuthMode, handleSubmit } = useAuthPage();
+  const { t, isSignIn, isLoading, error, toggleAuthMode, handleSubmit, handleProviderSignIn } =
+    useAuthPage();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -80,9 +81,7 @@ export const AuthForm = (): React.JSX.Element => {
     [email, password, displayName, isSignIn, handleSubmit, router],
   );
 
-  const handleProviderSignIn = useCallback((provider: string) => {
-    console.log(`Sign in with provider: ${provider}`);
-  }, []);
+
 
   return (
     <div className="flex items-center justify-center min-h-screen relative overflow-hidden bg-background before:content-[''] before:absolute before:-top-1/2 before:-left-1/2 before:w-[200%] before:h-[200%] before:bg-[var(--gradient-glow)] before:pointer-events-none before:z-0">
@@ -198,13 +197,14 @@ export const AuthForm = (): React.JSX.Element => {
             {/* Provider buttons */}
             <div className="flex flex-col gap-3">
               <button
+                id="google-sign-in-btn"
                 type="button"
-                disabled={true}
+                disabled={isLoading}
                 onClick={() => handleProviderSignIn('google')}
                 className="w-full h-11 flex items-center justify-center gap-3 font-medium text-sm rounded-[calc(var(--radius)*1.2)] bg-transparent border border-border text-foreground transition-all duration-200 hover:bg-surface-hover hover:border-foreground-muted hover:-translate-y-px active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer [&_svg]:shrink-0"
               >
                 <GoogleIcon />
-                {t('provider_google')}
+                {isLoading ? t('btn_loading') : t('provider_google')}
               </button>
 
               <button

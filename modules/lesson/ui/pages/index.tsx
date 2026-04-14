@@ -49,14 +49,6 @@ export default function LessonPage(): React.JSX.Element {
     <main className="min-h-screen py-8 px-4 bg-background text-foreground md:py-10 md:px-8">
       <div className="w-full max-w-[60rem] !mx-auto flex flex-col gap-4">
         <AppHeader
-          left={
-            <div>
-              <h1 className="m-0 text-3xl leading-tight">{t('page_title')}</h1>
-              <p className="m-0 text-foreground-secondary leading-relaxed">
-                {t('page_subtitle')}
-              </p>
-            </div>
-          }
           actions={
             <Button type="button" onClick={() => router.push('/lessons/new')}>
               {t('create_lesson_title')}
@@ -87,7 +79,13 @@ export default function LessonPage(): React.JSX.Element {
           onEditLesson={onEditLesson}
         />
 
-        <LessonDetailModal lesson={selectedLesson} t={t} onClose={() => setSelectedLesson(null)} onEditLesson={onEditLesson} onDeleteLesson={deleteLesson} />
+        <LessonDetailModal
+          lesson={selectedLesson}
+          t={t}
+          onClose={() => setSelectedLesson(null)}
+          onEditLesson={onEditLesson}
+          onDeleteLesson={deleteLesson}
+        />
       </div>
     </main>
   );

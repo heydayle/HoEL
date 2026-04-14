@@ -98,15 +98,22 @@ describe('SummaryLesson — processing state', () => {
 });
 
 describe('SummaryLesson — empty state (no processing)', () => {
-  it('shows empty state when summary is null and showProcessingState is false', () => {
+  it('shows "need 5 vocab" message when summary is null and vocabCount < 5', () => {
     render(
-      <SummaryLesson summary={null} isLoading={false} isGenerating={false} t={t} />,
+      <SummaryLesson
+        summary={null}
+        isLoading={false}
+        isGenerating={false}
+        t={t}
+        vocabCount={3}
+      />,
     );
-    expect(screen.getByText('summary_empty')).toBeInTheDocument();
+    expect(screen.getByText('min_vocab_for_summary')).toBeInTheDocument();
+    expect(screen.queryByText('summary_generate_btn')).not.toBeInTheDocument();
     expect(screen.queryByTestId('summary-processing')).not.toBeInTheDocument();
   });
 
-  it('renders Generate button in empty state when onRegenerate is provided', () => {
+  it('shows Generate button in empty state when vocabCount >= 5', () => {
     const onRegenerate = jest.fn();
     render(
       <SummaryLesson
@@ -118,8 +125,10 @@ describe('SummaryLesson — empty state (no processing)', () => {
         vocabCount={5}
       />,
     );
+    expect(screen.getByText('summary_empty')).toBeInTheDocument();
     const generateBtn = screen.getByText('summary_generate_btn');
     expect(generateBtn).toBeInTheDocument();
+    expect(generateBtn.closest('button')).not.toBeDisabled();
 
     fireEvent.click(generateBtn);
     expect(onRegenerate).toHaveBeenCalledTimes(1);
@@ -133,10 +142,19 @@ describe('SummaryLesson — empty state (no processing)', () => {
         isGenerating={true}
         t={t}
         onRegenerate={jest.fn()}
+        vocabCount={5}
       />,
     );
     const btn = screen.getByText('summary_generating');
     expect(btn.closest('button')).toBeDisabled();
+  });
+
+  it('shows empty state without button when vocabCount defaults to 0', () => {
+    render(
+      <SummaryLesson summary={null} isLoading={false} isGenerating={false} t={t} />,
+    );
+    expect(screen.getByText('min_vocab_for_summary')).toBeInTheDocument();
+    expect(screen.queryByText('summary_generate_btn')).not.toBeInTheDocument();
   });
 });
 
@@ -148,6 +166,7 @@ describe('SummaryLesson — summary displayed', () => {
         isLoading={false}
         isGenerating={false}
         t={t}
+        vocabCount={5}
       />,
     );
     expect(screen.getByText('summary_section_title')).toBeInTheDocument();
@@ -157,7 +176,7 @@ describe('SummaryLesson — summary displayed', () => {
     expect(screen.getByText('Q3?')).toBeInTheDocument();
   });
 
-  it('renders the Regenerate button when onRegenerate is provided and summary exists', () => {
+  it('renders the Regenerate button when onRegenerate is provided and vocabCount >= 5', () => {
     const onRegenerate = jest.fn();
     render(
       <SummaryLesson
@@ -176,7 +195,7 @@ describe('SummaryLesson — summary displayed', () => {
     expect(onRegenerate).toHaveBeenCalledTimes(1);
   });
 
-  it('disables Regenerate button and shows generating text when isGenerating is true with summary', () => {
+  it('disables Regenerate button and shows generating text when isGenerating is true', () => {
     render(
       <SummaryLesson
         summary={makeSummary()}
@@ -184,6 +203,7 @@ describe('SummaryLesson — summary displayed', () => {
         isGenerating={true}
         t={t}
         onRegenerate={jest.fn()}
+        vocabCount={5}
       />,
     );
     const btn = screen.getByText('summary_generating');
@@ -198,6 +218,7 @@ describe('SummaryLesson — summary displayed', () => {
         isGenerating={false}
         t={t}
         showProcessingState={true}
+        vocabCount={5}
       />,
     );
     expect(screen.queryByTestId('summary-processing')).not.toBeInTheDocument();
@@ -211,6 +232,7 @@ describe('SummaryLesson — summary displayed', () => {
         isLoading={false}
         isGenerating={false}
         t={t}
+        vocabCount={5}
       />,
     );
     expect(screen.queryByText('summary_questions_label')).not.toBeInTheDocument();
@@ -223,6 +245,7 @@ describe('SummaryLesson — summary displayed', () => {
         isLoading={false}
         isGenerating={false}
         t={t}
+        vocabCount={5}
       />,
     );
     expect(screen.queryByText('summary_translation_label')).not.toBeInTheDocument();
@@ -230,39 +253,7 @@ describe('SummaryLesson — summary displayed', () => {
 });
 
 describe('SummaryLesson — minimum vocabulary guard', () => {
-  it('disables Generate button and shows hint when vocabCount < 5 (empty state)', () => {
-    render(
-      <SummaryLesson
-        summary={null}
-        isLoading={false}
-        isGenerating={false}
-        t={t}
-        onRegenerate={jest.fn()}
-        vocabCount={3}
-      />,
-    );
-    const btn = screen.getByText('summary_generate_btn');
-    expect(btn.closest('button')).toBeDisabled();
-    expect(screen.getByText('summary_min_vocab_hint')).toBeInTheDocument();
-  });
-
-  it('enables Generate button when vocabCount >= 5 (empty state)', () => {
-    render(
-      <SummaryLesson
-        summary={null}
-        isLoading={false}
-        isGenerating={false}
-        t={t}
-        onRegenerate={jest.fn()}
-        vocabCount={5}
-      />,
-    );
-    const btn = screen.getByText('summary_generate_btn');
-    expect(btn.closest('button')).not.toBeDisabled();
-    expect(screen.queryByText('summary_min_vocab_hint')).not.toBeInTheDocument();
-  });
-
-  it('disables Regenerate button when vocabCount < 5 (summary exists)', () => {
+  it('hides Regenerate button and shows warning when vocabCount < 5 (summary exists)', () => {
     render(
       <SummaryLesson
         summary={makeSummary()}
@@ -273,11 +264,15 @@ describe('SummaryLesson — minimum vocabulary guard', () => {
         vocabCount={2}
       />,
     );
-    const btn = screen.getByText('summary_regenerate_btn');
-    expect(btn.closest('button')).toBeDisabled();
+    /** Regenerate button should NOT be rendered */
+    expect(screen.queryByText('summary_regenerate_btn')).not.toBeInTheDocument();
+    /** Warning note should be shown */
+    expect(screen.getByText('min_vocab_for_summary')).toBeInTheDocument();
+    /** Summary content should still be visible */
+    expect(screen.getByText('summary_section_title')).toBeInTheDocument();
   });
 
-  it('enables Regenerate button when vocabCount >= 5 (summary exists)', () => {
+  it('shows Regenerate button when vocabCount >= 5 (summary exists)', () => {
     render(
       <SummaryLesson
         summary={makeSummary()}
@@ -290,5 +285,37 @@ describe('SummaryLesson — minimum vocabulary guard', () => {
     );
     const btn = screen.getByText('summary_regenerate_btn');
     expect(btn.closest('button')).not.toBeDisabled();
+    expect(screen.queryByText('min_vocab_for_summary')).not.toBeInTheDocument();
+  });
+
+  it('shows "need 5 vocab" note instead of Generate button when vocab < 5 (no summary)', () => {
+    render(
+      <SummaryLesson
+        summary={null}
+        isLoading={false}
+        isGenerating={false}
+        t={t}
+        onRegenerate={jest.fn()}
+        vocabCount={3}
+      />,
+    );
+    expect(screen.getByText('min_vocab_for_summary')).toBeInTheDocument();
+    expect(screen.queryByText('summary_generate_btn')).not.toBeInTheDocument();
+  });
+
+  it('shows Generate button when vocab >= 5 (no summary)', () => {
+    render(
+      <SummaryLesson
+        summary={null}
+        isLoading={false}
+        isGenerating={false}
+        t={t}
+        onRegenerate={jest.fn()}
+        vocabCount={5}
+      />,
+    );
+    const btn = screen.getByText('summary_generate_btn');
+    expect(btn.closest('button')).not.toBeDisabled();
+    expect(screen.queryByText('min_vocab_for_summary')).not.toBeInTheDocument();
   });
 });

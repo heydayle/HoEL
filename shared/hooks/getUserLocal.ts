@@ -1,21 +1,37 @@
+/**
+ * Shape returned by getUserLocal with basic user info.
+ */
 interface UserLocal {
-    user: Record<string, unknown> | null;
-    userId: string | null;
-    refreshToken: string;
+  /** The raw user object from localStorage, or null */
+  user: Record<string, unknown> | null;
+  /** The user's UUID, or null if not authenticated */
+  userId: string | null;
 }
 
+/** The localStorage key set by AuthSyncProvider */
+const AUTH_TOKEN_KEY = 'sb-hpnokwlodebafzgebopj-auth-token';
+
+/**
+ * Retrieves the currently authenticated user from localStorage.
+ * Data is kept in sync by the AuthSyncProvider component which
+ * listens for Supabase auth state changes and updates localStorage.
+ *
+ * This is a **synchronous** read — no API call is made.
+ * Returns nulls when called on the server (SSR) since localStorage
+ * is not available outside the browser.
+ *
+ * @returns The authenticated user info, or nulls if not logged in
+ */
 export const getUserLocal = (): UserLocal => {
-    const user = () => {
-        const stored = localStorage.getItem('sb-hpnokwlodebafzgebopj-auth-token') ?? undefined;
-        return stored ? JSON.parse(stored) : null;
-    };
+  if (typeof window === 'undefined') {
+    return { user: null, userId: null };
+  }
 
-    const refreshToken = user()?.refresh_token ?? null;
-    const userId = user()?.user?.id ?? null;
+  const stored = localStorage.getItem(AUTH_TOKEN_KEY);
+  const user = stored ? JSON.parse(stored) : null;
 
-    return {
-        user: user(),
-        userId,
-        refreshToken
-    }
+  return {
+    user,
+    userId: user?.id ?? null,
+  };
 };

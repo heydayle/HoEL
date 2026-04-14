@@ -257,11 +257,13 @@ export const deleteLessonFromSupabase = async (
   lessonId: string,
 ): Promise<ILessonSaveResult> => {
   const supabase = createClient();
+  const { userId } = getUserLocal();
 
   const { data, error } = await supabase
     .from('lessons')
     .delete()
-    .eq('id', lessonId);
+    .eq('id', lessonId)
+    .eq('createdBy', userId);
 
   if (error) {
     console.error('Error deleting lesson:', error);
@@ -284,6 +286,7 @@ export const updateLessonInSupabase = async (
   lesson: Omit<ILesson, 'id'>,
 ): Promise<ILessonSaveResult> => {
   const supabase = createClient();
+  const { userId } = getUserLocal();
 
   const { data, error } = await supabase
     .from('lessons')
@@ -296,7 +299,8 @@ export const updateLessonInSupabase = async (
       priority: lesson.priority,
       notes: lesson.notes,
     })
-    .eq('id', lessonId);
+    .eq('id', lessonId)
+    .eq('createdBy', userId);
 
   if (error) {
     console.error('Error updating lesson:', error);

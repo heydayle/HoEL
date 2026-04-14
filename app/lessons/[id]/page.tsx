@@ -2,7 +2,7 @@
 
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { use, useEffect, useMemo } from 'react';
+import { use, useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { ILesson } from '@/modules/lesson/core/models';
 import { LessonForm } from '@/modules/lesson/ui/components/LessonForm';
@@ -23,10 +23,22 @@ interface IEditLessonPageProps {
   }>;
 }
 
+/** Minimum vocab count required for summary generation */
+const MIN_VOCAB_FOR_SUMMARY = 5;
+
+/** Polling interval (ms) to check for summary after background generation */
+const SUMMARY_POLL_INTERVAL_MS = 5000;
+
+/** Maximum number of polling attempts before giving up */
+const SUMMARY_POLL_MAX_ATTEMPTS = 12;
+
 /**
  * Page route for editing a lesson at /lessons/[id].
  * Loads the lesson detail including summary and vocabularies.
  * Summary is displayed above the lesson form.
+ *
+ * After saving with ≥5 vocab, the page polls for the summary
+ * until it appears (Case 2: user stays on screen).
  *
  * @param props - Route params including lesson ID
  * @returns Edit lesson page UI
@@ -55,22 +67,76 @@ export default function EditLessonPage({
 
   const lesson = useMemo(() => detailedLesson, [detailedLesson]);
 
+  /**
+   * Tracks whether a summary generation was just triggered by saving.
+   * Controls the "processing" state in the SummaryLesson component.
+   */
+  const [isSummaryPending, setIsSummaryPending] = useState(false);
+
   useEffect(() => {
     fetchLessonDetail();
     fetchSummary(params.id);
   }, [params.id]);
 
   /**
-   * Handles lesson update, passing the existing summary_id so the
-   * summary is regenerated (updated) rather than duplicated.
+   * Polls for summary after background generation.
+   * Stops when the summary is found or max attempts are reached.
+   * (Case 2: user stays on the edit screen)
    */
-  const handleUpdateLesson = async (updatedLesson: Omit<ILesson, 'id'>) => {
-    if (!lesson) {
+  useEffect(() => {
+    if (!isSummaryPending) {
       return;
     }
 
-    await updateLesson(lesson.id, updatedLesson, lesson.summary_id);
-  };
+    let attempt = 0;
+    const intervalId = setInterval(async () => {
+      attempt += 1;
+      await fetchSummary(params.id);
+
+      /** Stop polling — summary was fetched or max attempts reached */
+      if (attempt >= SUMMARY_POLL_MAX_ATTEMPTS) {
+        clearInterval(intervalId);
+        setIsSummaryPending(false);
+      }
+    }, SUMMARY_POLL_INTERVAL_MS);
+
+    return () => clearInterval(intervalId);
+  }, [isSummaryPending, params.id, fetchSummary]);
+
+  /** Stop polling once the summary has arrived */
+  useEffect(() => {
+    if (summary && isSummaryPending) {
+      setIsSummaryPending(false);
+    }
+  }, [summary, isSummaryPending]);
+
+  /**
+   * Handles lesson update, passing the existing summary_id so the
+   * summary is regenerated (updated) rather than duplicated.
+   * After saving, enables the polling state if ≥5 vocab.
+   */
+  const handleUpdateLesson = useCallback(
+    async (updatedLesson: Omit<ILesson, 'id'>) => {
+      if (!lesson) {
+        return;
+      }
+
+      await updateLesson(lesson.id, updatedLesson, summary?.id);
+
+      /** Refresh the lesson detail to get updated vocab count */
+      await fetchLessonDetail();
+
+      /** If ≥5 vocab, start polling for the background-generated summary */
+      const vocabCount = (updatedLesson.vocabularies ?? []).filter(
+        (v) => v.word.trim() !== '',
+      ).length;
+
+      if (vocabCount >= MIN_VOCAB_FOR_SUMMARY) {
+        setIsSummaryPending(true);
+      }
+    },
+    [lesson, summary?.id, updateLesson, fetchLessonDetail],
+  );
 
   /**
    * Triggers summary (re)generation for the current lesson
@@ -153,7 +219,7 @@ export default function EditLessonPage({
             t={t}
             onRegenerate={handleRegenerateSummary}
             onReload={() => fetchSummary(params.id)}
-            showProcessingState={(lesson?.vocabularies?.length ?? 0) > 0}
+            showProcessingState={isSummaryPending || isSummaryGenerating}
             vocabCount={lesson?.vocabularies?.length ?? 0}
           />
         </div>

@@ -59,11 +59,10 @@ jest.mock('@/modules/lesson/ui/hooks', () => ({
 }));
 
 describe('LessonPage', () => {
-  it('should render title, subtitle, and overview section', () => {
+  it('should render the create button and overview section', () => {
     render(<LessonPage />);
 
-    expect(screen.getByText('page_title')).toBeInTheDocument();
-    expect(screen.getByText('page_subtitle')).toBeInTheDocument();
+    expect(screen.getByText('create_lesson_title')).toBeInTheDocument();
     expect(screen.getByTestId('mock-lesson-overview')).toBeInTheDocument();
   });
 });

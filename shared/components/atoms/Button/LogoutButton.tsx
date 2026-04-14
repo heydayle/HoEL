@@ -10,6 +10,7 @@ export default function LogoutButton() {
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
+    localStorage.removeItem('sb-hpnokwlodebafzgebopj-auth-token');
     router.push('/auth');
   };
 

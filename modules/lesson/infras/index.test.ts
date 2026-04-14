@@ -113,7 +113,9 @@ describe('Lesson Infras – Supabase operations', () => {
   describe('updateLessonInSupabase', () => {
     it('returns success when update succeeds', async () => {
       mockUpdate.mockReturnValueOnce({
-        eq: jest.fn().mockResolvedValueOnce({ data: null, error: null }),
+        eq: jest.fn().mockReturnValueOnce({
+          eq: jest.fn().mockResolvedValueOnce({ data: null, error: null }),
+        }),
       });
 
       const { id, ...lessonData } = mockLesson;
@@ -124,9 +126,11 @@ describe('Lesson Infras – Supabase operations', () => {
 
     it('returns error result when update fails', async () => {
       mockUpdate.mockReturnValueOnce({
-        eq: jest.fn().mockResolvedValueOnce({
-          data: null,
-          error: { message: 'Not found' },
+        eq: jest.fn().mockReturnValueOnce({
+          eq: jest.fn().mockResolvedValueOnce({
+            data: null,
+            error: { message: 'Not found' },
+          }),
         }),
       });
 

@@ -247,7 +247,7 @@ export function LessonDetailModal({
               t={t}
               onRegenerate={handleRegenerateSummary}
               onReload={handleReloadSummary}
-              showProcessingState={hasVocabularies}
+              showProcessingState={isSummaryGenerating}
               vocabCount={lesson?.vocabularies?.length ?? 0}
             />
           </div>

@@ -103,7 +103,7 @@
   "delete_confirm_title": "Xóa bài học này?",
   "delete_confirm_description": "Hành động này không thể hoàn tác. Tất cả từ vựng và tóm tắt liên quan đến bài học sẽ bị xóa vĩnh viễn.",
   "delete_confirm_action": "Xóa",
-  "cancel": "Hủy",
   "lesson_deleted_toast": "Đã xóa bài học thành công",
-  "lesson_delete_error": "Không thể xóa bài học"
+  "lesson_delete_error": "Không thể xóa bài học",
+  "min_vocab_for_summary": "Cần ít nhất 5 từ vựng để tạo tóm tắt."
 }

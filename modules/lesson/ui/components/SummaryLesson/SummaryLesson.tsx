@@ -72,6 +72,7 @@ export function SummaryLesson({
     );
   }
 
+  /* Summary is being generated in the background (e.g. just created / updated) */
   if (!summary && showProcessingState) {
     return (
       <div
@@ -101,32 +102,40 @@ export function SummaryLesson({
     );
   }
 
+  /* No summary yet AND vocab count is below the minimum */
+  if (!summary && isBelowMinVocab) {
+    return (
+      <div className="flex flex-col items-center gap-3 p-6 border border-dashed border-border rounded-xl bg-muted/5">
+        <BookOpen className="w-8 h-8 text-muted-foreground/40" />
+        <p className="text-sm text-muted-foreground/60 italic m-0">
+          {t('min_vocab_for_summary')}
+        </p>
+      </div>
+    );
+  }
+
+  /* No summary yet BUT enough vocab — show generate button */
   if (!summary) {
     return (
       <div className="flex flex-col items-center gap-3 p-6 border border-dashed border-border rounded-xl bg-muted/5">
         <BookOpen className="w-8 h-8 text-muted-foreground/40" />
         <p className="text-sm text-muted-foreground/60 italic">{t('summary_empty')}</p>
         {onRegenerate && (
-          <>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={onRegenerate}
-              disabled={isGenerating || isBelowMinVocab}
-              className="gap-2"
-            >
-              {isGenerating ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <RefreshCw className="w-4 h-4" />
-              )}
-              {isGenerating ? t('summary_generating') : t('summary_generate_btn')}
-            </Button>
-            {isBelowMinVocab && (
-              <p className="text-xs text-muted-foreground/50 m-0">{t('summary_min_vocab_hint')}</p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onRegenerate}
+            disabled={isGenerating}
+            className="gap-2"
+          >
+            {isGenerating ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <RefreshCw className="w-4 h-4" />
             )}
-          </>
+            {isGenerating ? t('summary_generating') : t('summary_generate_btn')}
+          </Button>
         )}
       </div>
     );
@@ -140,13 +149,13 @@ export function SummaryLesson({
           <BookOpen className="w-4 h-4" />
           {t('summary_section_title')}
         </h3>
-        {onRegenerate && (
+        {onRegenerate && !isBelowMinVocab && (
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={onRegenerate}
-            disabled={isGenerating || isBelowMinVocab}
+            disabled={isGenerating}
             className="gap-1.5 text-xs h-7"
           >
             {isGenerating ? (
@@ -158,6 +167,13 @@ export function SummaryLesson({
           </Button>
         )}
       </div>
+
+      {/* Warning when vocab dropped below minimum */}
+      {isBelowMinVocab && (
+        <p className="text-xs text-amber-500/80 italic m-0">
+          {t('min_vocab_for_summary')}
+        </p>
+      )}
 
       {/* Paragraph */}
       {summary.paragraph && (

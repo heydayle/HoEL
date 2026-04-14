@@ -6,13 +6,13 @@ import { useLocale } from '@/shared/hooks/useLocale';
 import type { Locale } from '@/shared/types';
 import { createClient } from '@/shared/utils/supabase/client';
 
+import { toast } from 'sonner';
 import type { AuthProvider, IAuthFormData, IAuthResult } from '../../core/models';
 import { AuthMode } from '../../core/models';
-import { signInUseCase, signUpUseCase, signInWithProviderUseCase } from '../../core/usecases';
+import { signInUseCase, signInWithProviderUseCase, signUpUseCase } from '../../core/usecases';
 import { UsersTableAuthRepository } from '../../infras/authRepository';
 import en from '../../messages/en.json';
 import vi from '../../messages/vi.json';
-import { toast } from 'sonner';
 
 
 /** Locale messages map for auth module */
@@ -63,9 +63,9 @@ export const useAuthPage = () => {
           ? await signInUseCase(repository, formData)
           : await signUpUseCase(repository, formData);
 
-        if (isSignIn) {
+        if (isSignIn && result.success && result.user) {
           toast.success(t('sign_in_success'));
-          localStorage.setItem('sb-hpnokwlodebafzgebopj-auth-token', JSON.stringify(result));
+          localStorage.setItem('sb-hpnokwlodebafzgebopj-auth-token', JSON.stringify(result.user));
         } else {
           toast.success(t('register_success'));
           setAuthMode(AuthMode.SIGN_IN);

@@ -47,6 +47,23 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // Sync user data to a cookie so client-side code can read it.
+  // localStorage is NOT available in the server-side proxy context.
+  if (user) {
+    supabaseResponse.cookies.set(
+      'sb-user-data',
+      JSON.stringify({
+        id: user.id,
+        email: user.email,
+        display_name: user.user_metadata?.display_name || user.user_metadata?.full_name || '',
+        created_at: user.created_at,
+      }),
+      { path: '/', httpOnly: false, sameSite: 'lax', maxAge: 60 * 60 * 24 * 7 }
+    )
+  } else {
+    supabaseResponse.cookies.delete('sb-user-data')
+  }
+
   // Protect routes — redirect unauthenticated users away from /lessons
   if (!user && request.nextUrl.pathname.startsWith('/lessons')) {
     const url = request.nextUrl.clone()

@@ -4,6 +4,7 @@ import React from 'react';
 
 import { LocaleSwitcher, ThemeToggle } from '@/shared/components/atoms';
 import LogoutButton from '@/shared/components/atoms/Button/LogoutButton';
+import { getUserLocal } from '@/shared/hooks/getUserLocal';
 import type { Locale } from '@/shared/types';
 
 /**
@@ -11,7 +12,7 @@ import type { Locale } from '@/shared/types';
  */
 export interface IAppHeaderProps {
   /** Left-side content: title block, back button, etc. */
-  left: React.ReactNode;
+  left?: React.ReactNode;
   /** Optional extra action buttons inserted before the controls */
   actions?: React.ReactNode;
   /** Whether to show the LogoutButton (defaults to true) */
@@ -43,10 +44,21 @@ export function AppHeader({
   resolvedTheme,
   onToggleTheme,
 }: IAppHeaderProps): React.JSX.Element {
+  const { user } = getUserLocal();
   return (
     <header className="flex items-center justify-between gap-4 flex-wrap sticky top-8 z-40 py-2 bg-background/94 backdrop-blur-[10px]">
       {/* Left slot */}
-      <div>{left}</div>
+      <div className="flex items-center gap-2">
+        {!left && user?.display_name
+          ? [
+              'Hi, ',
+              <span
+                key="display-name"
+                className="font-bold text-lg"
+              >{`${user.display_name}!`}</span>,
+            ]
+          : left}
+      </div>
 
       {/* Right: actions + controls */}
       <div className="flex items-center gap-3">

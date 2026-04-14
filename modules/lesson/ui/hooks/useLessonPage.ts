@@ -17,6 +17,7 @@ import { useLocale, useTheme } from '@/shared/hooks';
 import type { Locale, TranslationMessages } from '@/shared/types';
 import { toast } from "sonner";
 import { v4 as uuidv4 } from 'uuid';
+import { getUserLocal } from '@/shared/hooks/getUserLocal';
 
 /**
  * Locale messages map for the lesson module.
@@ -88,12 +89,11 @@ export const useLessonPage = () => {
   const addLesson = async (lesson: Omit<ILesson, 'id'>): Promise<string | null> => {
     setIsAdding(true);
     const uuid = uuidv4();
-    const user = localStorage.getItem('sb-hpnokwlodebafzgebopj-auth-token');
-    const userID = JSON.parse(user || '{}')?.user?.id;
+    const { userId } = getUserLocal();
     const newLesson: ILesson = {
       ...lesson,
       id: uuid,
-      createdBy: userID || 'unknown',
+      createdBy: userId || 'unknown',
     };
 
     try {
@@ -158,10 +158,12 @@ export const useLessonPage = () => {
 
   /**
    * Updates an existing lesson and persists both metadata and vocabulary
-   * changes to Supabase.
+   * changes to Supabase. When ≥5 vocabularies are saved, summary
+   * generation is triggered in the background (fire-and-forget).
    *
    * @param lessonId - ID of lesson to update
    * @param lesson - Updated lesson data
+   * @param existingSummaryId - Optional existing summary ID for regeneration
    */
   const updateLesson = async (lessonId: string, lesson: Omit<ILesson, 'id'>, existingSummaryId?: string): Promise<void> => {
     setIsUpdating(true);
@@ -190,6 +192,23 @@ export const useLessonPage = () => {
           }));
 
         await syncVocabularies(lessonId, vocabPayloads);
+
+        /**
+         * Fire-and-forget: generate / regenerate summary in the background.
+         * Only trigger when there are at least 5 vocabulary items.
+         */
+        const wordList = vocabPayloads.map((v) => v.word);
+
+        if (wordList.length >= 5) {
+          generateAndSaveSummary(lessonId, wordList, existingSummaryId).catch(
+            (summaryErr: unknown) => {
+              console.error(
+                'Background summary generation failed:',
+                (summaryErr as Error).message,
+              );
+            },
+          );
+        }
       } else {
         /** No vocabularies submitted — clear existing ones */
         await syncVocabularies(lessonId, []);

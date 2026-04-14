@@ -103,7 +103,7 @@
   "delete_confirm_title": "Delete this lesson?",
   "delete_confirm_description": "This action cannot be undone. All vocabulary and summary data associated with this lesson will be permanently deleted.",
   "delete_confirm_action": "Delete",
-  "cancel": "Cancel",
   "lesson_deleted_toast": "Lesson deleted successfully",
-  "lesson_delete_error": "Failed to delete lesson"
+  "lesson_delete_error": "Failed to delete lesson",
+  "min_vocab_for_summary": "At least 5 vocabulary items are required to generate a summary."
 }

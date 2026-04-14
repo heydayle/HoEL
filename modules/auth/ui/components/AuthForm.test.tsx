@@ -158,16 +158,25 @@ describe('AuthForm Component', () => {
   it('calls handleProviderSignIn with "google" when Google button is clicked', () => {
     render(<AuthForm />);
 
-    const googleButton = screen.queryByText('Continue with Google') || screen.queryByRole('button', { name: /google/i });
-    // Just verify the button exists - click event handling is tested indirectly
-    expect(googleButton).toBeTruthy();
+    const googleButton = screen.getByRole('button', { name: /Continue with Google/i });
+    expect(googleButton).not.toBeDisabled();
+    fireEvent.click(googleButton);
+
+    expect(mockHandleProviderSignIn).toHaveBeenCalledTimes(1);
+    expect(mockHandleProviderSignIn).toHaveBeenCalledWith('google');
   });
 
-  it('calls handleProviderSignIn with "github" when GitHub button is clicked', () => {
+  it('renders the GitHub button as disabled', () => {
     render(<AuthForm />);
 
-    const githubButton = screen.queryByText('Continue with GitHub') || screen.queryByRole('button', { name: /github/i });
-    // Just verify the button exists - click event handling is tested indirectly
-    expect(githubButton).toBeTruthy();
+    const githubButton = screen.getByRole('button', { name: /Continue with GitHub/i });
+    expect(githubButton).toBeDisabled();
+  });
+
+  it('renders Google button with unique id for browser testing', () => {
+    render(<AuthForm />);
+
+    const googleButton = document.getElementById('google-sign-in-btn');
+    expect(googleButton).toBeInTheDocument();
   });
 });
