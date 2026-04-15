@@ -8,8 +8,7 @@ interface UserLocal {
   userId: string | null;
 }
 
-/** The localStorage key set by AuthSyncProvider */
-const AUTH_TOKEN_KEY = 'sb-hpnokwlodebafzgebopj-auth-token';
+import { AUTH_TOKEN_KEY } from '@/shared/utils/constants';
 
 /**
  * Retrieves the currently authenticated user from localStorage.

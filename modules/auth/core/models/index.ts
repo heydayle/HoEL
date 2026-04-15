@@ -58,3 +58,15 @@ export interface IAuthResult {
   /** Indicates if the password is considered weak (optional) */
   weakPassword?: boolean;
 }
+
+/**
+ * Represents the decoded portions of the Supabase JWT access token
+ * stored client-side. Used by session guard hooks to determine when
+ * a proactive token refresh should be triggered.
+ */
+export interface ITokenPayload {
+  /** Unix timestamp (seconds) when the access token expires */
+  exp: number;
+  /** Unix timestamp (seconds) when the token was issued */
+  iat: number;
+}

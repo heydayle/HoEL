@@ -21,15 +21,15 @@ export async function checkUserLoggedIn(request: NextRequest) {
     }
   );
 
-  // Get user and session from Supabase
+  // Validate the token server-side — only getUser() contacts the Auth server.
+  // getSession() is intentionally NOT used here as it only reads from cookies
+  // without verifying the token's validity.
   const { data: { user } } = await supabase.auth.getUser();
-  const { data: { session } } = await supabase.auth.getSession();
-  const accessToken = session?.access_token || null;
-  const isLoggedIn = !!user && !!accessToken;
 
-  if (!isLoggedIn) {
-    // Redirect to login page if not logged in
-    return NextResponse.redirect('/auth/page');
+  if (!user) {
+    // Redirect to login page if not authenticated
+    const url = new URL('/auth', request.url);
+    return NextResponse.redirect(url);
   }
 
   // If logged in, allow request to continue

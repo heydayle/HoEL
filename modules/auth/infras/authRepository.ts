@@ -48,8 +48,6 @@ export class UsersTableAuthRepository implements IAuthRepository {
         email: data.email,
         password: data.password,
       });
-    console.log(await this.client.auth.getClaims());
-    
     if (error) {
       return { success: false, error: error.message };
     }
@@ -123,5 +121,35 @@ export class UsersTableAuthRepository implements IAuthRepository {
     }
 
     return { success: true };
+  }
+
+  /**
+   * Refreshes the current Supabase session using the stored refresh token.
+   * The Supabase client automatically uses the refresh token from cookies.
+   * @returns The auth result with the new session on success
+   */
+  async refreshSession(): Promise<IAuthResult> {
+    const { data, error } = await this.client.auth.refreshSession();
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, session: data.session ?? undefined };
+  }
+
+  /**
+   * Retrieves the current active session from local cookies/storage.
+   * Does not contact the Supabase Auth server for validation.
+   * @returns The auth result with the current session
+   */
+  async getSession(): Promise<IAuthResult> {
+    const { data, error } = await this.client.auth.getSession();
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, session: data.session ?? undefined };
   }
 }

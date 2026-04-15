@@ -2,10 +2,10 @@
 
 import { useEffect } from 'react';
 
+import { AUTH_TOKEN_KEY } from '@/shared/utils/constants';
 import { createClient } from '@/shared/utils/supabase/client';
 
-/** The localStorage key for the user auth token */
-const AUTH_TOKEN_KEY = 'sb-hpnokwlodebafzgebopj-auth-token';
+import { useSessionGuard } from '@/shared/hooks/useSessionGuard';
 
 /**
  * Client-side provider that syncs the authenticated Supabase user
@@ -20,6 +20,8 @@ const AUTH_TOKEN_KEY = 'sb-hpnokwlodebafzgebopj-auth-token';
  * @returns `null` — this component renders nothing
  */
 export function AuthSyncProvider(): null {
+  useSessionGuard();
+
   useEffect(() => {
     const syncUser = async () => {
       const supabase = createClient();

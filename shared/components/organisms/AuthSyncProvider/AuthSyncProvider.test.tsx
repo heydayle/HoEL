@@ -1,5 +1,7 @@
 import { render, waitFor } from '@testing-library/react';
 
+import { AUTH_TOKEN_KEY } from '@/shared/utils/constants';
+
 import { AuthSyncProvider } from './AuthSyncProvider';
 
 /** Mock user data returned by supabase.auth.getUser() */
@@ -22,6 +24,11 @@ jest.mock('@/shared/utils/supabase/client', () => ({
   }),
 }));
 
+/** Mock the useSessionGuard hook — tested independently */
+jest.mock('@/shared/hooks/useSessionGuard', () => ({
+  useSessionGuard: jest.fn(),
+}));
+
 describe('AuthSyncProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -37,7 +44,7 @@ describe('AuthSyncProvider', () => {
     render(<AuthSyncProvider />);
 
     await waitFor(() => {
-      const stored = localStorage.getItem('sb-hpnokwlodebafzgebopj-auth-token');
+      const stored = localStorage.getItem(AUTH_TOKEN_KEY);
       expect(stored).not.toBeNull();
       const parsed = JSON.parse(stored!);
       expect(parsed.id).toBe('user-123');
@@ -47,13 +54,13 @@ describe('AuthSyncProvider', () => {
   });
 
   it('should remove localStorage when user is not authenticated', async () => {
-    localStorage.setItem('sb-hpnokwlodebafzgebopj-auth-token', 'old-data');
+    localStorage.setItem(AUTH_TOKEN_KEY, 'old-data');
     mockGetUser.mockResolvedValue({ data: { user: null } });
 
     render(<AuthSyncProvider />);
 
     await waitFor(() => {
-      expect(localStorage.getItem('sb-hpnokwlodebafzgebopj-auth-token')).toBeNull();
+      expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBeNull();
     });
   });
 
@@ -84,7 +91,7 @@ describe('AuthSyncProvider', () => {
     render(<AuthSyncProvider />);
 
     await waitFor(() => {
-      const stored = localStorage.getItem('sb-hpnokwlodebafzgebopj-auth-token');
+      const stored = localStorage.getItem(AUTH_TOKEN_KEY);
       expect(stored).not.toBeNull();
       const parsed = JSON.parse(stored!);
       expect(parsed.id).toBe('user-456');
@@ -93,7 +100,7 @@ describe('AuthSyncProvider', () => {
   });
 
   it('should clear localStorage on auth state change with sign out', async () => {
-    localStorage.setItem('sb-hpnokwlodebafzgebopj-auth-token', 'existing-data');
+    localStorage.setItem(AUTH_TOKEN_KEY, 'existing-data');
     mockGetUser.mockResolvedValue({ data: { user: mockUser } });
     mockOnAuthStateChange.mockImplementation((callback: Function) => {
       /** Simulate a sign-out event */
@@ -104,7 +111,7 @@ describe('AuthSyncProvider', () => {
     render(<AuthSyncProvider />);
 
     await waitFor(() => {
-      expect(localStorage.getItem('sb-hpnokwlodebafzgebopj-auth-token')).toBeNull();
+      expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBeNull();
     });
   });
 

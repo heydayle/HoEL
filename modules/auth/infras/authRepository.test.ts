@@ -38,7 +38,8 @@ const createMockClient = () => {
       signInWithOAuth: jest.fn(),
       signInWithPassword: jest.fn(),
       signUp: jest.fn(),
-      getClaims: jest.fn().mockResolvedValue(null),
+      refreshSession: jest.fn(),
+      getSession: jest.fn(),
     },
     /** Exposed for direct assertion access */
     _mocks: { mockSelect, mockEq, mockLimit, mockInsert, mockInsertSelect, mockSingle },
@@ -246,6 +247,90 @@ describe('UsersTableAuthRepository', () => {
       const result = await repo.signInWithProvider('github', 'http://localhost:3000/auth/callback');
 
       expect(result).toEqual({ success: false, error: 'OAuth provider not configured' });
+    });
+  });
+
+  describe('refreshSession', () => {
+    it('should return success with new session on successful refresh', async () => {
+      const mockNewSession = { access_token: 'new-token', refresh_token: 'new-refresh' };
+      mockClient.auth.refreshSession.mockResolvedValue({
+        data: { session: mockNewSession },
+        error: null,
+      });
+
+      const result = await repo.refreshSession();
+
+      expect(result.success).toBe(true);
+      expect(result.session).toEqual(mockNewSession);
+      expect(mockClient.auth.refreshSession).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return error when refresh token is expired or invalid', async () => {
+      mockClient.auth.refreshSession.mockResolvedValue({
+        data: { session: null },
+        error: { message: 'Invalid Refresh Token: Already Used' },
+      });
+
+      const result = await repo.refreshSession();
+
+      expect(result).toEqual({
+        success: false,
+        error: 'Invalid Refresh Token: Already Used',
+      });
+    });
+
+    it('should return success with undefined session when data.session is null', async () => {
+      mockClient.auth.refreshSession.mockResolvedValue({
+        data: { session: null },
+        error: null,
+      });
+
+      const result = await repo.refreshSession();
+
+      expect(result.success).toBe(true);
+      expect(result.session).toBeUndefined();
+    });
+  });
+
+  describe('getSession', () => {
+    it('should return success with current session', async () => {
+      const mockCurrentSession = { access_token: 'current-token', refresh_token: 'current-refresh' };
+      mockClient.auth.getSession.mockResolvedValue({
+        data: { session: mockCurrentSession },
+        error: null,
+      });
+
+      const result = await repo.getSession();
+
+      expect(result.success).toBe(true);
+      expect(result.session).toEqual(mockCurrentSession);
+      expect(mockClient.auth.getSession).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return success with undefined session when no session exists', async () => {
+      mockClient.auth.getSession.mockResolvedValue({
+        data: { session: null },
+        error: null,
+      });
+
+      const result = await repo.getSession();
+
+      expect(result.success).toBe(true);
+      expect(result.session).toBeUndefined();
+    });
+
+    it('should return error when getSession fails', async () => {
+      mockClient.auth.getSession.mockResolvedValue({
+        data: { session: null },
+        error: { message: 'Session retrieval failed' },
+      });
+
+      const result = await repo.getSession();
+
+      expect(result).toEqual({
+        success: false,
+        error: 'Session retrieval failed',
+      });
     });
   });
 });

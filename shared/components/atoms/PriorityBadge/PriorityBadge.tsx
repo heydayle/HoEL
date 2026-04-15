@@ -14,7 +14,7 @@ const PRIORITY_COLORS: Record<PriorityVariant, string> = {
   low: 'hsl(150, 60%, 40%)',
   medium: 'hsl(38, 92%, 50%)',
   high: 'hsl(0, 72%, 51%)',
-  pos: 'hsl(var(--primary))',
+  pos: 'oklch(0.51 0.21 252)',
 };
 
 /**
@@ -24,7 +24,7 @@ const PRIORITY_BG_COLORS: Record<PriorityVariant, string> = {
   low: 'rgba(34,197,110,0.12)',
   medium: 'rgba(234,179,8,0.12)',
   high: 'rgba(239,68,68,0.12)',
-  pos: 'hsl(var(--primary) / 0.12)',
+  pos: 'rgba(230, 230, 230, 0.8)',
 };
 
 /**

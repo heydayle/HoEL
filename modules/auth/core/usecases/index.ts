@@ -42,3 +42,28 @@ export const signInWithProviderUseCase = async (
   return repository.signInWithProvider(provider, redirectTo);
 };
 
+/**
+ * Use case for explicitly refreshing an expired Supabase session.
+ * Delegates to the repository's refreshSession method which uses
+ * the stored refresh token to obtain a new access token.
+ * @param repository - The authentication repository implementation
+ * @returns The authentication result with the refreshed session
+ */
+export const refreshSessionUseCase = async (
+  repository: IAuthRepository,
+): Promise<IAuthResult> => {
+  return repository.refreshSession();
+};
+
+/**
+ * Use case for retrieving the current active session.
+ * Reads session data from local storage without server validation.
+ * @param repository - The authentication repository implementation
+ * @returns The authentication result with the current session
+ */
+export const getSessionUseCase = async (
+  repository: IAuthRepository,
+): Promise<IAuthResult> => {
+  return repository.getSession();
+};
+

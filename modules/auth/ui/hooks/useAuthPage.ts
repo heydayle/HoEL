@@ -46,8 +46,8 @@ export const useAuthPage = () => {
 
   /**
    * Handles form submission for sign in or register.
-   * Queries the `users` table via the repository and stores
-   * the returned user session in localStorage on success.
+   * On successful sign-in, redirects to the home page.
+   * Session data is automatically synced by AuthSyncProvider.
    * @param formData - The user-submitted auth form data
    */
   const handleSubmit = useCallback(
@@ -65,8 +65,9 @@ export const useAuthPage = () => {
 
         if (isSignIn && result.success && result.user) {
           toast.success(t('sign_in_success'));
-          localStorage.setItem('sb-hpnokwlodebafzgebopj-auth-token', JSON.stringify(result.user));
-        } else {
+          /** Redirect to lessons — session data is synced by AuthSyncProvider */
+          window.location.href = '/lessons';
+        } else if (!isSignIn && result.success) {
           toast.success(t('register_success'));
           setAuthMode(AuthMode.SIGN_IN);
         }

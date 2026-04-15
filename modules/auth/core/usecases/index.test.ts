@@ -1,6 +1,6 @@
 import type { IAuthFormData, IAuthResult } from '../models';
 import type { IAuthRepository } from '../repositories';
-import { signInUseCase, signUpUseCase, signInWithProviderUseCase } from './index';
+import { signInUseCase, signUpUseCase, signInWithProviderUseCase, refreshSessionUseCase, getSessionUseCase } from './index';
 
 /**
  * Creates a mock auth repository for testing.
@@ -10,6 +10,8 @@ const createMockRepository = (): jest.Mocked<IAuthRepository> => ({
   signIn: jest.fn(),
   signUp: jest.fn(),
   signInWithProvider: jest.fn(),
+  refreshSession: jest.fn(),
+  getSession: jest.fn(),
 });
 
 describe('Auth Use Cases', () => {
@@ -109,6 +111,54 @@ describe('Auth Use Cases', () => {
         'github',
         'http://localhost:3000/auth/callback',
       );
+
+      expect(result).toEqual(expected);
+    });
+  });
+
+  describe('refreshSessionUseCase', () => {
+    it('should delegate to repository.refreshSession and return result', async () => {
+      const expected: IAuthResult = {
+        success: true,
+        session: { access_token: 'new-token' } as IAuthResult['session'],
+      };
+      mockRepo.refreshSession.mockResolvedValue(expected);
+
+      const result = await refreshSessionUseCase(mockRepo);
+
+      expect(mockRepo.refreshSession).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(expected);
+    });
+
+    it('should return error result when refresh fails', async () => {
+      const expected: IAuthResult = { success: false, error: 'Refresh token expired' };
+      mockRepo.refreshSession.mockResolvedValue(expected);
+
+      const result = await refreshSessionUseCase(mockRepo);
+
+      expect(result).toEqual(expected);
+    });
+  });
+
+  describe('getSessionUseCase', () => {
+    it('should delegate to repository.getSession and return result', async () => {
+      const expected: IAuthResult = {
+        success: true,
+        session: { access_token: 'current-token' } as IAuthResult['session'],
+      };
+      mockRepo.getSession.mockResolvedValue(expected);
+
+      const result = await getSessionUseCase(mockRepo);
+
+      expect(mockRepo.getSession).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(expected);
+    });
+
+    it('should return error result when getSession fails', async () => {
+      const expected: IAuthResult = { success: false, error: 'Session error' };
+      mockRepo.getSession.mockResolvedValue(expected);
+
+      const result = await getSessionUseCase(mockRepo);
 
       expect(result).toEqual(expected);
     });

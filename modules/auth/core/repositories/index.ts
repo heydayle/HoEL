@@ -28,5 +28,19 @@ export interface IAuthRepository {
    * @returns A promise resolving to the auth result (error only, since it redirects)
    */
   signInWithProvider(provider: AuthProvider, redirectTo: string): Promise<IAuthResult>;
+
+  /**
+   * Attempts to refresh the current Supabase session using the stored
+   * refresh token. Returns the new session on success.
+   * @returns A promise resolving to the auth result with the refreshed session
+   */
+  refreshSession(): Promise<IAuthResult>;
+
+  /**
+   * Retrieves the current active session without contacting the Auth server.
+   * Reads session data from local cookies/storage only.
+   * @returns A promise resolving to the auth result with the current session
+   */
+  getSession(): Promise<IAuthResult>;
 }
 
