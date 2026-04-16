@@ -1,13 +1,14 @@
 'use client';
 
-import { Check, Pencil, Share2, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Check, Pencil, Share2, Trash2, Volume2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import type { ILesson } from '@/modules/lesson/core/models';
 import { SummaryLesson } from '@/modules/lesson/ui/components/SummaryLesson';
 import { useSummaryLesson } from '@/modules/lesson/ui/hooks/useSummaryLesson';
 import { PriorityBadge, resolvePriorityVariant } from '@/shared/components';
+import { useTextToSpeech } from '@/shared/hooks';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -67,11 +68,25 @@ export function LessonDetailModal({
     handleGenerateSummary,
   } = useSummaryLesson(t);
 
+  const { speak, isSpeaking, currentWord } = useTextToSpeech();
+
   /** Tracks whether the share link was just copied */
   const [isCopied, setIsCopied] = useState(false);
 
   /** Whether the delete confirmation dialog is shown */
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  /**
+   * Speaks the given word using the Web Speech API.
+   * Wrapped in useCallback to avoid unnecessary re-renders.
+   * @param word - The vocabulary word to pronounce
+   */
+  const handleSpeak = useCallback(
+    (word: string) => {
+      speak(word);
+    },
+    [speak],
+  );
 
   /** Reset copied state when the modal lesson changes */
   useEffect(() => {
@@ -289,9 +304,24 @@ export function LessonDetailModal({
                           )}
 
                           {vocab.pronunciation && (
-                            <span className="ml-2 text-[0.775rem] text-muted-foreground/65">
-                              🔊 {vocab.pronunciation}
-                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleSpeak(vocab.word)}
+                              aria-label={`${t('tts_speak_label')}: ${vocab.word}`}
+                              className={[
+                                'inline-flex items-center gap-1 ml-2 px-1.5 py-0.5 rounded-md',
+                                'text-[0.775rem] cursor-pointer border-none bg-transparent',
+                                'transition-all duration-200',
+                                'hover:bg-primary/10 hover:text-primary',
+                                'focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1',
+                                isSpeaking && currentWord === vocab.word
+                                  ? 'text-primary animate-pulse'
+                                  : 'text-muted-foreground/65',
+                              ].join(' ')}
+                            >
+                              <Volume2 className="w-3.5 h-3.5" />
+                              <span>{vocab.pronunciation}</span>
+                            </button>
                           )}
                         </div>
                       </div>

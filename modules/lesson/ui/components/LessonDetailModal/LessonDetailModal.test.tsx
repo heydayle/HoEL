@@ -3,6 +3,28 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { LessonDetailModal } from './LessonDetailModal';
 import type { ILesson } from '@/modules/lesson/core/models';
 
+/** Mock speak function for useTextToSpeech */
+const mockSpeak = jest.fn();
+const mockCancel = jest.fn();
+
+/** Mutable state refs so tests can control isSpeaking / currentWord */
+let mockIsSpeaking = false;
+let mockCurrentWord: string | null = null;
+
+jest.mock('@/shared/hooks', () => ({
+  useTextToSpeech: () => ({
+    speak: mockSpeak,
+    cancel: mockCancel,
+    isSupported: true,
+    get isSpeaking() {
+      return mockIsSpeaking;
+    },
+    get currentWord() {
+      return mockCurrentWord;
+    },
+  }),
+}));
+
 /** i18n stub — returns the key so assertions stay readable */
 const t = (key: string) => key;
 
@@ -382,5 +404,60 @@ describe('LessonDetailModal — delete button', () => {
     });
     // Modal should NOT close when deletion failed
     expect(onClose).not.toHaveBeenCalled();
+  });
+});
+
+describe('LessonDetailModal — TTS pronunciation', () => {
+  beforeEach(() => {
+    mockSpeak.mockClear();
+    mockCancel.mockClear();
+    mockIsSpeaking = false;
+    mockCurrentWord = null;
+  });
+
+  it('renders the pronunciation as a clickable button with correct aria-label', () => {
+    const lesson = makeLesson({ vocabularies: [makeVocab()] });
+    render(<LessonDetailModal lesson={lesson} t={t} onClose={jest.fn()} />);
+
+    const btn = screen.getByLabelText('tts_speak_label: happy');
+    expect(btn).toBeInTheDocument();
+    expect(btn.tagName).toBe('BUTTON');
+  });
+
+  it('calls speak with the vocab word when pronunciation button is clicked', () => {
+    const lesson = makeLesson({ vocabularies: [makeVocab()] });
+    render(<LessonDetailModal lesson={lesson} t={t} onClose={jest.fn()} />);
+
+    fireEvent.click(screen.getByLabelText('tts_speak_label: happy'));
+    expect(mockSpeak).toHaveBeenCalledWith('happy');
+  });
+
+  it('does not render pronunciation button when pronunciation is empty', () => {
+    const lesson = makeLesson({
+      vocabularies: [makeVocab({ pronunciation: '' })],
+    });
+    render(<LessonDetailModal lesson={lesson} t={t} onClose={jest.fn()} />);
+    expect(screen.queryByLabelText(/tts_speak_label/)).not.toBeInTheDocument();
+  });
+
+  it('renders pronunciation text inside the button', () => {
+    const lesson = makeLesson({ vocabularies: [makeVocab()] });
+    render(<LessonDetailModal lesson={lesson} t={t} onClose={jest.fn()} />);
+
+    const btn = screen.getByLabelText('tts_speak_label: happy');
+    expect(btn).toHaveTextContent('HAP-ee');
+  });
+
+  it('calls speak with the correct word for each vocab entry', () => {
+    const lesson = makeLesson({
+      vocabularies: [
+        makeVocab({ id: 'v1', word: 'happy', pronunciation: 'HAP-ee' }),
+        makeVocab({ id: 'v2', word: 'sad', pronunciation: 'SAD' }),
+      ],
+    });
+    render(<LessonDetailModal lesson={lesson} t={t} onClose={jest.fn()} />);
+
+    fireEvent.click(screen.getByLabelText('tts_speak_label: sad'));
+    expect(mockSpeak).toHaveBeenCalledWith('sad');
   });
 });

@@ -105,5 +105,7 @@
   "delete_confirm_action": "Xóa",
   "lesson_deleted_toast": "Đã xóa bài học thành công",
   "lesson_delete_error": "Không thể xóa bài học",
-  "min_vocab_for_summary": "Cần ít nhất 5 từ vựng để tạo tóm tắt."
+  "min_vocab_for_summary": "Cần ít nhất 5 từ vựng để tạo tóm tắt.",
+  "tts_speak_label": "Nghe phát âm",
+  "tts_speaking_label": "Đang phát..."
 }

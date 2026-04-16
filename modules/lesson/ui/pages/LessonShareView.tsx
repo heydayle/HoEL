@@ -2,6 +2,7 @@
 import type { ILesson, ISummaryLesson, IVocabulary } from '@/modules/lesson/core/models';
 import { SummaryLesson } from '@/modules/lesson/ui/components/SummaryLesson';
 import { PriorityBadge, resolvePriorityVariant } from '@/shared/components';
+import { useTextToSpeech } from '@/shared/hooks';
 import { BookOpen, Calendar, Eye, Flag, User, Volume2 } from 'lucide-react';
 import React from 'react';
 
@@ -13,6 +14,12 @@ interface IVocabularyCardProps {
   vocab: IVocabulary;
   /** Translation function */
   t: (key: string) => string;
+  /** Callback to speak a word aloud */
+  onSpeak: (word: string) => void;
+  /** Whether speech is currently playing */
+  isSpeaking: boolean;
+  /** The word currently being spoken */
+  currentWord: string | null;
 }
 
 /**
@@ -20,7 +27,7 @@ interface IVocabularyCardProps {
  * @param props - Component props
  * @returns Vocabulary card element
  */
-function VocabularyCard({ vocab, t }: IVocabularyCardProps): React.JSX.Element {
+function VocabularyCard({ vocab, t, onSpeak, isSpeaking, currentWord }: IVocabularyCardProps): React.JSX.Element {
   return (
     <article className="flex flex-col gap-3 p-5 rounded-[0.875rem] bg-[var(--surface)] border border-[var(--surface-border)] transition-all duration-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] hover:border-primary/40 hover:-translate-y-0.5">
       <div className="flex items-center flex-wrap gap-2">
@@ -55,9 +62,24 @@ function VocabularyCard({ vocab, t }: IVocabularyCardProps): React.JSX.Element {
               <Volume2 aria-hidden="true" className="w-3.5 h-3.5" />
               {t('share_view_pronunciation')}
             </span>
-            <span className="text-[0.9rem] text-foreground leading-relaxed">
+            <button
+              type="button"
+              onClick={() => onSpeak(vocab.word)}
+              aria-label={`${t('tts_speak_label')}: ${vocab.word}`}
+              className={[
+                'inline-flex items-center gap-1.5 w-fit px-2 py-1 rounded-md',
+                'text-[0.9rem] leading-relaxed cursor-pointer border-none bg-transparent',
+                'transition-all duration-200',
+                'hover:bg-primary/10 hover:text-primary',
+                'focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-1',
+                isSpeaking && currentWord === vocab.word
+                  ? 'text-primary animate-pulse'
+                  : 'text-foreground',
+              ].join(' ')}
+            >
+              <Volume2 aria-hidden="true" className="w-4 h-4 shrink-0" />
               {vocab.pronunciation}
-            </span>
+            </button>
           </div>
         )}
         {vocab.example && (
@@ -88,6 +110,7 @@ interface ILessonShareViewProps {
   t: (key: string) => string;
 }
 
+
 /**
  * Public, read-only view of a single lesson.
  * Rendered at `/s/[id]` — no authentication required, no editing allowed.
@@ -95,6 +118,7 @@ interface ILessonShareViewProps {
  * @returns Full page read-only lesson detail UI
  */
 export function LessonShareView({ lesson, summary, t }: ILessonShareViewProps): React.JSX.Element {
+  const { speak, isSpeaking, currentWord } = useTextToSpeech();
   const formattedDate = new Date(lesson.date).toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'long',
@@ -182,7 +206,7 @@ export function LessonShareView({ lesson, summary, t }: ILessonShareViewProps): 
         ) : (
           <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
             {lesson.vocabularies.map((vocab) => (
-              <VocabularyCard key={vocab.id} vocab={vocab} t={t} />
+              <VocabularyCard key={vocab.id} vocab={vocab} t={t} onSpeak={speak} isSpeaking={isSpeaking} currentWord={currentWord} />
             ))}
           </div>
         )}

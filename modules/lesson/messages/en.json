@@ -105,5 +105,7 @@
   "delete_confirm_action": "Delete",
   "lesson_deleted_toast": "Lesson deleted successfully",
   "lesson_delete_error": "Failed to delete lesson",
-  "min_vocab_for_summary": "At least 5 vocabulary items are required to generate a summary."
+  "min_vocab_for_summary": "At least 5 vocabulary items are required to generate a summary.",
+  "tts_speak_label": "Listen to pronunciation",
+  "tts_speaking_label": "Speaking..."
 }
