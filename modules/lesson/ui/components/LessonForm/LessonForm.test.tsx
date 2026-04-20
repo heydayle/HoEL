@@ -138,7 +138,7 @@ describe('LessonForm — vocabulary section', () => {
   it('renders the AI vocab loader input and button', () => {
     render(<LessonForm {...baseProps} />);
     expect(screen.getByPlaceholderText('ex: happy')).toBeInTheDocument();
-    expect(screen.getByText('load_vocab_btn')).toBeInTheDocument();
+    expect(screen.getByText('AI_btn')).toBeInTheDocument();
   });
 
   it('renders the load_vocab_description hint text', () => {
@@ -245,7 +245,7 @@ describe('LessonForm — vocabulary section', () => {
     });
 
     render(<LessonForm {...baseProps} />);
-    fireEvent.click(screen.getByText('load_vocab_btn'));
+    fireEvent.click(screen.getByText('AI_btn'));
     expect(generate).toHaveBeenCalledWith('happy');
   });
 
@@ -261,7 +261,7 @@ describe('LessonForm — vocabulary section', () => {
     });
 
     render(<LessonForm {...baseProps} />);
-    fireEvent.click(screen.getByText('load_vocab_btn'));
+    fireEvent.click(screen.getByText('AI_btn'));
     expect(generate).not.toHaveBeenCalled();
   });
 
@@ -300,7 +300,7 @@ describe('LessonForm — vocabulary section', () => {
     expect(onSubmitLesson).not.toHaveBeenCalled();
   });
 
-  it('always shows load_vocab_btn text on button regardless of loading state', () => {
+  it('always shows AI_btn text on button regardless of loading state', () => {
     (useGenerateVocab as jest.Mock).mockReturnValue({
       generate: jest.fn(),
       isLoading: true,
@@ -311,10 +311,10 @@ describe('LessonForm — vocabulary section', () => {
     });
 
     render(<LessonForm {...baseProps} />);
-    const loadBtn = screen.getByText('load_vocab_btn');
+    const loadBtn = screen.getByText('AI_btn');
     expect(loadBtn).toBeInTheDocument();
-    // Button is intentionally NOT disabled to allow concurrent vocab generation
-    expect(loadBtn).not.toBeDisabled();
+    // Button is disabled because newVocab is empty
+    expect(loadBtn).toBeDisabled();
   });
 
   it('does NOT disable the vocab input while isLoading is true', () => {
@@ -511,15 +511,15 @@ describe('LessonForm — loading state UI indicators', () => {
     });
 
     render(<LessonForm {...baseProps} />);
-    // Button always shows load_vocab_btn — skeleton cards provide loading feedback
-    const loadBtn = screen.getByText('load_vocab_btn');
+    // Button always shows AI_btn — skeleton cards provide loading feedback
+    const loadBtn = screen.getByText('AI_btn');
     const svgIcon = loadBtn.querySelector('.animate-spin');
     expect(svgIcon).not.toBeInTheDocument();
   });
 
   it('does not render a spinner icon on the load button when isGenerating is false', () => {
     render(<LessonForm {...baseProps} />);
-    const loadBtn = screen.getByText('load_vocab_btn');
+    const loadBtn = screen.getByText('AI_btn');
     const svgIcon = loadBtn.querySelector('.animate-spin');
     expect(svgIcon).not.toBeInTheDocument();
   });

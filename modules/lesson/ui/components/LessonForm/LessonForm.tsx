@@ -1,6 +1,6 @@
 'use client';
 
-import { LoaderCircleIcon, Plus, Trash2 } from 'lucide-react';
+import { LoaderCircleIcon, Plus, Sparkles, Trash2 } from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ILesson, LessonPriority } from '@/modules/lesson/core/models';
@@ -376,8 +376,13 @@ export function LessonForm({
                 </p>
               </div>
               <div className="flex gap-2 items-center">
-                <Button type="button" onClick={handleLoadVocab}>
-                  {t('load_vocab_btn')}
+                <Button
+                  className="font-mono"
+                  type="button"
+                  onClick={handleLoadVocab}
+                  disabled={!newVocab || isSubmitting}
+                >
+                  {t('AI_btn')} <Sparkles className="w-4 h-4" />
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={handleAddVocab}>
                   <Plus className="w-4 h-4 mr-2" />
