@@ -262,7 +262,7 @@ export function LessonForm({
               >
                 {/* Header: index + remove */}
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-bold border-2 border-brutal-black bg-lemon py-1 px-2 pr-8 text-brutal-black rounded-full">
+                  <span className="text-sm font-bold border-2 border-brutal-black bg-lemon py-1 px-2 pr-8 text-black rounded-full">
                     #{renderedIndex + 1}
                   </span>
                   <Button

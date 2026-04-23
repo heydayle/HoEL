@@ -33,7 +33,7 @@ export function VocabCardSkeleton({
     >
       {/* Header row */}
       <div className="flex justify-between items-center">
-        <span className="text-sm font-bold border-2 border-brutal-black bg-lemon py-1 px-2 pr-8 text-brutal-black rounded-full">
+        <span className="text-sm font-bold border-2 border-brutal-black bg-lemon py-1 px-2 pr-8 text-black rounded-full">
           {loadingWord
             ? `${t('vocab_loading_word')}: ${loadingWord}`
             : t('vocab_loading')}

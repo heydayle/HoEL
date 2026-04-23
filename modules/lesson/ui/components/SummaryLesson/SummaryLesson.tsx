@@ -213,7 +213,7 @@ export function SummaryLesson({
           <div className="flex flex-col gap-1.5">
             {summary.question_1 && (
               <div className="flex items-start gap-2 text-[0.85rem] text-foreground/85">
-                <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full border-2 border-brutal-black bg-lemon text-brutal-black text-[0.7rem] font-bold mt-0.5">
+                <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full border-2 border-brutal-black bg-lemon text-black text-[0.7rem] font-bold mt-0.5">
                   1
                 </span>
                 <span>{summary.question_1}</span>
@@ -221,7 +221,7 @@ export function SummaryLesson({
             )}
             {summary.question_2 && (
               <div className="flex items-start gap-2 text-[0.85rem] text-foreground/85">
-                <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full border-2 border-brutal-black bg-lemon text-brutal-black text-[0.7rem] font-bold mt-0.5">
+                <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full border-2 border-brutal-black bg-lemon text-black text-[0.7rem] font-bold mt-0.5">
                   2
                 </span>
                 <span>{summary.question_2}</span>
@@ -229,7 +229,7 @@ export function SummaryLesson({
             )}
             {summary.question_3 && (
               <div className="flex items-start gap-2 text-[0.85rem] text-foreground/85">
-                <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full border-2 border-brutal-black bg-lemon text-brutal-black text-[0.7rem] font-bold mt-0.5">
+                <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full border-2 border-brutal-black bg-lemon text-black text-[0.7rem] font-bold mt-0.5">
                   3
                 </span>
                 <span>{summary.question_3}</span>

@@ -102,8 +102,8 @@ export function LessonOverview({
           <p className="mt-1 text-foreground text-2xl font-extrabold">{stats.totalLessons}</p>
         </div>
         <div className="p-4 px-5 rounded-[var(--rounded-bento)] border-2 border-brutal-black bg-lemon shadow-[var(--shadow-brutal-sm)]">
-          <p className="m-0 text-brutal-black text-sm font-bold">{t('stats_vocab')}</p>
-          <p className="mt-1 text-brutal-black text-2xl font-extrabold">{stats.totalVocabularies}</p>
+          <p className="m-0 text-black text-sm font-bold">{t('stats_vocab')}</p>
+          <p className="mt-1 text-black text-2xl font-extrabold">{stats.totalVocabularies}</p>
         </div>
       </section>
 

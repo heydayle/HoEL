@@ -29,11 +29,11 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
     "bg-primary text-primary-foreground",
   secondary:
-    "bg-lemon text-brutal-black hover:bg-lemon-hover",
+    "bg-lemon text-black hover:bg-lemon-hover",
   ghost:
     "bg-transparent text-foreground border-transparent shadow-none hover:bg-surface-hover hover:shadow-none hover:translate-y-0 hover:translate-x-0",
   outline:
-    "bg-brutal-white text-foreground hover:bg-lemon hover:text-brutal-black",
+    "bg-brutal-white text-foreground hover:bg-lemon hover:text-black",
 };
 
 /** Map of size names to their Tailwind class combinations */

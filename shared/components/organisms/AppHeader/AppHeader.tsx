@@ -61,9 +61,9 @@ export function AppHeader({
 
       {/* Right: actions + controls */}
       <div className="flex items-center gap-3">
+        <ThemeToggle resolvedTheme={resolvedTheme} onToggle={onToggleTheme} />
         {actions}
         <LocaleSwitcher locale={locale} onLocaleChange={onLocaleChange} />
-        <ThemeToggle resolvedTheme={resolvedTheme} onToggle={onToggleTheme} />
         {showLogout && <LogoutButton />}
       </div>
     </header>

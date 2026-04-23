@@ -52,7 +52,7 @@ export function ModeSelector({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={SPRING_TRANSITION}
-        className="inline-flex items-center gap-2 py-2 px-5 rounded-full border-2 border-brutal-black text-xs font-bold uppercase tracking-widest bg-lemon text-brutal-black shadow-[var(--shadow-brutal-sm)]"
+        className="inline-flex items-center gap-2 py-2 px-5 rounded-full border-2 border-brutal-black text-xs font-bold uppercase tracking-widest bg-lemon text-black shadow-[var(--shadow-brutal-sm)]"
       >
         <span className="w-2.5 h-2.5 rounded-full bg-brutal-black" aria-hidden="true" />
         {appTagline}

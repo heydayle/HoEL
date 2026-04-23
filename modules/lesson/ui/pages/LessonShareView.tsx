@@ -132,7 +132,7 @@ export function LessonShareView({ lesson, summary, t }: ILessonShareViewProps): 
       <main className="max-w-[52rem] mx-auto flex flex-col gap-6">
         {/* ── Hero banner ── */}
         <section className="flex flex-col gap-4 p-5 rounded-[var(--rounded-bento)] border-2 border-brutal-black bg-card shadow-[var(--shadow-brutal-sm)]">
-          <span className="inline-flex items-center gap-[0.35rem] w-fit py-1.5 !px-3 rounded-full border-2 border-brutal-black text-xs font-bold tracking-[0.04em] uppercase bg-lemon text-brutal-black shadow-[var(--shadow-brutal-sm)]">
+          <span className="inline-flex items-center gap-[0.35rem] w-fit py-1.5 !px-3 rounded-full border-2 border-brutal-black text-xs font-bold tracking-[0.04em] uppercase bg-lemon text-black shadow-[var(--shadow-brutal-sm)]">
             <Eye aria-hidden="true" className="w-3.5 h-3.5" />
             {t('share_view_badge')}
           </span>

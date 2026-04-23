@@ -255,7 +255,7 @@ body {
 
 ::selection {
   background: var(--lemon);
-  color: var(--brutal-black);
+  color: #000000;
 }
 
 /* ============================================================
