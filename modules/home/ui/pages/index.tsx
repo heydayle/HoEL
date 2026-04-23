@@ -26,7 +26,7 @@ export default function HomePage(): React.JSX.Element {
   } = useHomePage();
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-cream text-foreground flex flex-col">
       <HomeHeader
         resolvedTheme={resolvedTheme}
         onThemeToggle={toggleTheme}

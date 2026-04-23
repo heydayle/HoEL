@@ -9,8 +9,8 @@ describe('Button atom', () => {
     expect(button).toBeInTheDocument();
     
     // Default size is md and variant is primary
-    expect(button).toHaveClass('px-4', 'py-3', 'text-base');
-    expect(button).toHaveClass('bg-accent-primary');
+    expect(button).toHaveClass('px-5', 'py-3', 'text-base');
+    expect(button).toHaveClass('bg-primary');
   });
 
   it('should render icon if provided', () => {
@@ -23,18 +23,18 @@ describe('Button atom', () => {
 
   it('should render with different variants', () => {
     const { rerender } = render(<Button variant="secondary">Button</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-accent-secondary');
+    expect(screen.getByRole('button')).toHaveClass('bg-lemon');
 
     rerender(<Button variant="ghost">Button</Button>);
     expect(screen.getByRole('button')).toHaveClass('bg-transparent', 'text-foreground');
 
     rerender(<Button variant="outline">Button</Button>);
-    expect(screen.getByRole('button')).toHaveClass('border', 'border-surface-border');
+    expect(screen.getByRole('button')).toHaveClass('bg-brutal-white', 'text-foreground');
   });
 
   it('should render with different sizes', () => {
     const { rerender } = render(<Button size="sm">Button</Button>);
-    expect(screen.getByRole('button')).toHaveClass('px-3', 'py-2', 'text-sm');
+    expect(screen.getByRole('button')).toHaveClass('px-4', 'py-2', 'text-sm');
 
     rerender(<Button size="lg">Button</Button>);
     expect(screen.getByRole('button')).toHaveClass('px-8', 'py-4', 'text-lg');

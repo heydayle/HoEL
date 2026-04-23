@@ -29,7 +29,7 @@ interface IVocabularyCardProps {
  */
 function VocabularyCard({ vocab, t, onSpeak, isSpeaking, currentWord }: IVocabularyCardProps): React.JSX.Element {
   return (
-    <article className="flex flex-col gap-3 p-5 rounded-[0.875rem] bg-[var(--surface)] border border-[var(--surface-border)] transition-all duration-200 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] hover:border-primary/40 hover:-translate-y-0.5">
+    <article className="flex flex-col gap-3 p-5 rounded-[var(--rounded-bento)] bg-card border-2 border-brutal-black shadow-[var(--shadow-brutal-sm)] transition-all duration-200 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[var(--shadow-brutal-md)]">
       <div className="flex items-center flex-wrap gap-2">
         <span className="text-xl font-bold text-[var(--highlight)] rounded-lg">{vocab.word}</span>
         {vocab.ipa && (
@@ -128,11 +128,11 @@ export function LessonShareView({ lesson, summary, t }: ILessonShareViewProps): 
   const priorityVariant = resolvePriorityVariant(lesson.priority);
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-8 px-4 pb-16">
+    <div className="min-h-screen bg-cream text-foreground py-8 px-4 pb-16">
       <main className="max-w-[52rem] mx-auto flex flex-col gap-6">
         {/* ── Hero banner ── */}
-        <section className="flex flex-col gap-4 p-4 rounded-2xl border border-primary/25 backdrop-blur-[8px]">
-          <span className="inline-flex items-center gap-[0.35rem] w-fit py-1 !px-3 rounded-full text-xs font-semibold tracking-[0.04em] uppercase bg-primary/15 text-primary border border-primary/30">
+        <section className="flex flex-col gap-4 p-5 rounded-[var(--rounded-bento)] border-2 border-brutal-black bg-card shadow-[var(--shadow-brutal-sm)]">
+          <span className="inline-flex items-center gap-[0.35rem] w-fit py-1.5 !px-3 rounded-full border-2 border-brutal-black text-xs font-bold tracking-[0.04em] uppercase bg-lemon text-brutal-black shadow-[var(--shadow-brutal-sm)]">
             <Eye aria-hidden="true" className="w-3.5 h-3.5" />
             {t('share_view_badge')}
           </span>
@@ -146,7 +146,7 @@ export function LessonShareView({ lesson, summary, t }: ILessonShareViewProps): 
 
         {/* ── Lesson metadata ── */}
         <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(12rem,1fr))]">
-          <div className="flex flex-col gap-[0.35rem] py-4 px-5 rounded-xl bg-[var(--surface)] border border-[var(--surface-border)] transition-colors duration-200 hover:border-primary/40">
+          <div className="flex flex-col gap-[0.35rem] py-4 px-5 rounded-[calc(var(--rounded-bento)*0.6)] bg-card border-2 border-brutal-black shadow-[var(--shadow-brutal-sm)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-brutal-md)]">
             <span className="flex items-center gap-1.5 text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-foreground-secondary">
               <User aria-hidden="true" className="w-4 h-4" />
               {t('share_view_participant')}
@@ -155,7 +155,7 @@ export function LessonShareView({ lesson, summary, t }: ILessonShareViewProps): 
               {lesson.participantName}
             </span>
           </div>
-          <div className="flex flex-col gap-[0.35rem] py-4 px-5 rounded-xl bg-[var(--surface)] border border-[var(--surface-border)] transition-colors duration-200 hover:border-primary/40">
+          <div className="flex flex-col gap-[0.35rem] py-4 px-5 rounded-[calc(var(--rounded-bento)*0.6)] bg-card border-2 border-brutal-black shadow-[var(--shadow-brutal-sm)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-brutal-md)]">
             <span className="flex items-center gap-1.5 text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-foreground-secondary">
               <Calendar aria-hidden="true" className="w-4 h-4" />
               {t('share_view_date')}
@@ -164,7 +164,7 @@ export function LessonShareView({ lesson, summary, t }: ILessonShareViewProps): 
               {formattedDate}
             </span>
           </div>
-          <div className="flex flex-col gap-[0.35rem] py-4 px-5 rounded-xl bg-[var(--surface)] border border-[var(--surface-border)] transition-colors duration-200 hover:border-primary/40">
+          <div className="flex flex-col gap-[0.35rem] py-4 px-5 rounded-[calc(var(--rounded-bento)*0.6)] bg-card border-2 border-brutal-black shadow-[var(--shadow-brutal-sm)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-brutal-md)]">
             <span className="flex items-center gap-1.5 text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-foreground-secondary">
               <Flag aria-hidden="true" className="w-4 h-4" />
               {t('share_view_priority')}
@@ -183,7 +183,7 @@ export function LessonShareView({ lesson, summary, t }: ILessonShareViewProps): 
               <BookOpen aria-hidden="true" className="w-[1.1rem] h-[1.1rem]" />
               {t('share_view_notes')}
             </h2>
-            <p className="m-0 py-5 px-6 rounded-xl bg-[var(--surface)] border border-[var(--surface-border)] text-[0.95rem] leading-[1.7] text-foreground whitespace-pre-wrap break-words">
+            <p className="m-0 py-5 px-6 rounded-[var(--rounded-bento)] bg-card border-2 border-brutal-black shadow-[var(--shadow-brutal-sm)] text-[0.95rem] leading-[1.7] text-foreground whitespace-pre-wrap break-words font-medium">
               {lesson.notes}
             </p>
           </>
@@ -200,7 +200,7 @@ export function LessonShareView({ lesson, summary, t }: ILessonShareViewProps): 
           {lesson.vocabularies.length > 0 && ` (${lesson.vocabularies.length})`}
         </h2>
         {lesson.vocabularies.length === 0 ? (
-          <p className="m-0 py-6 rounded-xl border border-dashed border-[var(--surface-border)] text-foreground-secondary text-[0.9rem] text-center italic">
+          <p className="m-0 py-6 rounded-[var(--rounded-bento)] border-2 border-dashed border-brutal-black text-foreground-secondary text-[0.9rem] text-center italic font-medium">
             {t('share_view_no_vocab')}
           </p>
         ) : (

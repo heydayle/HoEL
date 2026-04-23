@@ -28,9 +28,8 @@ export interface IAppHeaderProps {
 }
 
 /**
- * Common sticky header organism used across all pages.
- * Composes LocaleSwitcher, ThemeToggle, and LogoutButton with
- * page-specific left content and optional action buttons.
+ * Common sticky header organism with Neo-Brutalism styling.
+ * Features solid background, thick bottom border, no glassmorphism.
  *
  * @param props - AppHeader props
  * @returns The rendered AppHeader element
@@ -46,7 +45,7 @@ export function AppHeader({
 }: IAppHeaderProps): React.JSX.Element {
   const { user } = getUserLocal();
   return (
-    <header className="flex items-center justify-between gap-4 flex-wrap sticky top-8 z-40 py-2 bg-background/94 backdrop-blur-[10px]">
+    <header className="flex items-center justify-between gap-4 flex-wrap sticky top-0 z-40 py-3 px-2 bg-cream border-b-2 border-brutal-black">
       {/* Left slot */}
       <div className="flex items-center gap-2">
         {!left && user?.display_name

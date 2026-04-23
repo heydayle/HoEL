@@ -44,9 +44,9 @@ const GitHubIcon = (): React.JSX.Element => (
 );
 
 /**
- * AuthForm component rendering the sign in / register form
- * with OAuth provider buttons (Google, GitHub).
- * Manages local form field state and delegates auth logic to useAuthPage hook.
+ * AuthForm with Neo-Brutalism design.
+ * Features thick bordered card, solid offset shadows,
+ * pill-shaped buttons, and high contrast inputs.
  * @returns The rendered auth form with i18n text
  */
 export const AuthForm = (): React.JSX.Element => {
@@ -84,23 +84,27 @@ export const AuthForm = (): React.JSX.Element => {
 
 
   return (
-    <div className="flex items-center justify-center min-h-screen relative overflow-hidden bg-background before:content-[''] before:absolute before:-top-1/2 before:-left-1/2 before:w-[200%] before:h-[200%] before:bg-[var(--gradient-glow)] before:pointer-events-none before:z-0">
-      <div className="relative z-[1] flex flex-col items-center w-full max-w-[440px] p-6 animate-[fadeInUp_0.6s_ease-out]">
+    <div className="flex items-center justify-center min-h-screen relative overflow-hidden bg-cream">
+      {/* Decorative background elements */}
+      <div className="absolute top-10 left-10 w-32 h-32 rounded-[var(--rounded-bento)] border-2 border-brutal-black bg-lemon/30 rotate-12" aria-hidden="true" />
+      <div className="absolute bottom-20 right-10 w-24 h-24 rounded-full border-2 border-brutal-black bg-terracotta/20 -rotate-6" aria-hidden="true" />
+
+      <div className="relative z-[1] flex flex-col items-center w-full max-w-[440px] p-6" style={{ animation: 'fadeInUp 0.6s ease-out' }}>
         {/* Brand */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-extrabold tracking-tight bg-[var(--gradient-hero)] bg-[length:200%_auto] bg-clip-text text-transparent animate-[shimmer_4s_linear_infinite]">
+          <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
             {t('app_name')}
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground tracking-[0.01em]">{t('app_tagline')}</p>
+          <p className="mt-2 text-sm font-medium text-muted-foreground tracking-[0.01em]">{t('app_tagline')}</p>
         </div>
 
-        {/* Auth Card */}
-        <div className="py-4 w-full border border-[var(--surface-border)] bg-[var(--surface)] shadow-[var(--surface-shadow)] rounded-[calc(var(--radius)*1.6)] backdrop-blur-[12px] transition-shadow duration-300 hover:shadow-[var(--surface-shadow-hover)]">
+        {/* Auth Card — Neo-Brutalism */}
+        <div className="py-4 w-full border-2 border-brutal-black bg-card shadow-[var(--shadow-brutal-md)] rounded-[var(--rounded-bento)]">
           <CardHeader>
-            <h2 className="text-2xl font-bold text-foreground tracking-tight">
+            <h2 className="text-2xl font-extrabold text-foreground tracking-tight">
               {t(isSignIn ? 'page_title' : 'page_title_register')}
             </h2>
-            <p className="mt-1 text-sm text-muted-foreground mb-4">
+            <p className="mt-1 text-sm font-medium text-muted-foreground mb-4">
               {isSignIn ? t('page_subtitle_sign_in') : t('page_subtitle_register')}
             </p>
           </CardHeader>
@@ -109,7 +113,8 @@ export const AuthForm = (): React.JSX.Element => {
             {error && (
               <div
                 role="alert"
-                className="flex items-center gap-2 py-3 px-4 mb-5 rounded-[calc(var(--radius)*1.2)] bg-accent-warm-light border border-[var(--accent-warm)] text-[var(--accent-warm)] text-[0.8125rem] font-medium animate-[fadeInUp_0.3s_ease-out]"
+                className="flex items-center gap-2 py-3 px-4 mb-5 rounded-[calc(var(--rounded-bento)*0.6)] border-2 border-brutal-black bg-destructive/10 text-destructive text-[0.8125rem] font-bold"
+                style={{ animation: 'fadeInUp 0.3s ease-out' }}
               >
                 <AlertCircle size={16} />
                 {error}
@@ -120,7 +125,7 @@ export const AuthForm = (): React.JSX.Element => {
               <div className="mb-5">
                 <label
                   htmlFor="email"
-                  className="text-[0.8125rem] font-medium text-foreground-secondary mb-1.5 block"
+                  className="text-[0.8125rem] font-bold text-foreground mb-1.5 block"
                 >
                   {t('label_email')}
                 </label>
@@ -133,36 +138,14 @@ export const AuthForm = (): React.JSX.Element => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
-                  className="w-full h-11 bg-background border border-border rounded-[calc(var(--radius)*1.2)] text-sm px-3 transition-all duration-200 focus:border-accent-primary focus:shadow-[0_0_0_3px_var(--accent-primary-light)] placeholder:text-foreground-muted"
+                  className="w-full h-11 bg-brutal-white border-2 border-brutal-black rounded-[calc(var(--rounded-bento)*0.6)] text-sm font-medium px-3 shadow-[var(--shadow-brutal-sm)] transition-all duration-200 focus:shadow-[var(--shadow-brutal-md)] focus:-translate-y-0.5 focus:-translate-x-0.5 placeholder:text-foreground-muted outline-none"
                 />
               </div>
-
-              {/* {!isSignIn && (
-                <div className="mb-5">
-                  <label
-                    htmlFor="displayName"
-                    className="text-[0.8125rem] font-medium text-foreground-secondary mb-1.5 block"
-                  >
-                    {t('label_display_name')}
-                  </label>
-                  <input
-                    id="displayName"
-                    name="displayName"
-                    type="text"
-                    placeholder={t('placeholder_display_name')}
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    required
-                    autoComplete="name"
-                    className="w-full h-11 bg-background border border-border rounded-[calc(var(--radius)*1.2)] text-sm px-3 transition-all duration-200 focus:border-accent-primary focus:shadow-[0_0_0_3px_var(--accent-primary-light)] placeholder:text-foreground-muted"
-                  />
-                </div>
-              )} */}
 
               <div className="mb-5">
                 <label
                   htmlFor="password"
-                  className="text-[0.8125rem] font-medium text-foreground-secondary mb-1.5 block"
+                  className="text-[0.8125rem] font-bold text-foreground mb-1.5 block"
                 >
                   {t('label_password')}
                 </label>
@@ -176,21 +159,21 @@ export const AuthForm = (): React.JSX.Element => {
                   required
                   minLength={6}
                   autoComplete={isSignIn ? 'current-password' : 'new-password'}
-                  className="w-full h-11 bg-background border border-border rounded-[calc(var(--radius)*1.2)] text-sm px-3 transition-all duration-200 focus:border-accent-primary focus:shadow-[0_0_0_3px_var(--accent-primary-light)] placeholder:text-foreground-muted"
+                  className="w-full h-11 bg-brutal-white border-2 border-brutal-black rounded-[calc(var(--rounded-bento)*0.6)] text-sm font-medium px-3 shadow-[var(--shadow-brutal-sm)] transition-all duration-200 focus:shadow-[var(--shadow-brutal-md)] focus:-translate-y-0.5 focus:-translate-x-0.5 placeholder:text-foreground-muted outline-none"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-11 mt-2 font-semibold text-[0.9375rem] rounded-[calc(var(--radius)*1.2)] bg-primary text-primary-foreground cursor-pointer transition-all duration-200 hover:not-disabled:-translate-y-px hover:not-disabled:shadow-[0_4px_12px_var(--accent-primary-light)] active:not-disabled:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full h-11 mt-2 font-bold text-[0.9375rem] rounded-full border-2 border-brutal-black bg-primary text-primary-foreground cursor-pointer shadow-[var(--shadow-brutal-sm)] transition-all duration-200 hover:not-disabled:-translate-y-0.5 hover:not-disabled:-translate-x-0.5 hover:not-disabled:shadow-[var(--shadow-brutal-md)] active:not-disabled:translate-y-px active:not-disabled:translate-x-px active:not-disabled:shadow-none disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isLoading ? t('btn_loading') : isSignIn ? t('btn_sign_in') : t('btn_register')}
               </button>
             </form>
 
             {/* Divider */}
-            <div className="flex items-center gap-3 my-6 text-foreground-muted text-xs uppercase tracking-[0.08em] before:content-[''] before:flex-1 before:h-px before:bg-border after:content-[''] after:flex-1 after:h-px after:bg-border">
+            <div className="flex items-center gap-3 my-6 text-foreground-muted text-xs uppercase tracking-[0.08em] font-bold before:content-[''] before:flex-1 before:h-[2px] before:bg-brutal-black after:content-[''] after:flex-1 after:h-[2px] after:bg-brutal-black">
               {t('divider_or')}
             </div>
 
@@ -201,7 +184,7 @@ export const AuthForm = (): React.JSX.Element => {
                 type="button"
                 disabled={isLoading}
                 onClick={() => handleProviderSignIn('google')}
-                className="w-full h-11 flex items-center justify-center gap-3 font-medium text-sm rounded-[calc(var(--radius)*1.2)] bg-transparent border border-border text-foreground transition-all duration-200 hover:bg-surface-hover hover:border-foreground-muted hover:-translate-y-px active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer [&_svg]:shrink-0"
+                className="w-full h-11 flex items-center justify-center gap-3 font-bold text-sm rounded-full border-2 border-brutal-black bg-brutal-white text-foreground shadow-[var(--shadow-brutal-sm)] transition-all duration-200 hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-[var(--shadow-brutal-md)] active:translate-y-px active:translate-x-px active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer [&_svg]:shrink-0"
               >
                 <GoogleIcon />
                 {isLoading ? t('btn_loading') : t('provider_google')}
@@ -211,7 +194,7 @@ export const AuthForm = (): React.JSX.Element => {
                 type="button"
                 disabled={true}
                 onClick={() => handleProviderSignIn('github')}
-                className="w-full h-11 flex items-center justify-center gap-3 font-medium text-sm rounded-[calc(var(--radius)*1.2)] bg-transparent border border-border text-foreground transition-all duration-200 hover:bg-surface-hover hover:border-foreground-muted hover:-translate-y-px active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer [&_svg]:shrink-0"
+                className="w-full h-11 flex items-center justify-center gap-3 font-bold text-sm rounded-full border-2 border-brutal-black bg-brutal-white text-foreground shadow-[var(--shadow-brutal-sm)] transition-all duration-200 hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-[var(--shadow-brutal-md)] active:translate-y-px active:translate-x-px active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer [&_svg]:shrink-0"
               >
                 <GitHubIcon />
                 {t('provider_github')}
@@ -219,13 +202,13 @@ export const AuthForm = (): React.JSX.Element => {
             </div>
 
             {/* Toggle section */}
-            <p className="text-center text-[0.8125rem] mt-7 text-muted-foreground">
+            <p className="text-center text-[0.8125rem] mt-7 text-muted-foreground font-medium">
               {isSignIn ? t('toggle_to_register') : t('toggle_to_sign_in')}
               <span
                 onClick={toggleAuthMode}
                 role="button"
                 tabIndex={0}
-                className="text-accent-primary cursor-pointer font-semibold ml-1 transition-colors duration-200 hover:text-accent-primary-hover hover:underline"
+                className="text-foreground cursor-pointer font-bold ml-1 underline underline-offset-2 transition-colors duration-200 hover:text-terracotta"
               >
                 {isSignIn ? t('link_register') : t('link_sign_in')}
               </span>

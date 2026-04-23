@@ -65,7 +65,7 @@ export function SummaryLesson({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-6 border border-border rounded-xl bg-muted/10">
+      <div className="flex items-center justify-center p-6 border-2 border-brutal-black rounded-[var(--rounded-bento)] bg-card shadow-[var(--shadow-brutal-sm)]">
         <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         <span className="ml-2 text-sm text-muted-foreground">{t('summary_loading')}</span>
       </div>
@@ -77,7 +77,7 @@ export function SummaryLesson({
     return (
       <div
         data-testid="summary-processing"
-        className="flex flex-col items-center gap-3 p-6 border border-primary/30 rounded-xl bg-primary/5 animate-pulse"
+        className="flex flex-col items-center gap-3 p-6 border-2 border-brutal-black rounded-[var(--rounded-bento)] bg-lemon/20 shadow-[var(--shadow-brutal-sm)] animate-pulse"
       >
         <div className="flex items-center gap-2">
           <Loader2 className="w-5 h-5 animate-spin text-primary" />
@@ -105,7 +105,7 @@ export function SummaryLesson({
   /* No summary yet AND vocab count is below the minimum */
   if (!summary && isBelowMinVocab) {
     return (
-      <div className="flex flex-col items-center gap-3 p-6 border border-dashed border-border rounded-xl bg-muted/5">
+      <div className="flex flex-col items-center gap-3 p-6 border-2 border-dashed border-brutal-black rounded-[var(--rounded-bento)] bg-card">
         <BookOpen className="w-8 h-8 text-muted-foreground/40" />
         <p className="text-sm text-muted-foreground/60 italic m-0">
           {t('min_vocab_for_summary')}
@@ -117,7 +117,7 @@ export function SummaryLesson({
   /* No summary yet BUT enough vocab — show generate button */
   if (!summary) {
     return (
-      <div className="flex flex-col items-center gap-3 p-6 border border-dashed border-border rounded-xl bg-muted/5">
+      <div className="flex flex-col items-center gap-3 p-6 border-2 border-dashed border-brutal-black rounded-[var(--rounded-bento)] bg-card">
         <BookOpen className="w-8 h-8 text-muted-foreground/40" />
         <p className="text-sm text-muted-foreground/60 italic">{t('summary_empty')}</p>
         {onRegenerate && (
@@ -142,7 +142,7 @@ export function SummaryLesson({
   }
 
   return (
-    <div className="flex flex-col gap-4 p-5 border border-border rounded-xl bg-gradient-to-br from-primary/5 to-transparent">
+    <div className="flex flex-col gap-4 p-5 border-2 border-brutal-black rounded-[var(--rounded-bento)] bg-card shadow-[var(--shadow-brutal-sm)]">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="flex items-center gap-2 m-0 text-sm font-semibold uppercase tracking-wider text-primary">
@@ -213,7 +213,7 @@ export function SummaryLesson({
           <div className="flex flex-col gap-1.5">
             {summary.question_1 && (
               <div className="flex items-start gap-2 text-[0.85rem] text-foreground/85">
-                <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full bg-primary/10 text-primary text-[0.7rem] font-semibold mt-0.5">
+                <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full border-2 border-brutal-black bg-lemon text-brutal-black text-[0.7rem] font-bold mt-0.5">
                   1
                 </span>
                 <span>{summary.question_1}</span>
@@ -221,7 +221,7 @@ export function SummaryLesson({
             )}
             {summary.question_2 && (
               <div className="flex items-start gap-2 text-[0.85rem] text-foreground/85">
-                <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full bg-primary/10 text-primary text-[0.7rem] font-semibold mt-0.5">
+                <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full border-2 border-brutal-black bg-lemon text-brutal-black text-[0.7rem] font-bold mt-0.5">
                   2
                 </span>
                 <span>{summary.question_2}</span>
@@ -229,7 +229,7 @@ export function SummaryLesson({
             )}
             {summary.question_3 && (
               <div className="flex items-start gap-2 text-[0.85rem] text-foreground/85">
-                <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full bg-primary/10 text-primary text-[0.7rem] font-semibold mt-0.5">
+                <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full border-2 border-brutal-black bg-lemon text-brutal-black text-[0.7rem] font-bold mt-0.5">
                   3
                 </span>
                 <span>{summary.question_3}</span>

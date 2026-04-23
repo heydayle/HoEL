@@ -1,6 +1,7 @@
 "use client";
 
 import type { IFeatureHighlight } from "@/modules/home/core/models";
+import { motion } from "framer-motion";
 
 /**
  * Props for the FeatureHighlights component.
@@ -12,9 +13,12 @@ interface IFeatureHighlightsProps {
   t: (key: string) => string;
 }
 
+/** Spring physics config as specified by the design system */
+const SPRING_TRANSITION = { type: "spring" as const, stiffness: 300, damping: 20 };
+
 /**
- * FeatureHighlights component displaying app capabilities as compact pills.
- * Positioned below the mode selector cards on the onboarding screen.
+ * FeatureHighlights — Neo-Brutalism pill badges displaying app capabilities.
+ * Features thick borders, solid shadows, and spring hover animations.
  * @param props - FeatureHighlights props
  * @returns The rendered FeatureHighlights element
  */
@@ -24,15 +28,19 @@ export function FeatureHighlights({
 }: IFeatureHighlightsProps): React.JSX.Element {
   return (
     <section id="feature-highlights-section" aria-label="App features" className="w-full">
-      <div className="flex flex-wrap justify-center gap-3">
-        {highlights.map((item) => (
-          <span
+      <div className="flex flex-wrap justify-center gap-4">
+        {highlights.map((item, index) => (
+          <motion.span
             key={item.id}
-            className="inline-flex items-center gap-2 py-2 px-4 rounded-full bg-surface border border-surface-border text-sm font-medium text-foreground-secondary transition-all duration-200 hover:border-accent-primary/40 hover:bg-surface-hover"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ ...SPRING_TRANSITION, delay: 0.4 + index * 0.08 }}
+            whileHover={{ y: -2, x: -2, boxShadow: 'var(--shadow-brutal-md)' }}
+            className="inline-flex items-center gap-2 py-2.5 px-5 rounded-full border-2 border-brutal-black bg-brutal-white text-sm font-bold text-foreground shadow-[var(--shadow-brutal-sm)] cursor-default"
           >
             <span aria-hidden="true">{item.icon}</span>
             <span>{t(item.titleKey)}</span>
-          </span>
+          </motion.span>
         ))}
       </div>
     </section>

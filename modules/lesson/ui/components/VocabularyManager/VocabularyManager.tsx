@@ -171,7 +171,7 @@ export function VocabularyManager({
   }, [handleCreate]);
 
   return (
-    <section className="flex flex-col gap-4 mt-4 pt-6 border-t border-border">
+    <section className="flex flex-col gap-4 mt-4 pt-6 border-t-2 border-brutal-black">
       {/* ── Section header ── */}
       <div className="flex justify-between items-center flex-wrap gap-3">
         <h2 className="m-0 text-lg font-semibold flex items-center gap-2">
@@ -225,7 +225,7 @@ export function VocabularyManager({
 
       {/* ── Draft review card ── */}
       {draftVocab && (
-        <div id="draft-review-card" className="p-4 border-2 border-dashed border-accent-primary/40 rounded-xl bg-accent-primary-light">
+        <div id="draft-review-card" className="p-4 border-2 border-dashed border-brutal-black rounded-[var(--rounded-bento)] bg-lemon/10 shadow-[var(--shadow-brutal-sm)]">
           <div className="flex justify-between items-center mb-3">
             <span className="text-sm font-semibold text-accent-primary uppercase tracking-wider">{t('vocab_mgr_draft_title')}</span>
             <Button type="button" variant="ghost" size="icon" onClick={clearDraft} aria-label={t('cancel')}>
@@ -276,11 +276,11 @@ export function VocabularyManager({
 
       {/* ── Vocabulary list ── */}
       {vocabularies.length === 0 && !isLoading ? (
-        <p className="py-6 px-4 text-center text-muted-foreground border border-dashed border-border rounded-lg italic">{t('vocab_mgr_empty')}</p>
+        <p className="py-6 px-4 text-center text-muted-foreground border-2 border-dashed border-brutal-black rounded-[var(--rounded-bento)] italic font-medium">{t('vocab_mgr_empty')}</p>
       ) : (
         <div className="flex flex-col gap-3">
           {vocabularies.map((vocab) => (
-            <div key={vocab.id} id={`vocab-card-${vocab.id}`} className="p-4 border border-border rounded-lg bg-surface transition-all duration-200 hover:border-accent-primary/40 hover:shadow-sm">
+            <div key={vocab.id} id={`vocab-card-${vocab.id}`} className="p-4 border-2 border-brutal-black rounded-[calc(var(--rounded-bento)*0.6)] bg-card shadow-[var(--shadow-brutal-sm)] transition-all duration-200 hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-[var(--shadow-brutal-md)]">
               <div className="flex justify-between items-start gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

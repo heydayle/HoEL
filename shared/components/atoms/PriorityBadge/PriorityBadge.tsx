@@ -8,23 +8,23 @@ import type { LessonPriority } from '@/modules/lesson/core/models';
 export type PriorityVariant = 'low' | 'medium' | 'high' | 'pos';
 
 /**
- * Foreground colour map for each priority variant.
+ * Foreground colour map for each priority variant (Neo-Brutalism high-contrast).
  */
 const PRIORITY_COLORS: Record<PriorityVariant, string> = {
-  low: 'hsl(150, 60%, 40%)',
-  medium: 'hsl(38, 92%, 50%)',
-  high: 'hsl(0, 72%, 51%)',
-  pos: 'oklch(0.51 0.21 252)',
+  low: '#166534',
+  medium: '#92400E',
+  high: '#991B1B',
+  pos: '#0D0D0D',
 };
 
 /**
- * Background colour map for each priority variant.
+ * Background colour map for each priority variant (Neo-Brutalism solid fills).
  */
 const PRIORITY_BG_COLORS: Record<PriorityVariant, string> = {
-  low: 'rgba(34,197,110,0.12)',
-  medium: 'rgba(234,179,8,0.12)',
-  high: 'rgba(239,68,68,0.12)',
-  pos: 'rgba(230, 230, 230, 0.8)',
+  low: '#BBF7D0',
+  medium: '#FDE68A',
+  high: '#FECACA',
+  pos: '#F0EBE3',
 };
 
 /**
@@ -49,9 +49,8 @@ interface IPriorityBadgeProps {
 }
 
 /**
- * Reusable coloured badge for displaying lesson priority or part-of-speech.
- * Encapsulates the shared colour palette and consistent styling used
- * across LessonOverview, LessonDetailModal, and LessonShareView.
+ * Neo-Brutalism coloured badge for displaying lesson priority or part-of-speech.
+ * Features thick black border, pill shape, and high-contrast solid fill colours.
  *
  * @param props - Component props
  * @returns Styled priority badge element
@@ -69,11 +68,10 @@ export function PriorityBadge({
 }: IPriorityBadgeProps): React.JSX.Element {
   return (
     <span
-      className={`inline-flex items-center py-[0.15rem] px-[0.55rem] rounded-full text-[0.72rem] font-semibold tracking-[0.04em] ${className}`}
+      className={`inline-flex items-center py-[0.15rem] px-[0.55rem] rounded-full border-2 border-brutal-black text-[0.72rem] font-bold tracking-[0.04em] ${className}`}
       style={{
         color: PRIORITY_COLORS[variant],
         background: PRIORITY_BG_COLORS[variant],
-        border: `1px solid ${PRIORITY_COLORS[variant]}33`,
       }}
     >
       {label}

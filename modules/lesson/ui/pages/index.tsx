@@ -12,7 +12,8 @@ import { Button } from '@/shared/components/Styled';
 
 /**
  * Main page component for lessons list routes.
- * Renders i18n-aware list information and theme/locale controls.
+ * Renders i18n-aware list information and theme/locale controls
+ * with Neo-Brutalism styling.
  * @returns Lessons list page UI
  */
 export default function LessonPage(): React.JSX.Element {
@@ -46,7 +47,7 @@ export default function LessonPage(): React.JSX.Element {
   };
 
   return (
-    <main className="min-h-screen py-8 px-4 bg-background text-foreground md:py-10 md:px-8">
+    <main className="min-h-screen py-8 px-4 bg-cream text-foreground md:py-10 md:px-8">
       <div className="w-full max-w-[60rem] !mx-auto flex flex-col gap-4">
         <AppHeader
           actions={

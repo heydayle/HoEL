@@ -29,11 +29,11 @@ export function VocabCardSkeleton({
   return (
     <div
       data-testid="vocab-card-skeleton"
-      className="flex flex-col gap-3 border border-border rounded-lg bg-muted/20 p-4 animate-pulse"
+      className="flex flex-col gap-3 border-2 border-brutal-black rounded-[calc(var(--rounded-bento)*0.6)] bg-card p-4 shadow-[var(--shadow-brutal-sm)] animate-pulse"
     >
       {/* Header row */}
       <div className="flex justify-between items-center">
-        <span className="text-sm font-medium bg-primary/40 py-1 px-2 pr-8 text-primary-foreground rounded">
+        <span className="text-sm font-bold border-2 border-brutal-black bg-lemon py-1 px-2 pr-8 text-brutal-black rounded-full">
           {loadingWord
             ? `${t('vocab_loading_word')}: ${loadingWord}`
             : t('vocab_loading')}

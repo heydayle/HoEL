@@ -53,6 +53,6 @@ describe('HomeHeader component', () => {
   it('should render correctly when locale is vi', () => {
     render(<HomeHeader {...defaultProps} locale="vi" />);
     const viBtn = screen.getByRole('button', { name: /chuyển sang tiếng việt/i });
-    expect(viBtn).toHaveClass('bg-accent-primary', 'text-white');
+    expect(viBtn).toHaveClass('bg-primary', 'text-primary-foreground');
   });
 });

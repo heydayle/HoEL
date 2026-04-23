@@ -3,6 +3,7 @@ import type { ILessonFilterInput, LessonSortOption } from '@/modules/lesson/core
 import { Check, Pencil, Share2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
 
 import { PriorityBadge, resolvePriorityVariant } from '@/shared/components';
 import { Card, Input } from '@/shared/components/Styled';
@@ -46,8 +47,12 @@ interface ILessonOverviewProps {
   onEditLesson: (lesson: ILesson) => void;
 }
 
+/** Spring physics config */
+const SPRING_TRANSITION = { type: "spring" as const, stiffness: 300, damping: 20 };
+
 /**
- * Displays filter controls and lessons list view.
+ * Neo-Brutalism lesson overview with Bento grid layout.
+ * Features thick bordered cards, solid shadows, and spring hover animations.
  * @param props - Component props
  * @returns Lessons list section with stats, filters, and cards
  */
@@ -90,26 +95,26 @@ export function LessonOverview({
 
   return (
     <>
-      {/* Stats Grid */}
+      {/* Stats Grid — Bento */}
       <section className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]">
-        <Card className="bg-surface p-2.5 px-5">
-          <p className="m-0 text-foreground-secondary text-sm">{t('stats_lessons')}</p>
-          <p className="mt-1 text-foreground text-2xl font-bold">{stats.totalLessons}</p>
-        </Card>
-        <Card className="bg-surface p-2.5 px-5">
-          <p className="m-0 text-foreground-secondary text-sm">{t('stats_vocab')}</p>
-          <p className="mt-1 text-foreground text-2xl font-bold">{stats.totalVocabularies}</p>
-        </Card>
+        <div className="p-4 px-5 rounded-[var(--rounded-bento)] border-2 border-brutal-black bg-card shadow-[var(--shadow-brutal-sm)]">
+          <p className="m-0 text-foreground-secondary text-sm font-bold">{t('stats_lessons')}</p>
+          <p className="mt-1 text-foreground text-2xl font-extrabold">{stats.totalLessons}</p>
+        </div>
+        <div className="p-4 px-5 rounded-[var(--rounded-bento)] border-2 border-brutal-black bg-lemon shadow-[var(--shadow-brutal-sm)]">
+          <p className="m-0 text-brutal-black text-sm font-bold">{t('stats_vocab')}</p>
+          <p className="mt-1 text-brutal-black text-2xl font-extrabold">{stats.totalVocabularies}</p>
+        </div>
       </section>
 
-      {/* Filter Panel */}
-      <Card className="bg-surface p-4 flex flex-col gap-3">
+      {/* Filter Panel — Neo-Brutalism */}
+      <div className="p-4 flex flex-col gap-3 rounded-[var(--rounded-bento)] border-2 border-brutal-black bg-card shadow-[var(--shadow-brutal-sm)]">
         <Input
           value={filters.searchTerm}
           onChange={(event) => onSearchTermChange(event.target.value)}
           placeholder={t('search_placeholder')}
           aria-label={t('search_aria_label')}
-          className="w-full py-1.5 px-2.5 md:py-2.5 md:px-4"
+          className="w-full"
         />
 
         <Input
@@ -117,7 +122,7 @@ export function LessonOverview({
           onChange={(event) => onVocabSearchTermChange(event.target.value)}
           placeholder={t('vocab_search_placeholder')}
           aria-label={t('vocab_search_placeholder')}
-          className="w-full py-1.5 px-2.5 md:py-2.5 md:px-4"
+          className="w-full"
         />
 
         <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(11rem,1fr))]">
@@ -127,7 +132,7 @@ export function LessonOverview({
               onPriorityFilterChange(event.target.value as LessonPriority | 'all')
             }
             aria-label={t('priority_filter_aria_label')}
-            className="w-full h-10 rounded-[var(--radius-md)] border border-surface-border bg-surface text-foreground py-1.5 px-2.5"
+            className="w-full h-10 rounded-full border-2 border-brutal-black bg-brutal-white text-foreground font-medium py-1.5 px-3 shadow-[var(--shadow-brutal-sm)] cursor-pointer outline-none"
           >
             <option value="all">{t('priority_all')}</option>
             <option value="Low">{t('priority_low')}</option>
@@ -139,7 +144,7 @@ export function LessonOverview({
             value={filters.sortBy}
             onChange={(event) => onSortChange(event.target.value as LessonSortOption)}
             aria-label={t('sort_aria_label')}
-            className="w-full h-10 rounded-[var(--radius-md)] border border-surface-border bg-surface text-foreground py-1.5 px-2.5"
+            className="w-full h-10 rounded-full border-2 border-brutal-black bg-brutal-white text-foreground font-medium py-1.5 px-3 shadow-[var(--shadow-brutal-sm)] cursor-pointer outline-none"
           >
             <option value="date_desc">{t('sort_date_desc')}</option>
             <option value="date_asc">{t('sort_date_asc')}</option>
@@ -152,7 +157,7 @@ export function LessonOverview({
             value={filters.startDate}
             onChange={(event) => onStartDateChange(event.target.value)}
             aria-label={t('start_date_aria_label')}
-            className="w-full py-1.5 px-2.5 md:py-2.5 md:px-4"
+            className="w-full"
           />
 
           <Input
@@ -160,25 +165,27 @@ export function LessonOverview({
             value={filters.endDate}
             onChange={(event) => onEndDateChange(event.target.value)}
             aria-label={t('end_date_aria_label')}
-            className="w-full py-1.5 px-2.5 md:py-2.5 md:px-4"
+            className="w-full"
           />
         </div>
 
         <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(11rem,1fr))]">
-          <label className="inline-flex items-center gap-1.5 text-foreground-secondary text-sm">
+          <label className="inline-flex items-center gap-2 text-foreground font-bold text-sm cursor-pointer">
             <input
               type="checkbox"
               checked={filters.isPinned}
               onChange={(event) => onPinnedFilterChange(event.target.checked)}
+              className="w-4 h-4 accent-primary"
             />
             {t('filter_pinned')}
           </label>
 
-          <label className="inline-flex items-center gap-1.5 text-foreground-secondary text-sm">
+          <label className="inline-flex items-center gap-2 text-foreground font-bold text-sm cursor-pointer">
             <input
               type="checkbox"
               checked={filters.isFavorite}
               onChange={(event) => onFavoriteFilterChange(event.target.checked)}
+              className="w-4 h-4 accent-primary"
             />
             {t('filter_favorite')}
           </label>
@@ -187,42 +194,47 @@ export function LessonOverview({
         <button
           type="button"
           onClick={onResetFilters}
-          className="w-fit py-1.5 px-2.5 md:py-2.5 md:px-4 rounded-[var(--radius-md)] border border-surface-border bg-surface-hover text-foreground cursor-pointer"
+          className="w-fit py-2 px-5 rounded-full border-2 border-brutal-black bg-brutal-white text-foreground font-bold cursor-pointer shadow-[var(--shadow-brutal-sm)] transition-all duration-200 hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-[var(--shadow-brutal-md)] active:translate-y-px active:translate-x-px active:shadow-none"
         >
           {t('reset_filters')}
         </button>
-      </Card>
+      </div>
 
-      {/* Lessons List */}
-      <div className="">
+      {/* Lessons List — Bento Grid with stagger */}
+      <div>
         {loading ? (
           <div className="flex items-center justify-center">
             <Spinner className="mx-auto mt-4" />
           </div>
         ) : lessons.length === 0 ? (
-          <p className="m-0 py-2.5 px-5 rounded-[var(--radius-md)] border border-dashed border-surface-border text-foreground-secondary">
+          <p className="m-0 py-4 px-5 rounded-[var(--rounded-bento)] border-2 border-dashed border-brutal-black text-foreground-secondary font-medium">
             {t('empty_state')}
           </p>
         ) : (
-          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {lessons.map((lesson) => (
-              <Card
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {lessons.map((lesson, index) => (
+              <motion.div
                 key={lesson.id}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...SPRING_TRANSITION, delay: index * 0.06 }}
+                whileHover={{ y: -4, x: -4, boxShadow: 'var(--shadow-brutal-md)' }}
+                whileTap={{ y: 1, x: 1, boxShadow: 'none' }}
                 onClick={() => onSelectLesson(lesson)}
-                className="bg-surface p-4 cursor-pointer transition-all duration-200 ease-in-out hover:border-accent-primary hover:bg-surface-hover hover:shadow-md active:scale-[0.98]"
+                className="p-5 cursor-pointer rounded-[var(--rounded-bento)] border-2 border-brutal-black bg-card shadow-[var(--shadow-brutal-sm)] transition-colors"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h2 className="m-0 text-foreground text-lg">{lesson.topic}</h2>
-                    <p className="mt-1.5 text-foreground-secondary text-[0.9rem]">
+                    <h2 className="m-0 text-foreground text-lg font-extrabold">{lesson.topic}</h2>
+                    <p className="mt-1.5 text-foreground-secondary text-[0.9rem] font-medium">
                       {t('participant_label')}: {lesson.participantName}
                     </p>
-                    <p className="mt-1.5 text-foreground-secondary text-[0.9rem]">
+                    <p className="mt-1.5 text-foreground-secondary text-[0.9rem] font-medium">
                       {t('date_label')}: {new Date(lesson.date).toLocaleDateString()}
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <PriorityBadge
                       label={lesson.priority}
                       variant={resolvePriorityVariant(lesson.priority)}
@@ -234,30 +246,30 @@ export function LessonOverview({
                       }}
                       title="Edit lesson"
                       aria-label="Edit lesson"
-                      className="flex items-center justify-center rounded-md bg-transparent text-foreground-secondary cursor-pointer transition-all duration-200 shrink-0 hover:bg-surface-hover hover:text-accent-primary active:scale-95"
+                      className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-brutal-black bg-brutal-white text-foreground cursor-pointer shadow-[var(--shadow-brutal-sm)] transition-all duration-200 shrink-0 hover:-translate-y-0.5 hover:shadow-[var(--shadow-brutal-md)] active:translate-y-px active:shadow-none"
                     >
-                      <Pencil className="w-4 h-4" />
+                      <Pencil className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={(e) => void handleShareLesson(e, lesson)}
                       title={t('share_link_label')}
                       aria-label={t('share_link_label')}
-                      className="flex items-center justify-center rounded-md bg-transparent text-foreground-secondary cursor-pointer transition-all duration-200 shrink-0 hover:bg-[hsl(180,60%,90%,0.15)] hover:text-[hsl(180,60%,45%)] active:scale-95"
+                      className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-brutal-black bg-brutal-white text-foreground cursor-pointer shadow-[var(--shadow-brutal-sm)] transition-all duration-200 shrink-0 hover:-translate-y-0.5 hover:shadow-[var(--shadow-brutal-md)] active:translate-y-px active:shadow-none"
                     >
                       {copiedId === lesson.id ? (
-                        <Check className="w-4 h-4 text-[hsl(150,60%,45%)]" />
+                        <Check className="w-3.5 h-3.5 text-green" />
                       ) : (
-                        <Share2 className="w-4 h-4" />
+                        <Share2 className="w-3.5 h-3.5" />
                       )}
                     </button>
                   </div>
                 </div>
 
-                <p className="mt-3 text-foreground leading-relaxed">{lesson.notes}</p>
-                <p className="mt-1.5 text-foreground-secondary text-[0.9rem]">
+                <p className="mt-3 text-foreground leading-relaxed font-medium">{lesson.notes}</p>
+                <p className="mt-1.5 text-foreground-secondary text-[0.9rem] font-medium">
                   {t('vocab_count')}: {lesson?.vocabularies?.length}
                 </p>
-              </Card>
+              </motion.div>
             ))}
           </section>
         )}
