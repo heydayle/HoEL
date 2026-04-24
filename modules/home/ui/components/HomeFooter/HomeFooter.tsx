@@ -11,8 +11,8 @@ interface IHomeFooterProps {
 }
 
 /**
- * Footer component for the Home onboarding page.
- * Displays the LingoNote tagline and copyright notice.
+ * Neo-Brutalism footer for the Home onboarding page.
+ * Features solid background and thick top border.
  * @param props - HomeFooter props
  * @returns The rendered HomeFooter element
  */
@@ -21,10 +21,10 @@ export function HomeFooter({
   copyright,
 }: IHomeFooterProps): React.JSX.Element {
   return (
-    <footer id="home-footer" className="py-6 border-t border-surface-border bg-background">
+    <footer id="home-footer" className="py-6 border-t-2 border-brutal-black bg-cream">
       <div className="max-w-[72rem] mx-auto px-6 flex flex-col items-center gap-1">
-        <p className="text-sm text-foreground-secondary">{footerText}</p>
-        <p className="text-xs text-foreground-muted">{copyright}</p>
+        <p className="text-sm font-medium text-foreground-secondary">{footerText}</p>
+        <p className="text-xs font-medium text-foreground-muted">{copyright}</p>
       </div>
     </footer>
   );

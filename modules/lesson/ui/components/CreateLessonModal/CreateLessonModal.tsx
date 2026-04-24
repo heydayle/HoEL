@@ -144,8 +144,8 @@ export function CreateLessonModal({
         </DialogTrigger>
       )}
 
-      <DialogContent className="flex! flex-col! max-h-[80vh]! overflow-hidden! p-0! gap-0! sm:max-w-[42rem]!">
-        <DialogHeader className="shrink-0! p-6! border-b border-border!">
+      <DialogContent className="flex! flex-col! max-h-[80vh]! overflow-hidden! p-0! gap-0! sm:max-w-[42rem]! rounded-[var(--rounded-bento)]! border-2! border-brutal-black! shadow-[var(--shadow-brutal-md)]!">
+        <DialogHeader className="shrink-0! p-6! border-b-2! border-brutal-black!">
           <DialogTitle>{isEditing ? 'Edit Lesson' : t('create_lesson_title')}</DialogTitle>
           <DialogDescription>{isEditing ? 'Update lesson details' : t('create_lesson_desc')}</DialogDescription>
         </DialogHeader>
@@ -188,7 +188,7 @@ export function CreateLessonModal({
             </div>
 
             {/* Vocabulary Section */}
-            <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-border">
+            <div className="flex flex-col gap-4 mt-4 pt-4 border-t-2 border-brutal-black">
               <div className="flex justify-between items-center">
                 <h3 className="text-base font-semibold">{t('vocab_section_title')}</h3>
                 <Button type="button" variant="outline" size="sm" onClick={handleAddVocab}>
@@ -198,7 +198,7 @@ export function CreateLessonModal({
               </div>
 
               {vocabularies.map((vocab, index) => (
-                <div key={vocab.id} className="flex flex-col gap-2 p-4 border border-border rounded-lg bg-muted/50">
+                <div key={vocab.id} className="flex flex-col gap-2 p-4 border-2 border-brutal-black rounded-[calc(var(--rounded-bento)*0.6)] bg-card shadow-[var(--shadow-brutal-sm)]">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium">#{index + 1}</span>
                     <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveVocab(vocab.id)} aria-label={t('remove_vocab_btn')}>
@@ -227,7 +227,7 @@ export function CreateLessonModal({
             </div>
           </div>
 
-          <DialogFooter className="shrink-0! m-0! py-4 px-6! flex! flex-row! justify-end! gap-2! border-t border-border! rounded-b-xl!">
+          <DialogFooter className="shrink-0! m-0! py-4 px-6! flex! flex-row! justify-end! gap-2! border-t-2! border-brutal-black! rounded-b-[var(--rounded-bento)]!">
             <Button type="button" variant="outline" onClick={() => { setVocabularies([]); setOpen(false); }}>
               {t('cancel')}
             </Button>

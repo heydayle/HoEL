@@ -24,28 +24,29 @@ interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.ReactNode;
 }
 
-/** Map of variant names to their Tailwind class combinations */
+/** Map of variant names to their Neo-Brutalist Tailwind class combinations */
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    "bg-accent-primary text-white hover:bg-accent-primary-hover shadow-md hover:shadow-lg",
+    "bg-primary text-primary-foreground",
   secondary:
-    "bg-accent-secondary text-[#0d0f1a] hover:bg-accent-secondary-hover shadow-md hover:shadow-lg",
+    "bg-lemon text-black hover:bg-lemon-hover",
   ghost:
-    "bg-transparent text-foreground hover:bg-surface-hover",
+    "bg-transparent text-foreground border-transparent shadow-none hover:bg-surface-hover hover:shadow-none hover:translate-y-0 hover:translate-x-0",
   outline:
-    "bg-transparent text-foreground border border-surface-border hover:bg-surface-hover hover:border-accent-primary",
+    "bg-brutal-white text-foreground hover:bg-lemon hover:text-black",
 };
 
 /** Map of size names to their Tailwind class combinations */
 const SIZE_CLASSES: Record<ButtonSize, string> = {
-  sm: "px-3 py-2 text-sm",
-  md: "px-4 py-3 text-base",
+  sm: "px-4 py-2 text-sm",
+  md: "px-5 py-3 text-base",
   lg: "px-8 py-4 text-lg",
 };
 
 /**
- * Button atom component with multiple visual variants and sizes.
- * Supports icons, disabled state, and all native button attributes.
+ * Button atom component with Neo-Brutalism styling.
+ * Features pill shape, thick black borders, and solid offset shadows
+ * with pop effect on hover.
  * @param props - Button props including variant, size, icon, and native button attributes
  * @returns The rendered Button element
  */
@@ -62,11 +63,14 @@ export default function Button({
     <button
       className={`
         inline-flex items-center justify-center gap-2
-        rounded-[var(--radius-md)] font-medium
-        transition-all duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)]
+        rounded-full border-2 border-brutal-black font-bold
+        shadow-[var(--shadow-brutal-sm)]
+        transition-all duration-200
         cursor-pointer
+        hover:-translate-y-0.5 hover:-translate-x-0.5
+        hover:shadow-[var(--shadow-brutal-md)]
+        active:translate-y-px active:translate-x-px active:shadow-none
         disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
-        active:scale-[0.97]
         ${VARIANT_CLASSES[variant]}
         ${SIZE_CLASSES[size]}
         ${className}

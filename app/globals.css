@@ -5,128 +5,141 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================
- * Design System Tokens
+ * BENTO NEO-BRUTALISM — Design System Tokens
  * Combined custom design system + shadcn/ui CSS variables.
  * ============================================================ */
 
 :root {
-  /* --- Custom Design System (Light Mode) --- */
-  --background-secondary: #f0f7ff; /* Xanh nhạt cực nhẹ cho nền */
-  --background-tertiary: #e0f0fe;
+  /* --- Neo-Brutalism Base Palette (Light Mode) --- */
+  --cream: #F4EFE6;
+  --lemon: #FACC15;
+  --lemon-hover: #EAB308;
+  --terracotta: #E07A5F;
+  --terracotta-hover: #C96A50;
+  --brutal-black: #000000;
+  --brutal-white: #FFFFFF;
+
+  /* Accent colors (semantic) */
+  --accent-primary: #2563EB;
+  --accent-primary-hover: #1D4ED8;
+  --accent-primary-light: rgba(37, 99, 235, 0.12);
+  --accent-secondary: #06B6D4;
+  --accent-secondary-hover: #0891B2;
+  --accent-secondary-light: rgba(6, 182, 212, 0.12);
+  --accent-warm: #F43F5E;
+  --accent-warm-light: rgba(244, 63, 94, 0.12);
+  --accent-gold: #FBBF24;
+  --accent-gold-light: rgba(251, 191, 36, 0.12);
+
+  /* Neo-Brutalism Borders & Shadows */
+  --border-brutal: 2px solid #000000;
+  --shadow-brutal-sm: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-brutal-md: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-brutal-lg: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+
+  /* Radii */
+  --rounded-bento: 24px;
+
+  /* Surface */
+  --surface: #FFFFFF;
+  --surface-hover: #F8F5F0;
+  --surface-border: #000000;
+
+  /* Foreground */
   --foreground-secondary: #334155;
-  --foreground-muted: #64748b;
-
-  /* Royal & Electric Blue Primary */
-  --accent-primary: #2563eb;
-  --accent-primary-hover: #1d4ed8;
-  --accent-primary-light: rgba(37, 99, 235, 0.1);
-
-  /* Cyan & Sky Secondary */
-  --accent-secondary: #06b6d4;
-  --accent-secondary-hover: #0891b2;
-  --accent-secondary-light: rgba(6, 182, 212, 0.1);
-
-  /* Sunset Warmth (Bổ túc cho Blue) */
-  --accent-warm: #f43f5e; /* Hồng đỏ hiện đại để làm nổi bật lỗi sai hoặc nút quan trọng */
-  --accent-warm-light: rgba(244, 63, 94, 0.1);
-  --accent-gold: #fbbf24;
-  --accent-gold-light: rgba(251, 191, 36, 0.1);
-
-  /* Gradient xanh dương sâu đến sáng */
-  --gradient-hero: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%);
-  --gradient-card: linear-gradient(145deg, rgba(37, 99, 235, 0.05), rgba(6, 182, 212, 0.03));
-  --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(37, 99, 235, 0.15), transparent 60%);
-
-  --surface: #ffffff;
-  --surface-hover: #f1f5f9;
-  --surface-border: rgba(30, 41, 59, 0.08);
-  --surface-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.03);
-  --surface-shadow-hover:
-    0 10px 15px -3px rgba(37, 99, 235, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --foreground-muted: #64748B;
 
   /* --- shadcn/ui Variables (Light Mode) --- */
-  --background: oklch(0.99 0.005 240); /* Trắng ánh xanh nhẹ */
-  --foreground: oklch(0.17 0.02 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.17 0.02 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.17 0.02 260);
-  --primary: oklch(0.51 0.21 252); /* Blue 600 */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.94 0.02 240);
-  --secondary-foreground: oklch(0.25 0.05 250);
-  --muted: oklch(0.94 0.02 240);
-  --muted-foreground: oklch(0.45 0.05 250);
-  --accent: oklch(0.94 0.02 240);
-  --accent-foreground: oklch(0.25 0.05 250);
-  --destructive: oklch(0.55 0.2 25);
-  --border: oklch(0.91 0.01 250);
-  --input: oklch(0.91 0.01 250);
-  --ring: oklch(0.51 0.21 252);
+  --background: #F4EFE6;
+  --foreground: #0D0D0D;
+  --card: #FFFFFF;
+  --card-foreground: #0D0D0D;
+  --popover: #FFFFFF;
+  --popover-foreground: #0D0D0D;
+  --primary: #0D0D0D;
+  --primary-foreground: #F4EFE6;
+  --secondary: #F0EBE3;
+  --secondary-foreground: #0D0D0D;
+  --muted: #F0EBE3;
+  --muted-foreground: #64748B;
+  --accent: #FACC15;
+  --accent-foreground: #0D0D0D;
+  --destructive: #DC2626;
+  --border: #000000;
+  --input: #000000;
+  --ring: #0D0D0D;
   --radius: 0.5rem;
-  --highlight: rgb(236, 162, 0);
-  --green: #22c55e;
+  --highlight: #E07A5F;
+  --green: #22C55E;
 }
 
-/* --- Dark Mode --- */
+/* --- Dark Mode (Neo-Brutalist Dark) --- */
 [data-theme='dark'],
 .dark {
-  /* Custom Design System (Dark) */
-  --background-secondary: #020617; /* Deep Navy */
-  --background-tertiary: #0f172a;
-  --foreground-secondary: #94a3b8;
-  --foreground-muted: #475569;
+  --cream: #1E1E1E;
+  --lemon: #FACC15;
+  --lemon-hover: #FDE047;
+  --terracotta: #F4845F;
+  --terracotta-hover: #FB923C;
+  --brutal-black: #E8E8E8;
+  --brutal-white: #1E1E1E;
 
-  --accent-primary: #60a5fa; /* Blue 400 */
-  --accent-primary-hover: #93c5fd;
+  --accent-primary: #60A5FA;
+  --accent-primary-hover: #93C5FD;
   --accent-primary-light: rgba(96, 165, 250, 0.15);
-
-  --accent-secondary: #22d3ee; /* Cyan 400 */
-  --accent-secondary-hover: #67e8f9;
+  --accent-secondary: #22D3EE;
+  --accent-secondary-hover: #67E8F9;
   --accent-secondary-light: rgba(34, 211, 238, 0.12);
-
-  --accent-warm: #fb7185;
+  --accent-warm: #FB7185;
   --accent-warm-light: rgba(251, 113, 133, 0.15);
-  --accent-gold: #fbbf24;
+  --accent-gold: #FBBF24;
+  --accent-gold-light: rgba(251, 191, 36, 0.15);
 
-  --gradient-hero: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #0891b2 100%);
-  --gradient-card: linear-gradient(145deg, rgba(96, 165, 250, 0.08), rgba(34, 211, 238, 0.05));
-  --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(96, 165, 250, 0.2), transparent 60%);
+  --border-brutal: 2px solid #E8E8E8;
+  --shadow-brutal-sm: 2px 2px 0px 0px rgba(232, 232, 232, 0.8);
+  --shadow-brutal-md: 4px 4px 0px 0px rgba(232, 232, 232, 0.8);
+  --shadow-brutal-lg: 6px 6px 0px 0px rgba(232, 232, 232, 0.8);
 
-  --surface: #13151c;
-  --surface-hover: #1c1f2b;
-  --surface-border: rgba(255, 255, 255, 0.07);
-  --surface-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-  --surface-shadow-hover: 0 0 20px rgba(96, 165, 250, 0.15);
+  --surface: #303134;
+  --surface-hover: #3C3C3C;
+  --surface-border: #E8E8E8;
 
-  /* shadcn/ui Variables (Dark) */
-  --background: oklch(0.105 0.018 265); /* #13151c-derived base */
-  --foreground: oklch(0.98 0.01 240);
-  --card: oklch(0.13 0.02 265); /* slightly above surface */
-  --card-foreground: oklch(0.98 0.01 240);
-  --popover: oklch(0.13 0.02 265);
-  --popover-foreground: oklch(0.98 0.01 240);
-  --primary: oklch(0.7 0.12 250);
-  --primary-foreground: oklch(0.12 0.02 260);
-  --secondary: oklch(0.19 0.025 265);
-  --secondary-foreground: oklch(0.98 0.01 240);
-  --muted: oklch(0.19 0.025 265);
-  --muted-foreground: oklch(0.65 0.03 250);
-  --accent: oklch(0.19 0.025 265);
-  --accent-foreground: oklch(0.98 0.01 240);
-  --destructive: oklch(0.45 0.18 25);
-  --border: oklch(14.479% 0.00002 271.152);
-  --input: oklch(0.22 0.025 265);
-  --ring: oklch(0.7 0.12 250);
-  --highlight: rgba(231, 170, 3, 0.918);
-  --green: #22c55e;
+  --foreground-secondary: #A1A1AA;
+  --foreground-muted: #71717A;
+
+  --background: #1E1E1E;
+  --foreground: #F0F0F0;
+  --card: #303134;
+  --card-foreground: #F0F0F0;
+  --popover: #303134;
+  --popover-foreground: #F0F0F0;
+  --primary: #F0F0F0;
+  --primary-foreground: #1E1E1E;
+  --secondary: #3C3C3C;
+  --secondary-foreground: #F0F0F0;
+  --muted: #3C3C3C;
+  --muted-foreground: #A1A1AA;
+  --accent: #FACC15;
+  --accent-foreground: #0D0D0D;
+  --destructive: #EF4444;
+  --border: #E8E8E8;
+  --input: #E8E8E8;
+  --ring: #F0F0F0;
+  --highlight: #F4845F;
+  --green: #22C55E;
 }
 
 @theme inline {
-  /* Custom design system theme tokens */
+  /* Neo-Brutalism custom tokens */
+  --color-cream: var(--cream);
+  --color-lemon: var(--lemon);
+  --color-lemon-hover: var(--lemon-hover);
+  --color-terracotta: var(--terracotta);
+  --color-terracotta-hover: var(--terracotta-hover);
+  --color-brutal-black: var(--brutal-black);
+  --color-brutal-white: var(--brutal-white);
+
   --color-background: var(--background);
-  --color-background-secondary: var(--background-secondary);
-  --color-background-tertiary: var(--background-tertiary);
   --color-foreground: var(--foreground);
   --color-foreground-secondary: var(--foreground-secondary);
   --color-foreground-muted: var(--foreground-muted);
@@ -143,6 +156,15 @@
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
   --color-surface-border: var(--surface-border);
+
+  /* Neo-Brutalism radii */
+  --radius-bento: var(--rounded-bento);
+
+  /* Neo-Brutalism shadows */
+  --shadow-brutal-sm: var(--shadow-brutal-sm);
+  --shadow-brutal-md: var(--shadow-brutal-md);
+  --shadow-brutal-lg: var(--shadow-brutal-lg);
+
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
 
@@ -192,8 +214,6 @@
 
 * {
   box-sizing: border-box;
-  /* margin: 0; */
-  /* padding: 0; */
 }
 
 html {
@@ -205,27 +225,24 @@ body {
   font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition:
-    background-color var(--transition-base),
-    color var(--transition-base);
 }
 
 /* ============================================================
- * Scrollbar Customization
+ * Scrollbar Customization (Neo-Brutalist)
  * ============================================================ */
 
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--cream);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--foreground-muted);
-  border-radius: var(--radius-full);
+  background: var(--brutal-black);
+  border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -237,12 +254,12 @@ body {
  * ============================================================ */
 
 ::selection {
-  background: var(--accent-primary-light);
-  color: var(--accent-primary);
+  background: var(--lemon);
+  color: #000000;
 }
 
 /* ============================================================
- * Keyframe Animations
+ * Keyframe Animations (Neo-Brutalism)
  * ============================================================ */
 
 @keyframes fadeInUp {
@@ -276,13 +293,22 @@ body {
   }
 }
 
-@keyframes float {
+@keyframes sparkle-breathe {
   0%,
   100% {
-    transform: translateY(0);
+    transform: scale(1);
   }
   50% {
-    transform: translateY(-8px);
+    transform: scale(1.1);
+  }
+}
+
+@keyframes barcode-scan {
+  0% {
+    top: 0;
+  }
+  100% {
+    top: 100%;
   }
 }
 
@@ -295,25 +321,13 @@ body {
   }
 }
 
-@keyframes pulse-glow {
+@keyframes brutal-bounce {
   0%,
   100% {
-    opacity: 0.6;
+    transform: translateY(0);
   }
   50% {
-    opacity: 1;
-  }
-}
-
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
+    transform: translateY(-6px);
   }
 }
 

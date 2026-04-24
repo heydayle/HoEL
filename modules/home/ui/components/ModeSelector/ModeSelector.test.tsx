@@ -46,7 +46,7 @@ describe("ModeSelector Component", () => {
       />
     );
 
-    expect(screen.getByText("Choose Your Mode")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/Choose.*Your.*Mode/);
     expect(screen.getByText("How are you using LingoNote?")).toBeInTheDocument();
   });
 

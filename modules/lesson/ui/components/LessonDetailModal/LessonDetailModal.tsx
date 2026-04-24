@@ -164,8 +164,8 @@ export function LessonDetailModal({
   return (
     <>
       <Dialog open={!!lesson} onOpenChange={onClose}>
-        <DialogContent className="flex! flex-col! max-h-[80vh]! overflow-hidden! p-0! gap-0! sm:max-w-[44rem]!">
-          <DialogHeader className="shrink-0! p-4! border-b border-border/50!">
+        <DialogContent className="flex! flex-col! max-h-[80vh]! overflow-hidden! p-0! gap-0! sm:max-w-[44rem]! rounded-[var(--rounded-bento)]! border-2! border-brutal-black! shadow-[var(--shadow-brutal-md)]!">
+          <DialogHeader className="shrink-0! p-4! border-b-2! border-brutal-black!">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <DialogTitle>{lesson.topic}</DialogTitle>
@@ -223,7 +223,7 @@ export function LessonDetailModal({
             </div>
 
             {/* Meta Strip */}
-            <div className="flex flex-wrap items-center gap-[0.3rem] pb-3 border-b border-border/40">
+            <div className="flex flex-wrap items-center gap-[0.3rem] pb-3 border-b-2 border-brutal-black">
               <PriorityBadge
                 label={lesson.priority}
                 variant={resolvePriorityVariant(lesson.priority)}
@@ -278,7 +278,7 @@ export function LessonDetailModal({
                   {lesson.vocabularies.map((vocab, index) => (
                     <div
                       key={vocab.id}
-                      className="p-3.5 border border-border rounded-lg bg-background"
+                      className="p-4 border-2 border-brutal-black rounded-[calc(var(--rounded-bento)*0.6)] bg-card shadow-[var(--shadow-brutal-sm)]"
                     >
                       {/* Row 1: index · word · IPA · PoS · pronunciation */}
                       <div className="flex flex-col items-baseline flex-wrap gap-2 mb-1.5">

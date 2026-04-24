@@ -175,14 +175,14 @@ export function LessonForm({
 
   if (isLoading) {
     return (
-      <div className="flex flex-col min-h-0 border border-border rounded-xl bg-background">
+      <div className="flex flex-col min-h-0 border-2 border-brutal-black rounded-[var(--rounded-bento)] bg-card shadow-[var(--shadow-brutal-sm)]">
         <Spinner />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col min-h-0 border border-border rounded-xl bg-background">
+    <div className="flex flex-col min-h-0 border-2 border-brutal-black rounded-[var(--rounded-bento)] bg-card shadow-[var(--shadow-brutal-sm)]">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-6 pb-24">
         {/* ── Lesson info ── */}
         <div className="flex flex-col gap-2">
@@ -244,7 +244,7 @@ export function LessonForm({
             <h3 className="m-0 text-base">{t('vocab_section_title')}</h3>
           </div>
           {vocabularies.length === 0 && (
-            <p className="block w-fit ml-4! p-1 italic bg-primary/40">{t('no_vocabularies')}</p>
+            <p className="block w-fit ml-4! p-2 px-4 font-bold italic border-2 border-brutal-black bg-lemon rounded-full">{t('no_vocabularies')}</p>
           )}
           {vocabularies.map((vocab, index) => {
             /* ── Skeleton placeholder for a loading vocabulary ── */
@@ -258,11 +258,11 @@ export function LessonForm({
             return (
               <div
                 key={vocab.id}
-                className="flex flex-col gap-3 border border-border rounded-lg bg-muted/20 p-4"
+                className="flex flex-col gap-3 border-2 border-brutal-black rounded-[calc(var(--rounded-bento)*0.6)] bg-card p-4 shadow-[var(--shadow-brutal-sm)]"
               >
                 {/* Header: index + remove */}
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium bg-primary py-1 px-2 pr-8 text-primary-foreground">
+                  <span className="text-sm font-bold border-2 border-brutal-black bg-lemon py-1 px-2 pr-8 text-black rounded-full">
                     #{renderedIndex + 1}
                   </span>
                   <Button
@@ -356,7 +356,7 @@ export function LessonForm({
         </div>
 
         {/* ── Sticky footer ── */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background/94 backdrop-blur-[10px]">
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t-2 border-brutal-black bg-cream">
           <div className="w-full max-w-[60rem] !mx-auto px-4 md:px-8 py-3 flex flex-col gap-3">
             {/* Load vocabulary from AI */}
             <div className="flex flex-col md:flex-row gap-2 items-start">
