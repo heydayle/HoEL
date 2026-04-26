@@ -1,13 +1,14 @@
+import { vi, type Mock } from 'vitest'
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { createClient } from './server';
 
-jest.mock('@supabase/ssr', () => ({
-  createServerClient: jest.fn(),
+vi.mock('@supabase/ssr', () => ({
+  createServerClient: vi.fn(),
 }));
 
-jest.mock('next/headers', () => ({
-  cookies: jest.fn(),
+vi.mock('next/headers', () => ({
+  cookies: vi.fn(),
 }));
 
 describe('Supabase Server - createClient', () => {
@@ -15,7 +16,7 @@ describe('Supabase Server - createClient', () => {
   let mockCookies: any;
 
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
     process.env = {
       ...originalEnv,
       NEXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
@@ -23,16 +24,16 @@ describe('Supabase Server - createClient', () => {
     };
 
     mockCookies = {
-      getAll: jest.fn().mockReturnValue([{ name: 'test-cookie', value: 'test-val' }]),
-      set: jest.fn(),
+      getAll: vi.fn().mockReturnValue([{ name: 'test-cookie', value: 'test-val' }]),
+      set: vi.fn(),
     };
 
-    (cookies as jest.Mock).mockResolvedValue(mockCookies);
+    (cookies as Mock).mockResolvedValue(mockCookies);
   });
 
   afterEach(() => {
     process.env = originalEnv;
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should call createServerClient with environment variables and options', async () => {
@@ -51,7 +52,7 @@ describe('Supabase Server - createClient', () => {
     await createClient();
     
     // get the cookies option that was passed
-    const options = (createServerClient as jest.Mock).mock.calls[0][2];
+    const options = (createServerClient as Mock).mock.calls[0][2];
     const retrievedCookies = options.cookies.getAll();
     
     expect(mockCookies.getAll).toHaveBeenCalled();
@@ -61,7 +62,7 @@ describe('Supabase Server - createClient', () => {
   it('should forward setAll calls to cookieStore.set', async () => {
     await createClient();
     
-    const options = (createServerClient as jest.Mock).mock.calls[0][2];
+    const options = (createServerClient as Mock).mock.calls[0][2];
     options.cookies.setAll([
       { name: 'cookie1', value: 'val1', options: { secure: true } },
       { name: 'cookie2', value: 'val2', options: { httpOnly: true } }
@@ -78,7 +79,7 @@ describe('Supabase Server - createClient', () => {
     });
 
     await createClient();
-    const options = (createServerClient as jest.Mock).mock.calls[0][2];
+    const options = (createServerClient as Mock).mock.calls[0][2];
     
     // should not throw
     expect(() => {

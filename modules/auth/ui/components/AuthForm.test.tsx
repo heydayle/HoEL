@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 import { AuthForm } from './AuthForm';
@@ -6,17 +7,17 @@ import { AuthForm } from './AuthForm';
  * Mocks
  * ============================================================ */
 
-const mockPush = jest.fn();
-const mockRefresh = jest.fn();
-jest.mock('next/navigation', () => ({
+const mockPush = vi.fn();
+const mockRefresh = vi.fn();
+vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush, refresh: mockRefresh }),
 }));
 
-const mockHandleSubmit = jest.fn();
-const mockToggleAuthMode = jest.fn();
-const mockHandleProviderSignIn = jest.fn();
+const mockHandleSubmit = vi.fn();
+const mockToggleAuthMode = vi.fn();
+const mockHandleProviderSignIn = vi.fn();
 
-jest.mock('../hooks/useAuthPage', () => ({
+vi.mock('../hooks/useAuthPage', () => ({
   useAuthPage: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
@@ -56,7 +57,7 @@ jest.mock('../hooks/useAuthPage', () => ({
 
 describe('AuthForm Component', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders the brand name and tagline', () => {

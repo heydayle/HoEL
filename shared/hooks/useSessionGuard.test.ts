@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { renderHook, act } from '@testing-library/react';
 
 import { useSessionGuard } from './useSessionGuard';
@@ -9,12 +10,12 @@ const mockSession = {
   expires_at: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
 };
 
-const mockGetSession = jest.fn();
-const mockRefreshSession = jest.fn();
-const mockOnAuthStateChange = jest.fn();
-const mockNavigateTo = jest.fn();
+const mockGetSession = vi.fn();
+const mockRefreshSession = vi.fn();
+const mockOnAuthStateChange = vi.fn();
+const mockNavigateTo = vi.fn();
 
-jest.mock('@/shared/utils/supabase/client', () => ({
+vi.mock('@/shared/utils/supabase/client', () => ({
   createClient: () => ({
     auth: {
       getSession: () => mockGetSession(),
@@ -24,24 +25,24 @@ jest.mock('@/shared/utils/supabase/client', () => ({
   }),
 }));
 
-jest.mock('@/shared/utils/navigation', () => ({
+vi.mock('@/shared/utils/navigation', () => ({
   navigateTo: (...args: unknown[]) => mockNavigateTo(...args),
 }));
 
 describe('useSessionGuard', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers();
+    vi.clearAllMocks();
+    vi.useFakeTimers();
 
     mockGetSession.mockResolvedValue({ data: { session: mockSession } });
     mockRefreshSession.mockResolvedValue({ data: { session: mockSession }, error: null });
     mockOnAuthStateChange.mockReturnValue({
-      data: { subscription: { unsubscribe: jest.fn() } },
+      data: { subscription: { unsubscribe: vi.fn() } },
     });
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('should subscribe to auth state changes on mount', () => {
@@ -79,7 +80,7 @@ describe('useSessionGuard', () => {
     expect(mockRefreshSession).not.toHaveBeenCalled();
 
     await act(async () => {
-      jest.advanceTimersByTime(60_000);
+      vi.advanceTimersByTime(60_000);
       await Promise.resolve();
     });
 
@@ -101,7 +102,7 @@ describe('useSessionGuard', () => {
 
     /** Should schedule with delay 0 (immediate) */
     await act(async () => {
-      jest.advanceTimersByTime(0);
+      vi.advanceTimersByTime(0);
       await Promise.resolve();
     });
 
@@ -125,7 +126,7 @@ describe('useSessionGuard', () => {
     });
 
     await act(async () => {
-      jest.advanceTimersByTime(0);
+      vi.advanceTimersByTime(0);
       await Promise.resolve();
     });
 
@@ -140,7 +141,7 @@ describe('useSessionGuard', () => {
         ...mockSession,
         expires_at: newExpiresAt,
       });
-      return { data: { subscription: { unsubscribe: jest.fn() } } };
+      return { data: { subscription: { unsubscribe: vi.fn() } } };
     });
 
     renderHook(() => useSessionGuard());
@@ -158,7 +159,7 @@ describe('useSessionGuard', () => {
     mockGetSession.mockResolvedValue({ data: { session: null } });
     mockOnAuthStateChange.mockImplementation((callback: Function) => {
       callback('SIGNED_OUT', null);
-      return { data: { subscription: { unsubscribe: jest.fn() } } };
+      return { data: { subscription: { unsubscribe: vi.fn() } } };
     });
 
     renderHook(() => useSessionGuard());
@@ -169,7 +170,7 @@ describe('useSessionGuard', () => {
 
     /** Advance time well past any possible expiry — refresh should NOT fire */
     await act(async () => {
-      jest.advanceTimersByTime(7_200_000);
+      vi.advanceTimersByTime(7_200_000);
       await Promise.resolve();
     });
 
@@ -177,7 +178,7 @@ describe('useSessionGuard', () => {
   });
 
   it('should unsubscribe and clear timer on unmount', async () => {
-    const mockUnsubscribe = jest.fn();
+    const mockUnsubscribe = vi.fn();
     mockOnAuthStateChange.mockReturnValue({
       data: { subscription: { unsubscribe: mockUnsubscribe } },
     });
@@ -204,7 +205,7 @@ describe('useSessionGuard', () => {
 
     /** Advance time — no timer should fire */
     await act(async () => {
-      jest.advanceTimersByTime(120_000);
+      vi.advanceTimersByTime(120_000);
       await Promise.resolve();
     });
 

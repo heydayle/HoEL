@@ -1,3 +1,4 @@
+import { vi, type Mock, type MockedFunction } from 'vitest'
 import { renderHook, act } from '@testing-library/react';
 import { useGenerateVocab } from './useGenerateVocab';
 import { executeGenerateVocab } from '../../core/usecases';
@@ -5,17 +6,17 @@ import { parseTextResult } from '@/shared/hooks';
 import type { ILesson, IVocabulary } from '../../core/models';
 
 /** Mock the API call layer */
-jest.mock('../../core/usecases', () => ({
-  executeGenerateVocab: jest.fn(),
+vi.mock('../../core/usecases', () => ({
+  executeGenerateVocab: vi.fn(),
 }));
 
 /** Mock the parse utility */
-jest.mock('@/shared/hooks', () => ({
-  parseTextResult: jest.fn(),
+vi.mock('@/shared/hooks', () => ({
+  parseTextResult: vi.fn(),
 }));
 
-const mockedExecute = executeGenerateVocab as jest.MockedFunction<typeof executeGenerateVocab>;
-const mockedParse = parseTextResult as jest.MockedFunction<typeof parseTextResult>;
+const mockedExecute = executeGenerateVocab as MockedFunction<typeof executeGenerateVocab>;
+const mockedParse = parseTextResult as MockedFunction<typeof parseTextResult>;
 
 /** Helper: create a resolved Dify-shaped response */
 const makeDifyResponse = (textResult: string) => ({
@@ -35,7 +36,7 @@ const makeParsedVocab = (word: string): IVocabulary => ({
 });
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 describe('useGenerateVocab — initialisation', () => {

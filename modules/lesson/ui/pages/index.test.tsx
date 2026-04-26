@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { render, screen } from '@testing-library/react';
 
 import LessonPage from './index';
@@ -5,10 +6,10 @@ import LessonPage from './index';
 /**
  * Mock next/navigation router
  */
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: jest.fn(),
-    prefetch: jest.fn(),
+    push: vi.fn(),
+    prefetch: vi.fn(),
   }),
 }));
 
@@ -16,20 +17,20 @@ jest.mock('next/navigation', () => ({
 /**
  * Mock overview component to focus on page composition.
  */
-jest.mock('@/modules/lesson/ui/components/LessonOverview', () => ({
+vi.mock('@/modules/lesson/ui/components/LessonOverview', () => ({
   LessonOverview: () => <section data-testid="mock-lesson-overview">LessonOverview</section>,
 }));
 
 /**
  * Mock hook to provide deterministic page data.
  */
-jest.mock('@/modules/lesson/ui/hooks', () => ({
-  useLessonPage: jest.fn(() => ({
+vi.mock('@/modules/lesson/ui/hooks', () => ({
+  useLessonPage: vi.fn(() => ({
     resolvedTheme: 'dark' as const,
     locale: 'en' as const,
-    setLocale: jest.fn(),
+    setLocale: vi.fn(),
     t: (key: string) => key,
-    toggleTheme: jest.fn(),
+    toggleTheme: vi.fn(),
     filters: {
       searchTerm: '',
       isPinned: false,
@@ -46,15 +47,15 @@ jest.mock('@/modules/lesson/ui/hooks', () => ({
       totalQuestions: 1,
     },
     loading: false,
-    updateSearchTerm: jest.fn(),
-    updateVocabSearchTerm: jest.fn(),
-    updatePinnedFilter: jest.fn(),
-    updateFavoriteFilter: jest.fn(),
-    updatePriorityFilter: jest.fn(),
-    updateStartDate: jest.fn(),
-    updateEndDate: jest.fn(),
-    updateSortBy: jest.fn(),
-    resetFilters: jest.fn(),
+    updateSearchTerm: vi.fn(),
+    updateVocabSearchTerm: vi.fn(),
+    updatePinnedFilter: vi.fn(),
+    updateFavoriteFilter: vi.fn(),
+    updatePriorityFilter: vi.fn(),
+    updateStartDate: vi.fn(),
+    updateEndDate: vi.fn(),
+    updateSortBy: vi.fn(),
+    resetFilters: vi.fn(),
   })),
 }));
 

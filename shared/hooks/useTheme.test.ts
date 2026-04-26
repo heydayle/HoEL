@@ -1,27 +1,28 @@
+import { vi } from 'vitest'
 import { act, renderHook } from '@testing-library/react';
 import { useTheme } from './useTheme';
 import type { ThemeMode } from '../types';
 
 describe('useTheme hook', () => {
-  let matchMediaMock: jest.Mock;
-  let addEventListenerMock: jest.Mock;
-  let removeEventListenerMock: jest.Mock;
+  let matchMediaMock: vi.mock;
+  let addEventListenerMock: vi.mock;
+  let removeEventListenerMock: vi.mock;
 
   beforeEach(() => {
     localStorage.clear();
     
     // Default mocks
-    addEventListenerMock = jest.fn();
-    removeEventListenerMock = jest.fn();
-    matchMediaMock = jest.fn().mockImplementation((query) => ({
+    addEventListenerMock = vi.fn();
+    removeEventListenerMock = vi.fn();
+    matchMediaMock = vi.fn().mockImplementation((query) => ({
       matches: false, // Default: light theme
       media: query,
       onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
       addEventListener: addEventListenerMock,
       removeEventListener: removeEventListenerMock,
-      dispatchEvent: jest.fn(),
+      dispatchEvent: vi.fn(),
     }));
     Object.defineProperty(window, 'matchMedia', {
       writable: true,

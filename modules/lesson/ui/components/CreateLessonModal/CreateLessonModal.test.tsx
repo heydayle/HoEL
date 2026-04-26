@@ -1,12 +1,13 @@
+import { vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CreateLessonModal } from './CreateLessonModal';
 
 describe('CreateLessonModal', () => {
-  const mockOnAddLesson = jest.fn();
+  const mockOnAddLesson = vi.fn();
   const mockT = (key: string) => key;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders trigger button', () => {

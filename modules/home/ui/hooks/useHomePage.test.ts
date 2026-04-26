@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { act, renderHook } from "@testing-library/react";
 
 import * as sharedHooks from "@/shared/hooks";
@@ -5,23 +6,23 @@ import * as sharedHooks from "@/shared/hooks";
 import { useHomePage } from "./useHomePage";
 
 // Mock next/navigation router
-jest.mock("next/navigation", () => ({
-  useRouter: jest.fn(() => ({
-    push: jest.fn(),
+vi.mock("next/navigation", () => ({
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
   })),
 }));
 
 // Mock the shared hooks to isolate useHomePage testing
-jest.mock("@/shared/hooks", () => ({
-  useTheme: jest.fn(() => ({
+vi.mock("@/shared/hooks", () => ({
+  useTheme: vi.fn(() => ({
     mode: "system",
     resolvedTheme: "dark",
-    setThemeMode: jest.fn(),
+    setThemeMode: vi.fn(),
   })),
-  useLocale: jest.fn(() => ({
+  useLocale: vi.fn(() => ({
     locale: "en",
-    setLocale: jest.fn(),
-    t: jest.fn((key: string) => `mockT_${key}`),
+    setLocale: vi.fn(),
+    t: vi.fn((key: string) => `mockT_${key}`),
   })),
 }));
 
@@ -58,8 +59,8 @@ describe("useHomePage hook", () => {
   });
 
   it("toggleTheme should call setThemeMode('dark') when resolvedTheme is light (system mode)", () => {
-    const mockSetThemeMode = jest.fn();
-    jest.spyOn(sharedHooks, "useTheme").mockImplementationOnce(() => ({
+    const mockSetThemeMode = vi.fn();
+    vi.spyOn(sharedHooks, "useTheme").mockImplementationOnce(() => ({
       mode: "system",
       resolvedTheme: "light",
       setThemeMode: mockSetThemeMode,
@@ -74,8 +75,8 @@ describe("useHomePage hook", () => {
   });
 
   it("toggleTheme should call setThemeMode('light') when resolvedTheme is dark (system mode)", () => {
-    const mockSetThemeMode = jest.fn();
-    jest.spyOn(sharedHooks, "useTheme").mockImplementationOnce(() => ({
+    const mockSetThemeMode = vi.fn();
+    vi.spyOn(sharedHooks, "useTheme").mockImplementationOnce(() => ({
       mode: "system",
       resolvedTheme: "dark",
       setThemeMode: mockSetThemeMode,

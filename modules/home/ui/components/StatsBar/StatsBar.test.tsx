@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { render, screen } from '@testing-library/react';
 import StatsBar from './StatsBar';
 import type { ILearningStat } from '@/modules/home/core/models';
@@ -8,7 +9,7 @@ describe('StatsBar component', () => {
     { id: 'stat2', labelKey: 'stat_2', value: '500', icon: '✅' },
   ];
 
-  const mockT = jest.fn((key: string) => `Translated_${key}`);
+  const mockT = vi.fn((key: string) => `Translated_${key}`);
 
   it('should render all stats correctly', () => {
     render(<StatsBar stats={mockStats} t={mockT} />);

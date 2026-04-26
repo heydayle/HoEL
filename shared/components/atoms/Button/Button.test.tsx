@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Button from './Button';
@@ -47,7 +48,7 @@ describe('Button atom', () => {
   });
 
   it('should forward additional props to the button element', async () => {
-    const handleClick = jest.fn();
+    const handleClick = vi.fn();
     render(<Button onClick={handleClick} data-testid="click-btn">Click Me</Button>);
     
     await userEvent.click(screen.getByTestId('click-btn'));

@@ -1,21 +1,22 @@
+import { vi, type Mocked } from 'vitest'
 import type { IAuthFormData, IAuthResult } from '../models';
 import type { IAuthRepository } from '../repositories';
 import { signInUseCase, signUpUseCase, signInWithProviderUseCase, refreshSessionUseCase, getSessionUseCase } from './index';
 
 /**
  * Creates a mock auth repository for testing.
- * @returns A mocked IAuthRepository with jest functions
+ * @returns A mocked IAuthRepository with vi functions
  */
-const createMockRepository = (): jest.Mocked<IAuthRepository> => ({
-  signIn: jest.fn(),
-  signUp: jest.fn(),
-  signInWithProvider: jest.fn(),
-  refreshSession: jest.fn(),
-  getSession: jest.fn(),
+const createMockRepository = (): Mocked<IAuthRepository> => ({
+  signIn: vi.fn(),
+  signUp: vi.fn(),
+  signInWithProvider: vi.fn(),
+  refreshSession: vi.fn(),
+  getSession: vi.fn(),
 });
 
 describe('Auth Use Cases', () => {
-  let mockRepo: jest.Mocked<IAuthRepository>;
+  let mockRepo: Mocked<IAuthRepository>;
 
   beforeEach(() => {
     mockRepo = createMockRepository();

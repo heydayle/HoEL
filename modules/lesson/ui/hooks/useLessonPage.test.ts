@@ -1,3 +1,4 @@
+import { vi, type Mock } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useLessonPage } from './useLessonPage';
 import { getLessonsFromLocalStorage, saveLessonsToLocalStorage } from '@/modules/lesson/infras';
@@ -22,38 +23,38 @@ afterAll(() => {
   console.error = originalError;
 });
 
-jest.mock('@/modules/lesson/infras', () => ({
-  getLessonsFromLocalStorage: jest.fn(),
-  saveLessonsToLocalStorage: jest.fn().mockResolvedValue({ success: true }),
-  updateLessonInSupabase: jest.fn().mockResolvedValue({ success: true }),
-  bulkAddVocabs: jest.fn().mockResolvedValue([]),
-  syncVocabularies: jest.fn().mockResolvedValue([]),
+vi.mock('@/modules/lesson/infras', () => ({
+  getLessonsFromLocalStorage: vi.fn(),
+  saveLessonsToLocalStorage: vi.fn().mockResolvedValue({ success: true }),
+  updateLessonInSupabase: vi.fn().mockResolvedValue({ success: true }),
+  bulkAddVocabs: vi.fn().mockResolvedValue([]),
+  syncVocabularies: vi.fn().mockResolvedValue([]),
 }));
 
-jest.mock('@/shared/hooks', () => ({
-  useTheme: jest.fn(),
-  useLocale: jest.fn(),
+vi.mock('@/shared/hooks', () => ({
+  useTheme: vi.fn(),
+  useLocale: vi.fn(),
 }));
 
 describe('useLessonPage', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    (useTheme as jest.Mock).mockReturnValue({
+    (useTheme as Mock).mockReturnValue({
       mode: 'light',
       resolvedTheme: 'light',
-      setThemeMode: jest.fn(),
+      setThemeMode: vi.fn(),
     });
 
-    (useLocale as jest.Mock).mockReturnValue({
+    (useLocale as Mock).mockReturnValue({
       locale: 'en',
-      setLocale: jest.fn(),
+      setLocale: vi.fn(),
       t: (key: string) => key,
     });
   });
 
   it('initializes with fallback data if local storage is empty', async () => {
-    (getLessonsFromLocalStorage as jest.Mock).mockResolvedValue([]);
+    (getLessonsFromLocalStorage as Mock).mockResolvedValue([]);
 
     const { result } = renderHook(() => useLessonPage());
 
@@ -78,7 +79,7 @@ describe('useLessonPage', () => {
         questions: []
       }
     ];
-    (getLessonsFromLocalStorage as jest.Mock).mockResolvedValue(mockLessons);
+    (getLessonsFromLocalStorage as Mock).mockResolvedValue(mockLessons);
 
     const { result } = renderHook(() => useLessonPage());
 
@@ -88,8 +89,8 @@ describe('useLessonPage', () => {
   });
 
   it('addLesson adds a new lesson and saves it to local storage', async () => {
-    (getLessonsFromLocalStorage as jest.Mock).mockResolvedValue([]);
-    (saveLessonsToLocalStorage as jest.Mock).mockResolvedValue({ success: true });
+    (getLessonsFromLocalStorage as Mock).mockResolvedValue([]);
+    (saveLessonsToLocalStorage as Mock).mockResolvedValue({ success: true });
     
     const { result } = renderHook(() => useLessonPage());
 
@@ -114,7 +115,7 @@ describe('useLessonPage', () => {
   });
 
   it('updates filters when calling update functions', async () => {
-    (getLessonsFromLocalStorage as jest.Mock).mockResolvedValue([]);
+    (getLessonsFromLocalStorage as Mock).mockResolvedValue([]);
     const { result } = renderHook(() => useLessonPage());
 
     await act(async () => {
@@ -149,14 +150,14 @@ describe('useLessonPage', () => {
   });
 
   it('toggles theme properly', async () => {
-    const mockSetThemeMode = jest.fn();
-    (useTheme as jest.Mock).mockReturnValue({
+    const mockSetThemeMode = vi.fn();
+    (useTheme as Mock).mockReturnValue({
       mode: 'system',
       resolvedTheme: 'dark',
       setThemeMode: mockSetThemeMode,
     });
 
-    (getLessonsFromLocalStorage as jest.Mock).mockResolvedValue([]);
+    (getLessonsFromLocalStorage as Mock).mockResolvedValue([]);
     const { result } = renderHook(() => useLessonPage());
 
     await act(async () => {
@@ -169,7 +170,7 @@ describe('useLessonPage', () => {
 
     expect(mockSetThemeMode).toHaveBeenCalledWith('light');
 
-    (useTheme as jest.Mock).mockReturnValue({
+    (useTheme as Mock).mockReturnValue({
       mode: 'dark',
       resolvedTheme: 'dark',
       setThemeMode: mockSetThemeMode,
@@ -213,7 +214,7 @@ describe('useLessonPage', () => {
         questions: []
       }
     ];
-    (getLessonsFromLocalStorage as jest.Mock).mockResolvedValue(mockLessons);
+    (getLessonsFromLocalStorage as Mock).mockResolvedValue(mockLessons);
 
     const { result } = renderHook(() => useLessonPage());
 
@@ -253,7 +254,7 @@ describe('useLessonPage', () => {
         questions: []
       }
     ];
-    (getLessonsFromLocalStorage as jest.Mock).mockResolvedValue(mockLessons);
+    (getLessonsFromLocalStorage as Mock).mockResolvedValue(mockLessons);
 
     const { result } = renderHook(() => useLessonPage());
 
@@ -291,7 +292,7 @@ describe('useLessonPage', () => {
         ],
       }
     ];
-    (getLessonsFromLocalStorage as jest.Mock).mockResolvedValue(mockLessons);
+    (getLessonsFromLocalStorage as Mock).mockResolvedValue(mockLessons);
 
     const { result } = renderHook(() => useLessonPage());
 
@@ -342,7 +343,7 @@ describe('useLessonPage', () => {
       vocabularies: [],
     };
     const mockLessons = [lesson1, lesson2];
-    (getLessonsFromLocalStorage as jest.Mock).mockResolvedValue(mockLessons);
+    (getLessonsFromLocalStorage as Mock).mockResolvedValue(mockLessons);
 
     const { result } = renderHook(() => useLessonPage());
 
@@ -378,7 +379,7 @@ describe('useLessonPage', () => {
         vocabularies: [],
       }
     ];
-    (getLessonsFromLocalStorage as jest.Mock).mockResolvedValue(mockLessons);
+    (getLessonsFromLocalStorage as Mock).mockResolvedValue(mockLessons);
 
     const { result } = renderHook(() => useLessonPage());
 

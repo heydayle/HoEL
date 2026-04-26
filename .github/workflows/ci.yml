@@ -30,4 +30,4 @@ jobs:
         run: pnpm install
 
       - name: Run unit tests
-        run: pnpm test --watchAll=false --no-coverage
+        run: pnpm test

@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { fireEvent, render, screen } from "@testing-library/react";
 
 import type { IFeatureHighlight, IModeCard } from "@/modules/home/core/models";
@@ -42,7 +43,7 @@ describe("ModeSelector Component", () => {
         modeCards={MOCK_MODE_CARDS}
         featureHighlights={MOCK_HIGHLIGHTS}
         t={mockT}
-        onSelectMode={jest.fn()}
+        onSelectMode={vi.fn()}
       />
     );
 
@@ -59,7 +60,7 @@ describe("ModeSelector Component", () => {
         modeCards={MOCK_MODE_CARDS}
         featureHighlights={MOCK_HIGHLIGHTS}
         t={mockT}
-        onSelectMode={jest.fn()}
+        onSelectMode={vi.fn()}
       />
     );
 
@@ -70,7 +71,7 @@ describe("ModeSelector Component", () => {
   });
 
   it("should call onSelectMode with correct mode when student card is clicked", () => {
-    const mockOnSelectMode = jest.fn();
+    const mockOnSelectMode = vi.fn();
     render(
       <ModeSelector
         title="Choose"
@@ -89,7 +90,7 @@ describe("ModeSelector Component", () => {
   });
 
   it("should call onSelectMode with 'teacher' when teacher card is clicked", () => {
-    const mockOnSelectMode = jest.fn();
+    const mockOnSelectMode = vi.fn();
     render(
       <ModeSelector
         title="Choose"

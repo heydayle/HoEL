@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 
@@ -7,7 +8,7 @@ import { LessonShareView } from './LessonShareView';
 
 
 /** Mock lucide-react icons to avoid SVG rendering in jsdom */
-jest.mock('lucide-react', () => ({
+vi.mock('lucide-react', () => ({
   Eye: () => null,
   BookOpen: () => null,
   Calendar: () => null,

@@ -1,16 +1,17 @@
+import { vi, type Mock } from 'vitest'
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
 import { updateSession } from './middleware';
 
-jest.mock('@supabase/ssr', () => ({
-  createServerClient: jest.fn(),
+vi.mock('@supabase/ssr', () => ({
+  createServerClient: vi.fn(),
 }));
 
-jest.mock('next/server', () => {
+vi.mock('next/server', () => {
   return {
     NextResponse: {
-      next: jest.fn(),
-      redirect: jest.fn(),
+      next: vi.fn(),
+      redirect: vi.fn(),
     },
   };
 });
@@ -25,7 +26,7 @@ describe('Supabase Middleware - updateSession', () => {
   let mockResponse: any;
 
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
     process.env = {
       ...originalEnv,
       NEXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
@@ -34,36 +35,36 @@ describe('Supabase Middleware - updateSession', () => {
 
     mockRequest = {
       cookies: {
-        getAll: jest.fn().mockReturnValue([{ name: 'req-cookie', value: 'req-val' }]),
-        set: jest.fn(),
+        getAll: vi.fn().mockReturnValue([{ name: 'req-cookie', value: 'req-val' }]),
+        set: vi.fn(),
       },
       nextUrl: {
         pathname: '/test-route',
-        clone: jest.fn().mockReturnThis(),
+        clone: vi.fn().mockReturnThis(),
       },
       url: 'http://localhost/test-route',
     } as unknown as NextRequest;
 
     mockSupabase = {
       auth: {
-        getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'test' } } }),
+        getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'test' } } }),
       },
     };
 
-    (createServerClient as jest.Mock).mockReturnValue(mockSupabase);
+    (createServerClient as Mock).mockReturnValue(mockSupabase);
 
     mockResponse = {
       cookies: {
-        set: jest.fn(),
+        set: vi.fn(),
       },
     } as unknown as NextResponse;
 
-    (NextResponse.next as jest.Mock).mockReturnValue(mockResponse);
+    (NextResponse.next as Mock).mockReturnValue(mockResponse);
   });
 
   afterEach(() => {
     process.env = originalEnv;
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('initializes supabase client and updates cookies correctly', async () => {
@@ -75,7 +76,7 @@ describe('Supabase Middleware - updateSession', () => {
 
   it('updates both request and response cookies when setAll is called in client options', async () => {
     await updateSession(mockRequest);
-    const options = (createServerClient as jest.Mock).mock.calls[0][2];
+    const options = (createServerClient as Mock).mock.calls[0][2];
     
     expect(options.cookies.getAll()).toEqual([{ name: 'req-cookie', value: 'req-val' }]);
 

@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { render, waitFor } from '@testing-library/react';
 
 import { AUTH_TOKEN_KEY } from '@/shared/utils/constants';
@@ -12,10 +13,10 @@ const mockUser = {
   created_at: '2026-01-01T00:00:00Z',
 };
 
-const mockGetUser = jest.fn();
-const mockOnAuthStateChange = jest.fn();
+const mockGetUser = vi.fn();
+const mockOnAuthStateChange = vi.fn();
 
-jest.mock('@/shared/utils/supabase/client', () => ({
+vi.mock('@/shared/utils/supabase/client', () => ({
   createClient: () => ({
     auth: {
       getUser: () => mockGetUser(),
@@ -25,16 +26,16 @@ jest.mock('@/shared/utils/supabase/client', () => ({
 }));
 
 /** Mock the useSessionGuard hook — tested independently */
-jest.mock('@/shared/hooks/useSessionGuard', () => ({
-  useSessionGuard: jest.fn(),
+vi.mock('@/shared/hooks/useSessionGuard', () => ({
+  useSessionGuard: vi.fn(),
 }));
 
 describe('AuthSyncProvider', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     localStorage.clear();
     mockOnAuthStateChange.mockReturnValue({
-      data: { subscription: { unsubscribe: jest.fn() } },
+      data: { subscription: { unsubscribe: vi.fn() } },
     });
   });
 
@@ -85,7 +86,7 @@ describe('AuthSyncProvider', () => {
           created_at: '2026-02-01T00:00:00Z',
         },
       });
-      return { data: { subscription: { unsubscribe: jest.fn() } } };
+      return { data: { subscription: { unsubscribe: vi.fn() } } };
     });
 
     render(<AuthSyncProvider />);
@@ -105,7 +106,7 @@ describe('AuthSyncProvider', () => {
     mockOnAuthStateChange.mockImplementation((callback: Function) => {
       /** Simulate a sign-out event */
       callback('SIGNED_OUT', null);
-      return { data: { subscription: { unsubscribe: jest.fn() } } };
+      return { data: { subscription: { unsubscribe: vi.fn() } } };
     });
 
     render(<AuthSyncProvider />);

@@ -1,10 +1,11 @@
+import { vi, type MockedFunction } from 'vitest'
 import { getLessonByIdPublic } from '@/modules/lesson/infras';
 import { act, renderHook } from '@testing-library/react';
 import { usePublicLessonDetail } from './usePublicLessonDetail';
-jest.mock('@/modules/lesson/infras', () => ({
-  getLessonByIdPublic: jest.fn(),
+vi.mock('@/modules/lesson/infras', () => ({
+  getLessonByIdPublic: vi.fn(),
 }));
-const mockGetLessonByIdPublic = getLessonByIdPublic as jest.MockedFunction<
+const mockGetLessonByIdPublic = getLessonByIdPublic as MockedFunction<
   typeof getLessonByIdPublic
 >;
 /** Minimal ILesson stub for tests */
@@ -28,7 +29,7 @@ const mockResponse = {
 
 describe('usePublicLessonDetail', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
   it('should initialise with isLoading=true and lesson=null', () => {
     mockGetLessonByIdPublic.mockResolvedValue(null);

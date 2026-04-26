@@ -1,37 +1,43 @@
+import { vi, type Mock } from 'vitest'
 import { renderHook, act } from '@testing-library/react';
 import { useTextToSpeech } from './useTextToSpeech';
 
 /** Captured event handlers from the last SpeechSynthesisUtterance instance */
 let capturedHandlers: Record<string, (() => void) | null>;
 
-/** Mock SpeechSynthesisUtterance constructor */
-let MockUtterance: jest.Mock;
+/** Mock SpeechSynthesisUtterance constructor — wrapped with vi.fn for call tracking */
+let MockUtterance: Mock;
 
 /** Mock speechSynthesis methods */
-const mockSpeak = jest.fn();
-const mockCancel = jest.fn();
+const mockSpeak = vi.fn();
+const mockCancel = vi.fn();
 
 beforeEach(() => {
   capturedHandlers = { onstart: null, onend: null, onerror: null };
 
-  MockUtterance = jest.fn().mockImplementation((text: string) => {
-    const instance = {
-      text,
-      lang: '',
-      rate: 1,
-      pitch: 1,
-      set onstart(fn: () => void) {
-        capturedHandlers.onstart = fn;
-      },
-      set onend(fn: () => void) {
-        capturedHandlers.onend = fn;
-      },
-      set onerror(fn: () => void) {
-        capturedHandlers.onerror = fn;
-      },
-    };
-    return instance;
-  });
+  /**
+   * Use a regular function (not arrow) so it supports `new` invocation.
+   * vi.fn wraps it to enable .mock tracking while preserving [[Construct]].
+   */
+  MockUtterance = vi.fn(function (this: Record<string, unknown>, text: string) {
+    this.text = text;
+    this.lang = '';
+    this.rate = 1;
+    this.pitch = 1;
+
+    Object.defineProperty(this, 'onstart', {
+      set(fn: () => void) { capturedHandlers.onstart = fn; },
+      configurable: true,
+    });
+    Object.defineProperty(this, 'onend', {
+      set(fn: () => void) { capturedHandlers.onend = fn; },
+      configurable: true,
+    });
+    Object.defineProperty(this, 'onerror', {
+      set(fn: () => void) { capturedHandlers.onerror = fn; },
+      configurable: true,
+    });
+  }) as unknown as Mock;
 
   Object.defineProperty(window, 'SpeechSynthesisUtterance', {
     value: MockUtterance,
@@ -102,7 +108,7 @@ describe('useTextToSpeech', () => {
         result.current.speak('test');
       });
 
-      const instance = MockUtterance.mock.results[0].value;
+      const instance = MockUtterance.mock.instances[0];
       expect(instance.lang).toBe('en-US');
     });
 
@@ -113,7 +119,7 @@ describe('useTextToSpeech', () => {
         result.current.speak('colour');
       });
 
-      const instance = MockUtterance.mock.results[0].value;
+      const instance = MockUtterance.mock.instances[0];
       expect(instance.lang).toBe('en-GB');
     });
 

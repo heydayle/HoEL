@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { SummaryLesson } from './SummaryLesson';
@@ -52,7 +53,7 @@ describe('SummaryLesson — processing state', () => {
   });
 
   it('renders the Reload button in processing state when onReload is provided', () => {
-    const onReload = jest.fn();
+    const onReload = vi.fn();
     render(
       <SummaryLesson
         summary={null}
@@ -114,7 +115,7 @@ describe('SummaryLesson — empty state (no processing)', () => {
   });
 
   it('shows Generate button in empty state when vocabCount >= 5', () => {
-    const onRegenerate = jest.fn();
+    const onRegenerate = vi.fn();
     render(
       <SummaryLesson
         summary={null}
@@ -141,7 +142,7 @@ describe('SummaryLesson — empty state (no processing)', () => {
         isLoading={false}
         isGenerating={true}
         t={t}
-        onRegenerate={jest.fn()}
+        onRegenerate={vi.fn()}
         vocabCount={5}
       />,
     );
@@ -177,7 +178,7 @@ describe('SummaryLesson — summary displayed', () => {
   });
 
   it('renders the Regenerate button when onRegenerate is provided and vocabCount >= 5', () => {
-    const onRegenerate = jest.fn();
+    const onRegenerate = vi.fn();
     render(
       <SummaryLesson
         summary={makeSummary()}
@@ -202,7 +203,7 @@ describe('SummaryLesson — summary displayed', () => {
         isLoading={false}
         isGenerating={true}
         t={t}
-        onRegenerate={jest.fn()}
+        onRegenerate={vi.fn()}
         vocabCount={5}
       />,
     );
@@ -260,7 +261,7 @@ describe('SummaryLesson — minimum vocabulary guard', () => {
         isLoading={false}
         isGenerating={false}
         t={t}
-        onRegenerate={jest.fn()}
+        onRegenerate={vi.fn()}
         vocabCount={2}
       />,
     );
@@ -279,7 +280,7 @@ describe('SummaryLesson — minimum vocabulary guard', () => {
         isLoading={false}
         isGenerating={false}
         t={t}
-        onRegenerate={jest.fn()}
+        onRegenerate={vi.fn()}
         vocabCount={10}
       />,
     );
@@ -295,7 +296,7 @@ describe('SummaryLesson — minimum vocabulary guard', () => {
         isLoading={false}
         isGenerating={false}
         t={t}
-        onRegenerate={jest.fn()}
+        onRegenerate={vi.fn()}
         vocabCount={3}
       />,
     );
@@ -310,7 +311,7 @@ describe('SummaryLesson — minimum vocabulary guard', () => {
         isLoading={false}
         isGenerating={false}
         t={t}
-        onRegenerate={jest.fn()}
+        onRegenerate={vi.fn()}
         vocabCount={5}
       />,
     );

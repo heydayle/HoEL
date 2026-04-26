@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { render, screen } from '@testing-library/react';
 import FeatureGrid from './FeatureGrid';
 import type { IFeatureCard } from '@/modules/home/core/models';
@@ -20,7 +21,7 @@ describe('FeatureGrid component', () => {
     },
   ];
 
-  const mockT = jest.fn((key: string) => `Translated_${key}`);
+  const mockT = vi.fn((key: string) => `Translated_${key}`);
 
   const defaultProps = {
     features: mockFeatures,

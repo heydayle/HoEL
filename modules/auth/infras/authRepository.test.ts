@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { TextEncoder } from 'util';
 import { webcrypto } from 'crypto';
 
@@ -22,24 +23,24 @@ if (!global.crypto.subtle) {
  * @returns A partially mocked SupabaseClient
  */
 const createMockClient = () => {
-  const mockLimit = jest.fn();
-  const mockEq = jest.fn().mockReturnValue({ limit: mockLimit });
-  const mockSelect = jest.fn().mockReturnValue({ eq: mockEq });
-  const mockSingle = jest.fn();
-  const mockInsertSelect = jest.fn().mockReturnValue({ single: mockSingle });
-  const mockInsert = jest.fn().mockReturnValue({ select: mockInsertSelect });
+  const mockLimit = vi.fn();
+  const mockEq = vi.fn().mockReturnValue({ limit: mockLimit });
+  const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
+  const mockSingle = vi.fn();
+  const mockInsertSelect = vi.fn().mockReturnValue({ single: mockSingle });
+  const mockInsert = vi.fn().mockReturnValue({ select: mockInsertSelect });
 
   return {
-    from: jest.fn().mockReturnValue({
+    from: vi.fn().mockReturnValue({
       select: mockSelect,
       insert: mockInsert,
     }),
     auth: {
-      signInWithOAuth: jest.fn(),
-      signInWithPassword: jest.fn(),
-      signUp: jest.fn(),
-      refreshSession: jest.fn(),
-      getSession: jest.fn(),
+      signInWithOAuth: vi.fn(),
+      signInWithPassword: vi.fn(),
+      signUp: vi.fn(),
+      refreshSession: vi.fn(),
+      getSession: vi.fn(),
     },
     /** Exposed for direct assertion access */
     _mocks: { mockSelect, mockEq, mockLimit, mockInsert, mockInsertSelect, mockSingle },

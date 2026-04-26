@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import LocaleSwitcher from './LocaleSwitcher';
@@ -6,15 +7,15 @@ import LocaleSwitcher from './LocaleSwitcher';
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
-    value: jest.fn().mockImplementation((query) => ({
+    value: vi.fn().mockImplementation((query) => ({
       matches: false,
       media: query,
       onchange: null,
-      addListener: jest.fn(), // Deprecated
-      removeListener: jest.fn(), // Deprecated
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
+      addListener: vi.fn(), // Deprecated
+      removeListener: vi.fn(), // Deprecated
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
     })),
   });
 
@@ -40,14 +41,14 @@ beforeAll(() => {
 
 describe('LocaleSwitcher atom', () => {
   it('should render the select component', () => {
-    const handleLocaleChange = jest.fn();
+    const handleLocaleChange = vi.fn();
     render(<LocaleSwitcher locale="en" onLocaleChange={handleLocaleChange} />);
     
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
   it('should call onLocaleChange when an option is selected', async () => {
-    const handleLocaleChange = jest.fn();
+    const handleLocaleChange = vi.fn();
     render(<LocaleSwitcher locale="en" onLocaleChange={handleLocaleChange} />);
     
     const trigger = screen.getByRole('combobox');

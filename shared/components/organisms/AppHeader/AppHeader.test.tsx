@@ -1,16 +1,17 @@
+import { vi } from 'vitest'
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { AppHeader } from './AppHeader';
 
 /** Mock LogoutButton so it renders a simple button */
-jest.mock('@/shared/components/atoms/Button/LogoutButton', () => {
-  return function MockLogoutButton() {
+vi.mock('@/shared/components/atoms/Button/LogoutButton', () => ({
+  default: function MockLogoutButton() {
     return <button>Log out</button>;
-  };
-});
+  },
+}));
 
 /** Mock LocaleSwitcher */
-jest.mock('@/shared/components/atoms', () => ({
+vi.mock('@/shared/components/atoms', () => ({
   LocaleSwitcher: ({ locale }: { locale: string }) => (
     <div data-testid="locale-switcher">{locale}</div>
   ),
@@ -31,14 +32,14 @@ jest.mock('@/shared/components/atoms', () => ({
 const defaultProps = {
   left: <h1>Page Title</h1>,
   locale: 'en' as const,
-  onLocaleChange: jest.fn(),
+  onLocaleChange: vi.fn(),
   resolvedTheme: 'dark' as const,
-  onToggleTheme: jest.fn(),
+  onToggleTheme: vi.fn(),
 };
 
 describe('AppHeader', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders the left slot content', () => {
@@ -78,7 +79,7 @@ describe('AppHeader', () => {
   });
 
   it('calls onToggleTheme when ThemeToggle is clicked', () => {
-    const onToggleTheme = jest.fn();
+    const onToggleTheme = vi.fn();
     render(<AppHeader {...defaultProps} onToggleTheme={onToggleTheme} />);
     fireEvent.click(screen.getByTestId('theme-toggle'));
     expect(onToggleTheme).toHaveBeenCalledTimes(1);

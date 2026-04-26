@@ -1,7 +1,8 @@
 import '@testing-library/jest-dom'
+import { vi } from 'vitest'
 
-// Mock fetch for tests
-global.fetch = jest.fn(() =>
+/** Mock fetch for tests — returns a minimal successful Response stub */
+global.fetch = vi.fn(() =>
   Promise.resolve({
     ok: true,
     status: 200,
@@ -18,24 +19,24 @@ global.fetch = jest.fn(() =>
       arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
     }),
   })
-) as jest.Mock
+) as unknown as typeof fetch
 
-// Mock uuid
-jest.mock('uuid', () => ({
-  v4: jest.fn(() => 'mocked-uuid-string'),
+/** Mock uuid to return a deterministic string */
+vi.mock('uuid', () => ({
+  v4: vi.fn(() => 'mocked-uuid-string'),
 }))
 
-// Mock matchMedia for window
+/** Mock matchMedia for window — prevents errors in components using media queries */
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   })),
 })

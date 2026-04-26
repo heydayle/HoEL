@@ -1,10 +1,11 @@
+import { vi } from 'vitest'
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ThemeToggle from './ThemeToggle';
 
 describe('ThemeToggle atom', () => {
   it('should display the dark mode icon when resolvedTheme is dark', () => {
-    const handleToggle = jest.fn();
+    const handleToggle = vi.fn();
     render(<ThemeToggle resolvedTheme="dark" onToggle={handleToggle} />);
     
     const button = screen.getByRole('button', { name: /switch to light mode/i });
@@ -15,7 +16,7 @@ describe('ThemeToggle atom', () => {
   });
 
   it('should display the light mode icon when resolvedTheme is light', () => {
-    const handleToggle = jest.fn();
+    const handleToggle = vi.fn();
     render(<ThemeToggle resolvedTheme="light" onToggle={handleToggle} />);
     
     const button = screen.getByRole('button', { name: /switch to dark mode/i });
@@ -26,7 +27,7 @@ describe('ThemeToggle atom', () => {
   });
 
   it('should call onToggle when clicked', async () => {
-    const handleToggle = jest.fn();
+    const handleToggle = vi.fn();
     render(<ThemeToggle resolvedTheme="dark" onToggle={handleToggle} />);
     
     const button = screen.getByRole('button');

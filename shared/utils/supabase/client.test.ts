@@ -1,15 +1,16 @@
+import { vi } from 'vitest'
 import { createBrowserClient } from '@supabase/ssr';
 import { createClient } from './client';
 
-jest.mock('@supabase/ssr', () => ({
-  createBrowserClient: jest.fn(),
+vi.mock('@supabase/ssr', () => ({
+  createBrowserClient: vi.fn(),
 }));
 
 describe('Supabase Client - createClient', () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
     process.env = {
       ...originalEnv,
       NEXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
@@ -19,7 +20,7 @@ describe('Supabase Client - createClient', () => {
 
   afterEach(() => {
     process.env = originalEnv;
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should call createBrowserClient with environment variables', () => {

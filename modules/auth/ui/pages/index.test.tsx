@@ -1,8 +1,9 @@
+import { vi } from 'vitest'
 import { render, screen } from '@testing-library/react';
 
 import AuthPage from './index';
 
-jest.mock('../components/AuthForm', () => ({
+vi.mock('../components/AuthForm', () => ({
   AuthForm: () => <div data-testid="auth-form-mock">Auth Form Mock</div>,
 }));
 

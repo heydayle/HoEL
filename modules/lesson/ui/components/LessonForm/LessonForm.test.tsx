@@ -1,17 +1,18 @@
+import { vi, type Mock } from 'vitest'
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { LessonForm } from './LessonForm';
 import type { ILesson } from '@/modules/lesson/core/models';
 
 /** Mock useGenerateVocab so tests don't call the real API */
-jest.mock('../../hooks/useGenerateVocab', () => ({
-  useGenerateVocab: jest.fn().mockReturnValue({
-    generate: jest.fn(),
+vi.mock('../../hooks/useGenerateVocab', () => ({
+  useGenerateVocab: vi.fn().mockReturnValue({
+    generate: vi.fn(),
     isLoading: false,
     newVocab: '',
-    setNewVocab: jest.fn(),
+    setNewVocab: vi.fn(),
     vocabularies: [],
-    setVocabularies: jest.fn(),
+    setVocabularies: vi.fn(),
   }),
 }));
 
@@ -26,8 +27,8 @@ const baseProps = {
   title: 'Test Title',
   description: 'Test Description',
   submitLabel: 'Submit',
-  onSubmitLesson: jest.fn(),
-  onCancel: jest.fn(),
+  onSubmitLesson: vi.fn(),
+  onCancel: vi.fn(),
 };
 
 /** Helper: build a full ILesson fixture */
@@ -45,16 +46,16 @@ const makeLesson = (overrides: Partial<ILesson> = {}): ILesson => ({
 });
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 
   // Reset mock to default empty state before each test
-  (useGenerateVocab as jest.Mock).mockReturnValue({
-    generate: jest.fn(),
+  (useGenerateVocab as Mock).mockReturnValue({
+    generate: vi.fn(),
     isLoading: false,
     newVocab: '',
-    setNewVocab: jest.fn(),
+    setNewVocab: vi.fn(),
     vocabularies: [],
-    setVocabularies: jest.fn(),
+    setVocabularies: vi.fn(),
   });
 });
 
@@ -76,14 +77,14 @@ describe('LessonForm — base fields', () => {
   });
 
   it('calls onCancel when cancel button is clicked', () => {
-    const onCancel = jest.fn();
+    const onCancel = vi.fn();
     render(<LessonForm {...baseProps} onCancel={onCancel} />);
     fireEvent.click(screen.getByText('cancel'));
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
   it('calls onSubmitLesson when form is submitted with required fields filled', () => {
-    const onSubmitLesson = jest.fn();
+    const onSubmitLesson = vi.fn();
     render(<LessonForm {...baseProps} onSubmitLesson={onSubmitLesson} />);
 
     fireEvent.change(screen.getByLabelText('form_topic'), { target: { value: 'Topic' } });
@@ -95,7 +96,7 @@ describe('LessonForm — base fields', () => {
   });
 
   it('appends T09:00:00.000Z to bare date strings on submit', () => {
-    const onSubmitLesson = jest.fn();
+    const onSubmitLesson = vi.fn();
     render(<LessonForm {...baseProps} onSubmitLesson={onSubmitLesson} />);
 
     fireEvent.change(screen.getByLabelText('form_topic'), { target: { value: 'T' } });
@@ -121,7 +122,7 @@ describe('LessonForm — editing mode', () => {
 
   it('preserves isPinned / isFavorite from initialLesson on submit', () => {
     const lesson = makeLesson({ isPinned: true, isFavorite: true });
-    const onSubmitLesson = jest.fn();
+    const onSubmitLesson = vi.fn();
     render(
       <LessonForm {...baseProps} initialLesson={lesson} onSubmitLesson={onSubmitLesson} />,
     );
@@ -152,12 +153,12 @@ describe('LessonForm — vocabulary section', () => {
   });
 
   it('shows vocab item fields when vocabularies exist', () => {
-    (useGenerateVocab as jest.Mock).mockReturnValue({
-      generate: jest.fn(),
+    (useGenerateVocab as Mock).mockReturnValue({
+      generate: vi.fn(),
       isLoading: false,
       newVocab: '',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [
         {
           id: 'v1',
@@ -207,12 +208,12 @@ describe('LessonForm — vocabulary section', () => {
   });
 
   it('removes a vocab item when its remove button is clicked', () => {
-    const setVocabularies = jest.fn();
-    (useGenerateVocab as jest.Mock).mockReturnValue({
-      generate: jest.fn(),
+    const setVocabularies = vi.fn();
+    (useGenerateVocab as Mock).mockReturnValue({
+      generate: vi.fn(),
       isLoading: false,
       newVocab: '',
-      setNewVocab: jest.fn(),
+      setNewVocab: vi.fn(),
       setVocabularies,
       vocabularies: [
         { id: 'v1', word: 'a', ipa: '', partOfSpeech: '', meaning: '', translation: '', pronunciation: '', example: '' },
@@ -234,13 +235,13 @@ describe('LessonForm — vocabulary section', () => {
   });
 
   it('calls generate when load vocab button is clicked with non-empty input', () => {
-    const generate = jest.fn();
-    (useGenerateVocab as jest.Mock).mockReturnValue({
+    const generate = vi.fn();
+    (useGenerateVocab as Mock).mockReturnValue({
       generate,
       isLoading: false,
       newVocab: 'happy',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [],
     });
 
@@ -250,13 +251,13 @@ describe('LessonForm — vocabulary section', () => {
   });
 
   it('does NOT call generate when load vocab is clicked with empty input', () => {
-    const generate = jest.fn();
-    (useGenerateVocab as jest.Mock).mockReturnValue({
+    const generate = vi.fn();
+    (useGenerateVocab as Mock).mockReturnValue({
       generate,
       isLoading: false,
       newVocab: '   ',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [],
     });
 
@@ -266,13 +267,13 @@ describe('LessonForm — vocabulary section', () => {
   });
 
   it('calls generate on Enter key press in the new-vocab input', () => {
-    const generate = jest.fn();
-    (useGenerateVocab as jest.Mock).mockReturnValue({
+    const generate = vi.fn();
+    (useGenerateVocab as Mock).mockReturnValue({
       generate,
       isLoading: false,
       newVocab: 'happy',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [],
     });
 
@@ -283,14 +284,14 @@ describe('LessonForm — vocabulary section', () => {
   });
 
   it('does NOT submit the outer form on Enter in new-vocab input', () => {
-    const onSubmitLesson = jest.fn();
-    const generate = jest.fn();
-    (useGenerateVocab as jest.Mock).mockReturnValue({
+    const onSubmitLesson = vi.fn();
+    const generate = vi.fn();
+    (useGenerateVocab as Mock).mockReturnValue({
       generate,
       isLoading: false,
       newVocab: 'happy',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [],
     });
 
@@ -301,12 +302,12 @@ describe('LessonForm — vocabulary section', () => {
   });
 
   it('always shows AI_btn text on button regardless of loading state', () => {
-    (useGenerateVocab as jest.Mock).mockReturnValue({
-      generate: jest.fn(),
+    (useGenerateVocab as Mock).mockReturnValue({
+      generate: vi.fn(),
       isLoading: true,
       newVocab: '',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [],
     });
 
@@ -318,12 +319,12 @@ describe('LessonForm — vocabulary section', () => {
   });
 
   it('does NOT disable the vocab input while isLoading is true', () => {
-    (useGenerateVocab as jest.Mock).mockReturnValue({
-      generate: jest.fn(),
+    (useGenerateVocab as Mock).mockReturnValue({
+      generate: vi.fn(),
       isLoading: true,
       newVocab: '',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [],
     });
 
@@ -333,12 +334,12 @@ describe('LessonForm — vocabulary section', () => {
   });
 
   it('renders skeleton cards for vocabulary items with _loading: true', () => {
-    (useGenerateVocab as jest.Mock).mockReturnValue({
-      generate: jest.fn(),
+    (useGenerateVocab as Mock).mockReturnValue({
+      generate: vi.fn(),
       isLoading: true,
       newVocab: '',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [
         {
           id: 'v-loading-1',
@@ -380,18 +381,18 @@ describe('LessonForm — vocabulary section', () => {
 
 describe('LessonForm — submit with vocabularies', () => {
   it('submits vocabulary data read from Textarea fields', () => {
-    (useGenerateVocab as jest.Mock).mockReturnValue({
-      generate: jest.fn(),
+    (useGenerateVocab as Mock).mockReturnValue({
+      generate: vi.fn(),
       isLoading: false,
       newVocab: '',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [
         { id: 'v1', word: '', ipa: '', partOfSpeech: '', meaning: '', translation: '', pronunciation: '', example: '' },
       ],
     });
 
-    const onSubmitLesson = jest.fn();
+    const onSubmitLesson = vi.fn();
     render(<LessonForm {...baseProps} onSubmitLesson={onSubmitLesson} />);
 
     fireEvent.change(screen.getByLabelText('form_topic'), { target: { value: 'T' } });
@@ -426,12 +427,12 @@ describe('LessonForm — submit with vocabularies', () => {
   });
 
   it('excludes _loading vocabulary items from the submitted data', () => {
-    (useGenerateVocab as jest.Mock).mockReturnValue({
-      generate: jest.fn(),
+    (useGenerateVocab as Mock).mockReturnValue({
+      generate: vi.fn(),
       isLoading: true,
       newVocab: '',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [
         {
           id: 'v-done',
@@ -458,7 +459,7 @@ describe('LessonForm — submit with vocabularies', () => {
       ],
     });
 
-    const onSubmitLesson = jest.fn();
+    const onSubmitLesson = vi.fn();
     render(<LessonForm {...baseProps} onSubmitLesson={onSubmitLesson} />);
 
     // Fill required form fields
@@ -483,12 +484,12 @@ describe('LessonForm — empty state', () => {
   });
 
   it('hides the no_vocabularies message when vocabularies exist', () => {
-    (useGenerateVocab as jest.Mock).mockReturnValue({
-      generate: jest.fn(),
+    (useGenerateVocab as Mock).mockReturnValue({
+      generate: vi.fn(),
       isLoading: false,
       newVocab: '',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [
         { id: 'v1', word: 'a', ipa: '', partOfSpeech: '', meaning: '', translation: '', pronunciation: '', example: '' },
       ],
@@ -501,12 +502,12 @@ describe('LessonForm — empty state', () => {
 
 describe('LessonForm — loading state UI indicators', () => {
   it('does not render a spinner icon on the load button even when isGenerating is true', () => {
-    (useGenerateVocab as jest.Mock).mockReturnValue({
-      generate: jest.fn(),
+    (useGenerateVocab as Mock).mockReturnValue({
+      generate: vi.fn(),
       isLoading: true,
       newVocab: '',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [],
     });
 
@@ -527,12 +528,12 @@ describe('LessonForm — loading state UI indicators', () => {
 
 describe('LessonForm — multiple skeletons', () => {
   it('renders multiple skeleton cards for multiple loading items', () => {
-    (useGenerateVocab as jest.Mock).mockReturnValue({
-      generate: jest.fn(),
+    (useGenerateVocab as Mock).mockReturnValue({
+      generate: vi.fn(),
       isLoading: true,
       newVocab: '',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [
         {
           id: 'v-load-1',
@@ -570,12 +571,12 @@ describe('LessonForm — multiple skeletons', () => {
   });
 
   it('correctly indexes non-loading items when loading items are interspersed', () => {
-    (useGenerateVocab as jest.Mock).mockReturnValue({
-      generate: jest.fn(),
+    (useGenerateVocab as Mock).mockReturnValue({
+      generate: vi.fn(),
       isLoading: true,
       newVocab: '',
-      setNewVocab: jest.fn(),
-      setVocabularies: jest.fn(),
+      setNewVocab: vi.fn(),
+      setVocabularies: vi.fn(),
       vocabularies: [
         { id: 'v1', word: 'first', ipa: '', partOfSpeech: '', meaning: '', translation: '', pronunciation: '', example: '' },
         {
@@ -613,12 +614,12 @@ describe('LessonForm — multiple skeletons', () => {
 
 describe('LessonForm — manual add during loading', () => {
   it('calls setVocabularies when add vocab button is clicked while loading', () => {
-    const setVocabularies = jest.fn();
-    (useGenerateVocab as jest.Mock).mockReturnValue({
-      generate: jest.fn(),
+    const setVocabularies = vi.fn();
+    (useGenerateVocab as Mock).mockReturnValue({
+      generate: vi.fn(),
       isLoading: true,
       newVocab: 'test',
-      setNewVocab: jest.fn(),
+      setNewVocab: vi.fn(),
       setVocabularies,
       vocabularies: [
         {

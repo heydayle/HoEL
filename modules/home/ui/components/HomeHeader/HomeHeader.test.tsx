@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HomeHeader } from './HomeHeader';
@@ -6,9 +7,9 @@ import type { Locale } from '@/shared/types';
 describe('HomeHeader component', () => {
   const defaultProps = {
     resolvedTheme: 'light' as const,
-    onThemeToggle: jest.fn(),
+    onThemeToggle: vi.fn(),
     locale: 'en' as Locale,
-    onLocaleChange: jest.fn(),
+    onLocaleChange: vi.fn(),
   };
 
   it('should render the application title', () => {
@@ -17,7 +18,7 @@ describe('HomeHeader component', () => {
   });
 
   it('should render ThemeToggle and pass down props and handlers', async () => {
-    const handleToggle = jest.fn();
+    const handleToggle = vi.fn();
     render(<HomeHeader {...defaultProps} onThemeToggle={handleToggle} />);
     
     // Light mode means switch to dark mode button exists
@@ -29,7 +30,7 @@ describe('HomeHeader component', () => {
   });
 
   it('should render LocaleSwitcher and pass down props and handlers', async () => {
-    const handleLocaleChange = jest.fn();
+    const handleLocaleChange = vi.fn();
     render(<HomeHeader {...defaultProps} onLocaleChange={handleLocaleChange} />);
     
     // Switch to VI button

@@ -1,26 +1,27 @@
+import { vi } from 'vitest'
 import { getLessonsFromLocalStorage, saveLessonsToLocalStorage, updateLessonInSupabase } from './index';
 import type { ILesson } from '@/modules/lesson/core/models';
 
 /**
  * Mock Supabase client used across all infras tests.
  */
-const mockEq = jest.fn();
-const mockSelect = jest.fn().mockReturnValue({ eq: mockEq });
-const mockUpdate = jest.fn();
-const mockInsert = jest.fn();
-const mockFrom = jest.fn(() => ({
+const mockEq = vi.fn();
+const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
+const mockUpdate = vi.fn();
+const mockInsert = vi.fn();
+const mockFrom = vi.fn(() => ({
   select: mockSelect,
   insert: mockInsert,
   update: mockUpdate,
 }));
 
-jest.mock('@/shared/utils/supabase/client', () => ({
+vi.mock('@/shared/utils/supabase/client', () => ({
   createClient: () => ({
     from: mockFrom,
   }),
 }));
 
-jest.mock('@/shared/hooks/getUserLocal', () => ({
+vi.mock('@/shared/hooks/getUserLocal', () => ({
   getUserLocal: () => ({
     user: null,
     userId: 'test-user-id',
@@ -30,7 +31,7 @@ jest.mock('@/shared/hooks/getUserLocal', () => ({
 
 describe('Lesson Infras – Supabase operations', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   /** Shared mock lesson fixture */
@@ -113,8 +114,8 @@ describe('Lesson Infras – Supabase operations', () => {
   describe('updateLessonInSupabase', () => {
     it('returns success when update succeeds', async () => {
       mockUpdate.mockReturnValueOnce({
-        eq: jest.fn().mockReturnValueOnce({
-          eq: jest.fn().mockResolvedValueOnce({ data: null, error: null }),
+        eq: vi.fn().mockReturnValueOnce({
+          eq: vi.fn().mockResolvedValueOnce({ data: null, error: null }),
         }),
       });
 
@@ -126,8 +127,8 @@ describe('Lesson Infras – Supabase operations', () => {
 
     it('returns error result when update fails', async () => {
       mockUpdate.mockReturnValueOnce({
-        eq: jest.fn().mockReturnValueOnce({
-          eq: jest.fn().mockResolvedValueOnce({
+        eq: vi.fn().mockReturnValueOnce({
+          eq: vi.fn().mockResolvedValueOnce({
             data: null,
             error: { message: 'Not found' },
           }),

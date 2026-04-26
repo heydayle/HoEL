@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import type { ILesson, ILessonStats } from '@/modules/lesson/core/models';
@@ -6,10 +7,10 @@ import type { ILessonFilterInput } from '@/modules/lesson/core/usecases';
 import { LessonOverview } from './LessonOverview';
 
 /** Mock sonner toast so we can assert toast.success calls */
-jest.mock('sonner', () => ({
+vi.mock('sonner', () => ({
   toast: {
-    success: jest.fn(),
-    error: jest.fn(),
+    success: vi.fn(),
+    error: vi.fn(),
   },
 }));
 
@@ -90,17 +91,17 @@ const defaultProps = {
   lessons: MOCK_LESSONS,
   filters: MOCK_FILTERS,
   t,
-  onSearchTermChange: jest.fn(),
-  onVocabSearchTermChange: jest.fn(),
-  onPinnedFilterChange: jest.fn(),
-  onFavoriteFilterChange: jest.fn(),
-  onPriorityFilterChange: jest.fn(),
-  onStartDateChange: jest.fn(),
-  onEndDateChange: jest.fn(),
-  onSortChange: jest.fn(),
-  onResetFilters: jest.fn(),
-  onSelectLesson: jest.fn(),
-  onEditLesson: jest.fn(),
+  onSearchTermChange: vi.fn(),
+  onVocabSearchTermChange: vi.fn(),
+  onPinnedFilterChange: vi.fn(),
+  onFavoriteFilterChange: vi.fn(),
+  onPriorityFilterChange: vi.fn(),
+  onStartDateChange: vi.fn(),
+  onEndDateChange: vi.fn(),
+  onSortChange: vi.fn(),
+  onResetFilters: vi.fn(),
+  onSelectLesson: vi.fn(),
+  onEditLesson: vi.fn(),
 };
 
 describe('LessonOverview', () => {
@@ -113,7 +114,7 @@ describe('LessonOverview', () => {
   });
 
   it('should call search handler when user types in search box', () => {
-    const onSearchTermChange = jest.fn();
+    const onSearchTermChange = vi.fn();
 
     render(<LessonOverview {...defaultProps} onSearchTermChange={onSearchTermChange} />);
 
@@ -125,13 +126,13 @@ describe('LessonOverview', () => {
   });
 
   it('should call corresponding handlers when filters are changed', () => {
-    const onPriorityFilterChange = jest.fn();
-    const onPinnedFilterChange = jest.fn();
-    const onFavoriteFilterChange = jest.fn();
-    const onStartDateChange = jest.fn();
-    const onEndDateChange = jest.fn();
-    const onSortChange = jest.fn();
-    const onResetFilters = jest.fn();
+    const onPriorityFilterChange = vi.fn();
+    const onPinnedFilterChange = vi.fn();
+    const onFavoriteFilterChange = vi.fn();
+    const onStartDateChange = vi.fn();
+    const onEndDateChange = vi.fn();
+    const onSortChange = vi.fn();
+    const onResetFilters = vi.fn();
 
     render(
       <LessonOverview
@@ -188,10 +189,10 @@ describe('LessonOverview', () => {
     beforeEach(() => {
       Object.assign(navigator, {
         clipboard: {
-          writeText: jest.fn().mockResolvedValue(undefined),
+          writeText: vi.fn().mockResolvedValue(undefined),
         },
       });
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it('renders the share button for each lesson card', () => {
@@ -224,7 +225,7 @@ describe('LessonOverview', () => {
     });
 
     it('does not trigger onSelectLesson when share button is clicked (stopPropagation)', async () => {
-      const onSelectLesson = jest.fn();
+      const onSelectLesson = vi.fn();
       render(<LessonOverview {...defaultProps} onSelectLesson={onSelectLesson} />);
 
       const shareBtn = screen.getByLabelText('share_link_label');
@@ -236,7 +237,7 @@ describe('LessonOverview', () => {
     });
 
     it('resets the copied icon back after 2000 ms', async () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers({ shouldAdvanceTime: true });
 
       render(<LessonOverview {...defaultProps} />);
 
@@ -252,13 +253,13 @@ describe('LessonOverview', () => {
 
       // Advance timers past the 2 s reset
       act(() => {
-        jest.advanceTimersByTime(2100);
+        vi.advanceTimersByTime(2100);
       });
 
       // Button still rendered (icon reverted to Link2 — no copied state)
       expect(screen.getByLabelText('share_link_label')).toBeInTheDocument();
 
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
   });
 });
