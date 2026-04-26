@@ -8,7 +8,6 @@ import type { ILesson } from '@/modules/lesson/core/models';
 import { SummaryLesson } from '@/modules/lesson/ui/components/SummaryLesson';
 import { useSummaryLesson } from '@/modules/lesson/ui/hooks/useSummaryLesson';
 import { PriorityBadge, resolvePriorityVariant } from '@/shared/components';
-import { useTextToSpeech } from '@/shared/hooks';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/Styled';
+import { useTextToSpeech } from '@/shared/hooks';
 
 /**
  * Props for LessonDetailModal component.
@@ -223,7 +223,7 @@ export function LessonDetailModal({
             </div>
 
             {/* Meta Strip */}
-            <div className="flex flex-wrap items-center gap-[0.3rem] pb-3 border-b-2 border-brutal-black">
+            <div className="flex flex-wrap items-center gap-[0.3rem] pb-2">
               <PriorityBadge
                 label={lesson.priority}
                 variant={resolvePriorityVariant(lesson.priority)}

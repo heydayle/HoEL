@@ -32,7 +32,7 @@ export const getLessonsFromLocalStorage = async (): Promise<ILesson[]> => {
 
   if (error) {
     console.error('Error fetching lessons:', error);
-    return [];
+    throw new Error(`Failed to load lessons: ${error.message}`);
   }
 
   /** Map Supabase rows into the app's ILesson shape */
@@ -195,9 +195,9 @@ export const fetchGeneratedVocab = async (word: string): Promise<IDifyVocabRespo
 };
 
 /**
- * Sends a request to the Dify AI workflow API to generate vocabulary data.
+ * Sends a request to the Dify AI workflow API to generate a lesson summary.
  *
- * @param word - The English word to look up
+ * @param wordList - Array of vocabulary words used to build the summary
  * @returns Raw response payload from the Dify API
  */
 export const fetchGeneratedSummaryLesson = async (wordList: string[]): Promise<IDifyVocabResponse> => {
@@ -208,7 +208,7 @@ export const fetchGeneratedSummaryLesson = async (wordList: string[]): Promise<I
   });
 
   if (!response.ok) {
-    throw new Error('Failed to generate vocabulary from server');
+    throw new Error('Failed to generate summary from server');
   }
 
   return response.json();

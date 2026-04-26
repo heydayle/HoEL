@@ -26,11 +26,16 @@ export const getUserLocal = (): UserLocal => {
     return { user: null, userId: null };
   }
 
-  const stored = localStorage.getItem(AUTH_TOKEN_KEY);
-  const user = stored ? JSON.parse(stored) : null;
+  try {
+    const stored = localStorage.getItem(AUTH_TOKEN_KEY);
+    const user = stored ? JSON.parse(stored) : null;
 
-  return {
-    user,
-    userId: user?.id ?? null,
-  };
+    return {
+      user,
+      userId: user?.id ?? null,
+    };
+  } catch {
+    console.error('getUserLocal: failed to parse stored user data');
+    return { user: null, userId: null };
+  }
 };

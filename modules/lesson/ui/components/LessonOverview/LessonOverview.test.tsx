@@ -22,7 +22,6 @@ import { toast } from 'sonner';
 const MOCK_STATS: ILessonStats = {
   totalLessons: 1,
   totalVocabularies: 2,
-  totalQuestions: 1,
 };
 
 /**

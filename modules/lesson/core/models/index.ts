@@ -112,8 +112,6 @@ export interface ILessonStats {
   totalLessons: number;
   /** Total vocab items across lessons */
   totalVocabularies: number;
-  /** Total questions across lessons */
-  totalQuestions: number;
 }
 
 export interface ISummaryLesson {

@@ -101,7 +101,7 @@ export const useVocabulary = (
 
     try {
       const result = await executeGenerateVocab(word.trim());
-      const parsed = parseTextResult(result?.data?.outputs?.text_result);
+      const parsed = parseTextResult(result?.data?.outputs?.text_result) as Record<string, string> | null;
 
       if (parsed) {
         setDraftVocab({

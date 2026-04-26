@@ -85,6 +85,11 @@ export const useSummaryLesson = (
       wordList: string[],
       existingSummaryId?: string,
     ): Promise<ISummaryLesson | null> => {
+      /** Guard: prevent concurrent duplicate generation calls */
+      if (isGenerating) {
+        return null;
+      }
+
       setIsGenerating(true);
       setError(null);
 
@@ -110,7 +115,7 @@ export const useSummaryLesson = (
         setIsGenerating(false);
       }
     },
-    [t],
+    [t, isGenerating],
   );
 
   return {

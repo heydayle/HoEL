@@ -42,7 +42,7 @@ export const getSummaryByLessonId = async (
  */
 export const createSummaryRecord = async (
   payload: ISummaryLessonCreatePayload,
-): Promise<ISummaryLesson | null> => {
+): Promise<ISummaryLesson> => {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -53,7 +53,7 @@ export const createSummaryRecord = async (
 
   if (error) {
     console.error('Error creating summary:', error);
-    return null;
+    throw new Error(`Failed to create summary record: ${error.message}`);
   }
 
   return data as ISummaryLesson;
@@ -69,7 +69,7 @@ export const createSummaryRecord = async (
 export const updateSummaryRecord = async (
   id: string,
   payload: ISummaryLessonUpdatePayload,
-): Promise<ISummaryLesson | null> => {
+): Promise<ISummaryLesson> => {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -81,7 +81,7 @@ export const updateSummaryRecord = async (
 
   if (error) {
     console.error('Error updating summary:', error);
-    return null;
+    throw new Error(`Failed to update summary record: ${error.message}`);
   }
 
   return data as ISummaryLesson;

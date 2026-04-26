@@ -69,9 +69,9 @@ export const generateAndSaveSummary = async (
 
   /** Step 1: Call AI to generate summary content */
   const aiResult = await executeGenerateSummaryLesson(wordList);
-  const parsed: IParsedSummary | null = parseTextResult(
+  const parsed = parseTextResult(
     aiResult?.data?.outputs?.text_result,
-  );
+  ) as IParsedSummary | null;
 
   if (!parsed) {
     throw new Error('Failed to parse AI-generated summary content.');
@@ -91,20 +91,10 @@ export const generateAndSaveSummary = async (
   if (existingSummaryId) {
     /** Case 2: Update existing summary */
     const updated = await updateSummaryRecord(existingSummaryId, summaryPayload);
-
-    if (!updated) {
-      throw new Error('Failed to update existing summary record.');
-    }
-
     return updated;
   }
 
   /** Case 1: Create new summary */
   const created = await createSummaryRecord(summaryPayload);
-
-  if (!created) {
-    throw new Error('Failed to create new summary record.');
-  }
-
   return created;
 };

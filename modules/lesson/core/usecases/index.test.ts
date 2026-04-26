@@ -67,7 +67,6 @@ describe('lesson usecases', () => {
     expect(getLessonStats(lessons)).toEqual({
       totalLessons: 2,
       totalVocabularies: 3,
-      totalQuestions: 0,
     });
   });
 

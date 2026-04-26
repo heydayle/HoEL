@@ -77,15 +77,15 @@ describe('Lesson Infras – Supabase operations', () => {
       expect(result[0].vocabularies[0].word).toBe('hello');
     });
 
-    it('returns empty array on Supabase error', async () => {
+    it('throws an error on Supabase failure', async () => {
       mockEq.mockResolvedValueOnce({
         data: null,
         error: { message: 'Network error' },
       });
 
-      const result = await getLessonsFromLocalStorage();
-
-      expect(result).toEqual([]);
+      await expect(getLessonsFromLocalStorage()).rejects.toThrow(
+        'Failed to load lessons: Network error',
+      );
     });
   });
 

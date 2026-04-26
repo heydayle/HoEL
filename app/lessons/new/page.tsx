@@ -3,20 +3,52 @@
 import { useRouter } from 'next/navigation';
 
 import type { ILesson } from '@/modules/lesson/core/models';
+import enMessages from '@/modules/lesson/messages/en.json';
+import viMessages from '@/modules/lesson/messages/vi.json';
 import { LessonForm } from '@/modules/lesson/ui/components/LessonForm';
-import { useLessonPage } from '@/modules/lesson/ui/hooks';
+import { useLessonMutations } from '@/modules/lesson/ui/hooks';
 import { AppHeader, FullPageLoading } from '@/shared/components';
+import { useLocale, useTheme } from '@/shared/hooks';
+import type { Locale, TranslationMessages } from '@/shared/types';
+
+/** Locale messages map for the lesson module */
+const MESSAGES: Record<Locale, TranslationMessages> = {
+  en: enMessages as TranslationMessages,
+  vi: viMessages as TranslationMessages,
+};
 
 /**
  * Page route for creating a new lesson at /lessons/new.
  * Reuses the existing lesson creation form and navigates back on close.
  * Shows a full-page loading overlay while the lesson is being persisted.
+ *
+ * Uses `useLessonMutations` instead of `useLessonPage` to avoid
+ * fetching the entire lessons list when only the `addLesson` mutation
+ * is needed.
+ *
  * @returns Create lesson page UI
  */
 export default function NewLessonPage(): React.JSX.Element {
   const router = useRouter();
-  const { resolvedTheme, locale, setLocale, t, toggleTheme, addLesson, isAdding } = useLessonPage();
+  const { mode, resolvedTheme, setThemeMode } = useTheme();
+  const { locale, setLocale, t } = useLocale(MESSAGES);
+  const { addLesson, isAdding } = useLessonMutations(t);
 
+  /**
+   * Toggles light/dark mode with system-mode awareness.
+   */
+  const toggleTheme = (): void => {
+    if (mode === 'system') {
+      setThemeMode(resolvedTheme === 'dark' ? 'light' : 'dark');
+      return;
+    }
+    setThemeMode(mode === 'dark' ? 'light' : 'dark');
+  };
+
+  /**
+   * Handles lesson creation and navigates to the edit page on success.
+   * @param lesson - The lesson data to persist (without `id`)
+   */
   const handleAddLesson = async (lesson: Omit<ILesson, 'id'>) => {
     const lessonId = await addLesson(lesson);
 
@@ -63,3 +95,4 @@ export default function NewLessonPage(): React.JSX.Element {
     </main>
   );
 }
+

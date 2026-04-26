@@ -212,12 +212,10 @@ export const getFilteredLessons = (lessons: ILesson[], filters: ILessonFilterInp
 export const getLessonStats = (lessons: ILesson[]): ILessonStats => {
   const totalLessons = lessons.length;
   const totalVocabularies = lessons.reduce((sum, lesson) => sum + (lesson?.vocabularies && lesson?.vocabularies.length || 0), 0);
-  const totalQuestions = 0; // Questions feature currently disabled
 
   return {
     totalLessons,
     totalVocabularies,
-    totalQuestions,
   };
 };
 
@@ -249,9 +247,10 @@ export const executeGenerateVocab = async (word: string): Promise<IDifyVocabResp
 
 
 /**
- * UseCase: Xử lý logic nghiệp vụ khi người dùng yêu cầu tạo từ vựng
- * @param {string} word - Từ vựng nhập vào từ UI
- * @returns {Promise<IDifyVocabResponse>} Raw response từ Dify API
+ * UseCase: Handles business logic for lesson summary generation via AI.
+ *
+ * @param wordList - Array of vocabulary words used to generate the summary
+ * @returns Raw response payload from the Dify API
  */
 export const executeGenerateSummaryLesson = async (wordList: string[]): Promise<IDifyVocabResponse> => {
   // 1. Validate đầu vào (Business logic)

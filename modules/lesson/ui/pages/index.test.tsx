@@ -44,7 +44,6 @@ vi.mock('@/modules/lesson/ui/hooks', () => ({
     stats: {
       totalLessons: 1,
       totalVocabularies: 1,
-      totalQuestions: 1,
     },
     loading: false,
     updateSearchTerm: vi.fn(),

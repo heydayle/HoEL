@@ -140,12 +140,19 @@ export const deleteVocab = async (id: string): Promise<boolean> => {
 
 /**
  * Replaces all vocabulary records for a lesson with a new set.
- * Deletes existing records first, then bulk-inserts the replacements.
- * Used during lesson update to synchronise the vocabulary list.
+ *
+ * Uses a **safe insert-first, delete-after** strategy to prevent data loss:
+ * 1. Snapshot existing vocabulary IDs.
+ * 2. Insert the new vocabulary records (old data remains intact during this step).
+ * 3. Delete the old records by their specific IDs only after the insert succeeds.
+ *
+ * If the insert fails, existing vocabularies are preserved and returned.
+ * If the delete fails after insert, duplicates may exist temporarily but
+ * no data is lost — a subsequent sync will clean them up.
  *
  * @param lessonId - UUID of the parent lesson
  * @param payloads - New vocabulary records to insert
- * @returns The inserted rows on success, or an empty array on failure
+ * @returns The inserted rows on success, or the existing rows if the insert fails
  */
 export const syncVocabularies = async (
   lessonId: string,
@@ -153,21 +160,36 @@ export const syncVocabularies = async (
 ): Promise<IVocabularyRow[]> => {
   const supabase = createClient();
 
-  /** Remove all existing vocabularies for this lesson */
-  const { error: deleteError } = await supabase
-    .from(TABLE_NAME)
-    .delete()
-    .eq('lesson_id', lessonId);
+  /** Step 1: Snapshot existing vocabulary IDs for later cleanup */
+  const existingVocabs = await getVocabsByLesson(lessonId);
+  const existingIds = existingVocabs.map((v) => v.id);
 
-  if (deleteError) {
-    console.error('Error deleting old vocabularies:', deleteError);
-    return [];
+  /** Step 2: Insert new vocabularies first — data remains safe if this fails */
+  let insertedRows: IVocabularyRow[] = [];
+
+  if (payloads.length > 0) {
+    insertedRows = await bulkAddVocabs(payloads);
+
+    if (insertedRows.length === 0) {
+      /** Insert failed — return existing vocabs unchanged (no data loss) */
+      console.error('syncVocabularies: bulk insert failed, keeping existing data');
+      return existingVocabs;
+    }
   }
 
-  /** Insert the new set (if any) */
-  if (payloads.length === 0) {
-    return [];
+  /** Step 3: Delete old vocabs by specific IDs (not by lesson_id) */
+  if (existingIds.length > 0) {
+    const { error: deleteError } = await supabase
+      .from(TABLE_NAME)
+      .delete()
+      .in('id', existingIds);
+
+    if (deleteError) {
+      console.error('syncVocabularies: failed to delete old records:', deleteError);
+      /** Old vocabs still exist alongside new ones — not ideal but no data loss.
+       *  A subsequent sync will clean up the duplicates. */
+    }
   }
 
-  return bulkAddVocabs(payloads);
+  return insertedRows;
 };

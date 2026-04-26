@@ -8,7 +8,7 @@ import {
   getFilteredLessons,
   getLessonStats
 } from '@/modules/lesson/core/usecases';
-import { generateAndSaveSummary } from '@/modules/lesson/core/usecases/summaryUseCase';
+
 import { deleteLessonFromSupabase, getLessonsFromLocalStorage, saveLessonsToLocalStorage, updateLessonInSupabase } from '@/modules/lesson/infras';
 import { bulkAddVocabs, syncVocabularies } from '@/modules/lesson/infras/vocabularyApi';
 import enMessages from '@/modules/lesson/messages/en.json';
@@ -54,26 +54,45 @@ export const useLessonPage = () => {
   const [loading, setLoading] = useState(false);
 
   /**
-   * Reads lessons from local storage and falls back to sample data.
+   * Reads lessons from Supabase on first render.
    */
   const [lessons, setLessons] = useState<ILesson[]>([]);
 
-  const loadLessons = async () => {
-    const storedLessons = await getLessonsFromLocalStorage();
-    return storedLessons.length > 0 ? storedLessons : [];
-  };
+  /** Error state exposed for potential error UI integration */
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
+
     const fetchLessons = async () => {
-      setLoading(true);
-      const lessons = await loadLessons();
       if (mounted) {
-        setLessons(lessons);
+        setLoading(true);
+        setFetchError(null);
       }
-      setLoading(false);
+
+      try {
+        const storedLessons = await getLessonsFromLocalStorage();
+
+        if (mounted) {
+          setLessons(storedLessons);
+        }
+      } catch (err: unknown) {
+        const message = (err as Error).message || 'Failed to load lessons';
+        console.error('fetchLessons error:', message);
+
+        if (mounted) {
+          setFetchError(message);
+          toast.error(message);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
     };
+
     void fetchLessons();
+
     return () => {
       mounted = false;
     };
@@ -125,20 +144,6 @@ export const useLessonPage = () => {
           console.error('Failed to save vocabularies for lesson:', uuid);
           toast.error(t('vocab_save_error_toast') || 'Failed to save vocabularies');
         }
-
-        /**
-         * Fire-and-forget: generate summary in the background.
-         * The lesson is already saved — we don't block the user
-         * waiting for the AI summary to complete.
-         * Only trigger when there are at least 5 vocabulary items.
-         */
-        const wordList = vocabPayloads.map((v) => v.word);
-
-        if (wordList.length >= 5) {
-          generateAndSaveSummary(uuid, wordList).catch((summaryErr: unknown) => {
-            console.error('Background summary generation failed:', (summaryErr as Error).message);
-          });
-        }
       }
 
       const updatedLessons = [newLesson, ...lessons];
@@ -158,14 +163,13 @@ export const useLessonPage = () => {
 
   /**
    * Updates an existing lesson and persists both metadata and vocabulary
-   * changes to Supabase. When ≥5 vocabularies are saved, summary
-   * generation is triggered in the background (fire-and-forget).
+   * changes to Supabase. Summary generation is handled separately by
+   * the consuming page via `useSummaryLesson`.
    *
    * @param lessonId - ID of lesson to update
    * @param lesson - Updated lesson data
-   * @param existingSummaryId - Optional existing summary ID for regeneration
    */
-  const updateLesson = async (lessonId: string, lesson: Omit<ILesson, 'id'>, existingSummaryId?: string): Promise<void> => {
+  const updateLesson = async (lessonId: string, lesson: Omit<ILesson, 'id'>): Promise<void> => {
     setIsUpdating(true);
     try {
       /** Persist lesson metadata */
@@ -192,23 +196,6 @@ export const useLessonPage = () => {
           }));
 
         await syncVocabularies(lessonId, vocabPayloads);
-
-        /**
-         * Fire-and-forget: generate / regenerate summary in the background.
-         * Only trigger when there are at least 5 vocabulary items.
-         */
-        const wordList = vocabPayloads.map((v) => v.word);
-
-        if (wordList.length >= 5) {
-          generateAndSaveSummary(lessonId, wordList, existingSummaryId).catch(
-            (summaryErr: unknown) => {
-              console.error(
-                'Background summary generation failed:',
-                (summaryErr as Error).message,
-              );
-            },
-          );
-        }
       } else {
         /** No vocabularies submitted — clear existing ones */
         await syncVocabularies(lessonId, []);
@@ -374,6 +361,7 @@ export const useLessonPage = () => {
 
   return {
     loading,
+    fetchError,
     resolvedTheme,
     locale,
     setLocale,
