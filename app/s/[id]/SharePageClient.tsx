@@ -1,7 +1,8 @@
 'use client';
 
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Gamepad2 } from 'lucide-react';
 import { use, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 import enMessages from '@/modules/lesson/messages/en.json';
 import viMessages from '@/modules/lesson/messages/vi.json';
@@ -35,6 +36,7 @@ export default function SharePageClient({
   params: paramsPromise,
 }: ISharePageClientProps): React.JSX.Element {
   const params = use(paramsPromise);
+  const router = useRouter();
   const { locale, setLocale, t } = useLocale(MESSAGES);
   const { resolvedTheme, setThemeMode } = useTheme();
   const { lesson, summary, isLoading, error, fetchPublicLesson } = usePublicLessonDetail(params.id);
@@ -50,6 +52,14 @@ export default function SharePageClient({
   /** Locale & theme controls — shared across all states */
   const controls = (
     <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+      <button
+        id="play-game-btn"
+        onClick={() => router.push(`/s/${params.id}/play`)}
+        className="flex items-center gap-1.5 rounded-md border border-brutal-black/20 bg-lemon px-3 py-1.5 text-xs font-black text-brutal-black shadow-sm transition-all hover:shadow-md active:translate-y-px"
+      >
+        <Gamepad2 size={14} />
+        {t('practice_btn')}
+      </button>
       <Button
         className="h-8 bg-primary text-primary-foreground hover:bg-primary/90"
         size="sm"

@@ -46,6 +46,15 @@ export default function LessonPage(): React.JSX.Element {
     router.push(`/lessons/${lesson.id}`);
   };
 
+  /**
+   * Navigates to the free-practice game for the given lesson.
+   *
+   * @param lesson - The lesson to start practicing
+   */
+  const onPracticeLesson = (lesson: ILesson) => {
+    router.push(`/lessons/${lesson.id}/practice`);
+  };
+
   return (
     <main className="min-h-screen py-8 px-4 bg-cream text-foreground md:py-10 md:px-8">
       <div className="w-full max-w-[60rem] !mx-auto flex flex-col gap-4">
@@ -78,6 +87,7 @@ export default function LessonPage(): React.JSX.Element {
           onResetFilters={resetFilters}
           onSelectLesson={setSelectedLesson}
           onEditLesson={onEditLesson}
+          onPracticeLesson={onPracticeLesson}
         />
 
         <LessonDetailModal

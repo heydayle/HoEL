@@ -19,6 +19,7 @@ test_failures*
 # next.js
 /.next/
 /out/
+/.plans/
 
 # production
 /build

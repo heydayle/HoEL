@@ -1,7 +1,9 @@
 import type { ILesson, ILessonStats, LessonPriority } from '@/modules/lesson/core/models';
 import type { ILessonFilterInput, LessonSortOption } from '@/modules/lesson/core/usecases';
 import { motion } from 'framer-motion';
-import { Check, Pencil, Share2 } from 'lucide-react';
+import { Check, Gamepad2, Pencil, Share2 } from 'lucide-react';
+
+import { GAME_CONFIG } from '@/modules/free-practice/core/models';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -47,6 +49,8 @@ interface ILessonOverviewProps {
   onSelectLesson: (lesson: ILesson) => void;
   /** Edit lesson handler */
   onEditLesson: (lesson: ILesson) => void;
+  /** Practice lesson handler — navigates to the free-practice game */
+  onPracticeLesson: (lesson: ILesson) => void;
 }
 
 /** Spring physics config */
@@ -77,6 +81,7 @@ export function LessonOverview({
   onResetFilters,
   onSelectLesson,
   onEditLesson,
+  onPracticeLesson,
 }: ILessonOverviewProps): React.JSX.Element {
   /** Tracks which lesson ID (if any) just had its share link copied */
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -145,6 +150,19 @@ export function LessonOverview({
                       variant={resolvePriorityVariant(lesson.priority)}
                     />
                     <div className="flex items-center gap-2">
+                      {(lesson.vocabularies?.length ?? 0) >= GAME_CONFIG.MIN_VOCAB_COUNT && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onPracticeLesson(lesson);
+                          }}
+                          title={t('practice_btn')}
+                          aria-label={t('practice_btn')}
+                          className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-brutal-black bg-lemon text-brutal-black cursor-pointer shadow-[var(--shadow-brutal-sm)] transition-all duration-200 shrink-0 hover:-translate-y-0.5 hover:shadow-[var(--shadow-brutal-md)] active:translate-y-px active:shadow-none"
+                        >
+                          <Gamepad2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
