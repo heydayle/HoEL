@@ -95,7 +95,7 @@ export const useFreePractice = (
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [quizQueue, setQuizQueue] = useState<IQuizItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(GAME_CONFIG.TIME_PER_QUESTION);
+  const [timeLeft, setTimeLeft] = useState<number>(GAME_CONFIG.TIME_PER_QUESTION);
   const [totalAnswered, setTotalAnswered] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [userInput, setUserInput] = useState('');
@@ -140,7 +140,7 @@ export const useFreePractice = (
   /** --- Timer logic --- */
 
   /** Tracks current timeLeft for the interval callback (avoids stale closures). */
-  const timeLeftRef = useRef(GAME_CONFIG.TIME_PER_QUESTION);
+  const timeLeftRef = useRef<number>(GAME_CONFIG.TIME_PER_QUESTION);
 
   /**
    * Starts (or restarts) the 1-second countdown interval.

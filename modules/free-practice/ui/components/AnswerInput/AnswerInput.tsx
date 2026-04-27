@@ -38,7 +38,7 @@ const SHAKE_ANIMATION = {
 const SHAKE_TRANSITION = {
   type: 'tween' as const,
   duration: 0.4,
-  ease: 'easeInOut',
+  ease: 'easeInOut' as const,
 };
 
 /**
