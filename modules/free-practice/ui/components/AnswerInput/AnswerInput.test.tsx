@@ -85,16 +85,23 @@ describe('AnswerInput', () => {
     expect(screen.getByDisplayValue('test')).toBeInTheDocument();
   });
 
-  it('auto-focuses the input on mount when status is idle', () => {
+  it('does NOT auto-focus on initial mount (iOS keyboard safety)', () => {
     render(<AnswerInput {...createProps()} />);
 
-    expect(screen.getByPlaceholderText('input_placeholder')).toHaveFocus();
+    expect(screen.getByPlaceholderText('input_placeholder')).not.toHaveFocus();
   });
 
-  it('auto-focuses the input when status is wrong', () => {
-    render(<AnswerInput {...createProps({ answerStatus: 'wrong' })} />);
+  it('auto-focuses after user interaction when status changes', () => {
+    const { rerender } = render(<AnswerInput {...createProps()} />);
+    const input = screen.getByPlaceholderText('input_placeholder');
 
-    expect(screen.getByPlaceholderText('input_placeholder')).toHaveFocus();
+    /** Simulate the user tapping the input (sets hasInteractedRef) */
+    fireEvent.focus(input);
+
+    /** Re-render with a new status to trigger the useEffect */
+    rerender(<AnswerInput {...createProps({ answerStatus: 'wrong' })} />);
+
+    expect(input).toHaveFocus();
   });
 
   it('does not focus the input when status is correct', () => {

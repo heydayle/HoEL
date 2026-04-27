@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { Toaster } from "@/shared/components/Styled";
@@ -32,6 +32,22 @@ export const metadata: Metadata = {
     "teacher",
     "LingoNote",
   ],
+};
+
+/**
+ * Viewport config.
+ * - `viewport-fit=cover` enables `env(safe-area-inset-*)` on iOS.
+ * - `interactive-widget=resizes-content` tells iOS Safari to **resize**
+ *   the layout viewport when the keyboard opens, instead of scrolling
+ *   the page upward (which pushes content off-screen).
+ * - `maximumScale: 1` prevents Safari from zooming into focused inputs.
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
 };
 
 /**

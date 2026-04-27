@@ -87,10 +87,10 @@ export default function PromptCard({
     <div
       id="prompt-card"
       className={cn(
-        'relative flex flex-col items-center justify-center gap-6',
-        'rounded-bento border-2 border-brutal-black bg-surface p-8',
+        'relative flex flex-col items-center justify-center gap-3 md:gap-6',
+        'rounded-bento border-2 border-brutal-black bg-surface p-4 md:p-8',
         'shadow-brutal-md',
-        'min-h-[200px] text-center',
+        'min-h-[140px] md:min-h-[200px] text-center',
       )}
     >
       {/* Question counter + Score */}
@@ -115,7 +115,7 @@ export default function PromptCard({
       <div className="flex min-h-[80px] flex-1 items-center justify-center">
         {isMeaningMode ? (
           <div className="flex flex-col items-center gap-3">
-            <p className="text-2xl font-black leading-relaxed text-foreground md:text-3xl">
+            <p className="text-xl font-black leading-relaxed text-foreground md:text-2xl lg:text-3xl">
               {currentItem.meaning}
             </p>
 
@@ -128,7 +128,7 @@ export default function PromptCard({
                   exit={{ opacity: 0 }}
                   transition={{ type: 'spring', ...SPRING_CONFIG }}
                   className={cn(
-                    'text-2xl font-black md:text-3xl',
+                    'text-xl font-black md:text-2xl lg:text-3xl',
                     answerStatus === 'correct'
                       ? 'text-green-600 dark:text-green-400'
                       : 'text-terracotta',
@@ -141,7 +141,7 @@ export default function PromptCard({
             </AnimatePresence>
           </div>
         ) : (
-          <p className="text-xl font-bold leading-relaxed text-foreground md:text-2xl">
+          <p className="text-lg font-bold leading-relaxed text-foreground md:text-xl lg:text-2xl">
             {isRevealing ? (
               <>
                 {blankedSentence?.split('____').map((segment, idx, arr) => (

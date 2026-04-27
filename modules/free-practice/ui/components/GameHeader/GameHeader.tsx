@@ -42,7 +42,7 @@ export default function GameHeader({
       id="game-header"
       className={cn(
         'flex w-full items-center justify-between',
-        'rounded-bento border-2 border-brutal-black bg-surface px-5 py-3',
+        'rounded-bento border-2 border-brutal-black bg-surface px-3 py-2 md:px-5 md:py-3',
         'shadow-brutal-sm',
       )}
     >
@@ -58,8 +58,8 @@ export default function GameHeader({
         )}
         aria-label={t('back_btn')}
       >
-        <ArrowLeft size={20} strokeWidth={2.5} />
-        <span className="text-sm font-bold">{t('back_btn')}</span>
+        <ArrowLeft size={18} strokeWidth={2.5} />
+        <span className="hidden text-sm font-bold sm:inline">{t('back_btn')}</span>
       </button>
 
       {/* Right: Theme toggle + End Game */}
@@ -95,7 +95,7 @@ export default function GameHeader({
             'cursor-pointer active:translate-x-[2px] active:translate-y-[2px] active:shadow-none',
           )}
         >
-          <X size={16} strokeWidth={3} />
+          <X size={14} strokeWidth={3} />
           <span>{t('end_game_btn')}</span>
         </button>
       </div>

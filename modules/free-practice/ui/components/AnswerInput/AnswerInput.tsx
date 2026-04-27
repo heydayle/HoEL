@@ -1,10 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { type KeyboardEvent, useEffect, useRef } from 'react';
+import { useEffect, useRef, type KeyboardEvent } from 'react';
 
-import type { AnswerStatus } from '@/modules/free-practice/core/models';
 import { cn } from '@/lib/utils';
+import type { AnswerStatus } from '@/modules/free-practice/core/models';
 
 /**
  * Props for the AnswerInput component.
@@ -65,15 +65,54 @@ export default function AnswerInput({
   const inputRef = useRef<HTMLInputElement>(null);
 
   /**
-   * Re-focuses the input whenever the answer status transitions to
-   * a typeable state (`idle` / `wrong`). This covers:
-   * - Initial mount
-   * - After a wrong-answer shake resets to `idle`
-   * - After advancing to a new question (status resets to `idle`)
+   * Tracks whether the user has tapped the input at least once.
+   *
+   * On iOS, the very first focus opens the keyboard and Safari scrolls the
+   * page upward before the viewport height changes — `scrollTo(0,0)` can't
+   * counter-scroll because the page hasn't grown yet. By skipping the
+   * programmatic auto-focus on mount and letting the user tap the input
+   * themselves, the sticky header + prompt stays visible. Once the keyboard
+   * is already open (hasInteracted = true), subsequent programmatic focuses
+   * are safe — Safari won't scroll again.
+   */
+  const hasInteractedRef = useRef(false);
+
+  /**
+   * Pins the page scroll to the top for the duration of the iOS keyboard
+   * opening animation (~500ms).
+   *
+   * Fired on every `onFocus` event (including the user's first tap).
+   * Also marks the input as "interacted" so the `useEffect` can safely
+   * call `.focus()` on subsequent question transitions.
+   */
+  const pinScrollToTop = () => {
+    hasInteractedRef.current = true;
+
+    window.scrollTo(0, 0);
+
+    requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+    });
+
+    const pin = () => window.scrollTo(0, 0);
+    window.addEventListener('scroll', pin, { passive: false });
+    setTimeout(() => {
+      window.removeEventListener('scroll', pin);
+    }, 600);
+  };
+
+  /**
+   * Re-focuses the input whenever the answer status transitions to a
+   * typeable state (`idle` / `wrong`).
+   *
+   * Skipped on the initial mount (hasInteractedRef is false) to avoid
+   * triggering iOS Safari's keyboard scroll on page load. After the user
+   * taps the input once, all subsequent focuses are safe.
    */
   useEffect(() => {
-    if (!isLocked && inputRef.current) {
-      inputRef.current.focus();
+    if (!isLocked && inputRef.current && hasInteractedRef.current) {
+      inputRef.current.focus({ preventScroll: true });
+      pinScrollToTop();
     }
   }, [answerStatus, isLocked]);
 
@@ -103,15 +142,16 @@ export default function AnswerInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
+        onFocus={pinScrollToTop}
         disabled={isLocked}
         placeholder={t('input_placeholder')}
         autoComplete="off"
         className={cn(
-          'w-full rounded-bento border-4 border-brutal-black bg-surface p-4',
-          'text-center text-2xl font-black text-foreground md:text-3xl',
+          'w-full rounded-bento border-4 border-brutal-black bg-surface p-3 md:p-4',
+          'text-center text-xl font-black text-foreground md:text-2xl lg:text-3xl',
           'shadow-brutal-sm outline-none',
           'transition-all duration-200',
-          'placeholder:text-foreground-muted placeholder:font-normal placeholder:text-lg',
+          'placeholder:text-foreground-muted placeholder:font-normal placeholder:text-base md:placeholder:text-lg',
           'focus:shadow-brutal-md',
           isLocked && 'cursor-not-allowed opacity-60',
           answerStatus === 'correct' && 'border-green-500 dark:border-green-400',

@@ -346,3 +346,12 @@ body {
     @apply font-sans;
   }
 }
+
+/* ============================================================
+ * Mobile / Safe-Area Utilities
+ * Ensures the pinned input is never hidden behind the iOS home
+ * indicator. Requires <meta viewport content="viewport-fit=cover">.
+ * ============================================================ */
+.pb-safe {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}

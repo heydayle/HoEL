@@ -48,10 +48,12 @@ Manage state purely on the client side (e.g., Zustand or custom React Hook).
 
 <ui_implementation>
 <layout_structure>
-The page uses a full-height flex/grid layout structured as follows:
+The page uses a full-height flex layout structured as follows:
+
+> **iOS keyboard fix**: On iOS Safari, focusing an input scrolls the entire page upward to position the input above the software keyboard. This pushes the header and question off the top of the screen. The fix: the header, prompt card, and timer bar live inside a **`sticky top-0 z-10 bg-background`** container. When Safari scrolls the page, this sticky block pins itself to the top of the visible area so the question is always readable. The input sits at the natural document bottom — Safari scrolls to it automatically. A `flex-1` spacer between the sticky block and the input keeps the layout vertically distributed on desktop / tall screens.
 
     1. **Header**:
-       - Left: Navigation/Back button.
+       - Left: Navigation/Back button (icon-only on mobile `< sm`, label visible on `sm+`).
        - Right: Color Mode Toggle and a prominent "End Game" (Kết thúc) button (Brutalist style: `bg-terracotta text-white border-2 border-black`).
 
     2. **Main Session (Bento Grid Central)**:
@@ -65,7 +67,7 @@ The page uses a full-height flex/grid layout structured as follows:
            - **Translation**: Shown only in **meaning** mode (complements the meaning without repeating it).
            - Fields are gracefully hidden when empty.
        - **Progress Bar**: A slim horizontal bar (`h-2`) representing 30s → 0s. Soft border: `border border-brutal-black/30`. Inner fill shrinks right-to-left.
-       - **Input Area**: A massive input field centered below the prompt. `border-4 border-black p-4 text-center text-3xl font-black focus:outline-none focus:shadow-brutal-md rounded-bento`. **Must always maintain focus** — use a `useRef` + `useEffect` to programmatically re-focus the input whenever `answerStatus` returns to a typeable state (`idle` or `wrong`). Do NOT rely on the HTML `autoFocus` attribute as it only fires on initial mount.
+       - **Input Area**: A large centered input field. **Must always maintain focus** — use `useRef` + `useEffect` to re-focus whenever `answerStatus` returns to `idle` or `wrong`. Do NOT use HTML `autoFocus`.
 
 </layout_structure>
 
